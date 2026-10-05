@@ -641,10 +641,11 @@ rules:
       `# renovate: datasource=… depName=…` comment sits above a `*_VERSION` variable.
     rationale: Unpinned is unsafe and pinned-but-stale is unsafe too; only automation keeps both true.
     fix:
-      human: "Add renovate.json; `fleetlint fix --apply` writes one that also covers pinned actions, hook revisions and annotated tool versions. Then install the Renovate app on the repository."
-      agent: "Add renovate.json extending config:recommended, helpers:pinGitHubActionDigests, customManagers:makefileVersions and customManagers:githubActionsVersions, with the pre-commit manager enabled. Put a `# renovate: datasource=… depName=…` comment above every pinned tool version in the task runner file and the workflows."
+      human: "Add renovate.json extending config:recommended with the pinned-actions preset; `fleetlint fix --apply` writes one with only the settings the repository's stacks need."
+      agent: "Add renovate.json extending config:recommended and helpers:pinGitHubActionDigests; add gomodTidy only for a Go module and lockfile maintenance only where a package manager keeps a lockfile."
       actions:
-        - template: renovate.json
+        - template: "{stack}/renovate.json"
+          to: renovate.json
     refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: ci/job-timeouts

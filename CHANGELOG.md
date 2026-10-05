@@ -7,6 +7,7 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ### Added
 
+- `deps/update-automation` has a fix: `fleetlint fix` writes a renovate.json with only the settings the repository's stacks need (`gomodTidy` for a Go module, lockfile maintenance where a package manager keeps a lockfile, the hook-revision manager always), plus the presets for pinned actions, Makefile versions and workflow versions.
 - The presets `minimal`, `recommended` and `slop` (94 rules) and the fix templates, moved here from the fleetlint repository. fleetlint embeds this module.
 - Templates for a justfile and a Taskfile next to the Makefile, and workflow fragments that install those runners.
 
