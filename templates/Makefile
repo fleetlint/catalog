@@ -12,8 +12,11 @@ COVER_MIN   ?= 80
 help: ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*##' '{printf "  %-12s %s\n", $$1, $$2}'
 
+# Tool versions: a `# renovate:` comment above a *_VERSION variable lets Renovate bump it, e.g.
+#   # renovate: datasource=go depName=github.com/golangci/golangci-lint/v2
+#   GOLANGCI_VERSION ?= v2.14.0
 tools: ## install the pinned tools the other targets use
-	@echo "TODO: install each tool at a fixed version (go install pkg@v1.2.3, uv tool install name==1.2.3)"
+	@echo "TODO: install each tool at a fixed version from a *_VERSION variable (go install pkg@v1.2.3, uv tool install name==1.2.3)"
 
 fmt: ## format in place
 	@echo "TODO: formatter"

@@ -8,17 +8,6 @@
     "customManagers:githubActionsVersions"
   ],
   "pre-commit": {
-    "enabled": true,
-    "managerFilePatterns": [
-      "/^templates/pre-commit/head\\.yaml$/"
-    ]
-  },
-  "postUpdateOptions": [
-    "gomodTidy"
-  ],
-  "github-actions": {
-    "managerFilePatterns": [
-      "/^templates/.+\\.ya?ml$/"
-    ]
+    "enabled": true
   }
 }

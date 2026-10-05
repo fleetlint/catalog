@@ -1,6 +1,7 @@
 package catalog_test
 
 import (
+	"encoding/json"
 	"io/fs"
 	"strings"
 	"testing"
@@ -36,6 +37,10 @@ func TestPresetsAndTemplatesArePresent(t *testing.T) {
 	})
 	if err != nil || files == 0 {
 		t.Fatalf("templates: %d files, err=%v", files, err)
+	}
+	var cfg map[string]any
+	if b, err := catalog.Templates.ReadFile("templates/renovate.json"); err != nil || json.Unmarshal(b, &cfg) != nil || cfg["extends"] == nil {
+		t.Errorf("templates/renovate.json must be valid JSON with an extends list: %v", err)
 	}
 	for _, stack := range []string{"go", "python", "rust", "node", "kotlin", "flutter"} {
 		for _, name := range []string{"pre-commit/" + stack + ".yaml", "check/" + stack + ".yml", stack + "/release.yml"} {

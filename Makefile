@@ -4,7 +4,9 @@ SHELL := bash
 .ONESHELL:
 .DEFAULT_GOAL := check-fast
 
+# renovate: datasource=go depName=github.com/golangci/golangci-lint/v2
 GOLANGCI_VERSION    ?= v2.14.0
+# renovate: datasource=go depName=golang.org/x/vuln
 GOVULNCHECK_VERSION ?= v1.8.0
 # Tools are built with this module's toolchain: golangci-lint refuses code that targets a newer Go than it was built with.
 TOOLCHAIN := $(shell go env GOVERSION)
