@@ -26,7 +26,7 @@ rules:
     fix:
       human: "Delete the comment, or rewrite it to state the constraint the code satisfies."
       agent: "Delete narration comments; keep a comment only if it explains a constraint, and rewrite it to say that."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/placeholder-comments
     title: No placeholder implementations
@@ -43,7 +43,7 @@ rules:
     fix:
       human: "Implement it, or remove the code and track the gap in an issue."
       agent: "Report each placeholder; implement it only when the intended behaviour is clear from the callers, otherwise ask."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/banner-comments
     title: No banner or divider comments
@@ -60,7 +60,7 @@ rules:
     fix:
       human: "Delete the banner; split the file if the sections are separate concerns."
       agent: "Delete banner comments; do not restructure the file in the same change."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/todo-without-issue
     title: TODOs reference an issue
@@ -77,7 +77,7 @@ rules:
     fix:
       human: "Open an issue and reference it, or do the work, or delete the note."
       agent: "Report each note; do not invent issue numbers."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/emoji-in-code
     title: No emoji in source code
@@ -94,7 +94,7 @@ rules:
     fix:
       human: "Replace the symbol with a word or remove it."
       agent: "Replace each symbol with plain text; keep symbols that are test data."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/typographic-chars
     title: No typographic characters in source code
@@ -111,7 +111,7 @@ rules:
     fix:
       human: "Replace with the ASCII equivalent."
       agent: "Replace with ASCII equivalents; keep characters that are user-facing text or test data."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/commented-out-code
     title: No commented-out code
@@ -128,7 +128,7 @@ rules:
     fix:
       human: "Delete it."
       agent: "Delete commented-out code."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/debug-output
     title: No debug prints outside tests
@@ -145,7 +145,7 @@ rules:
     fix:
       human: "Use the logger; for a CLI, the output stream the command was given."
       agent: "Replace with the project's logger or output writer; delete prints that are debugging leftovers."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/arbitrary-delays
     title: No sleeps outside tests
@@ -162,7 +162,7 @@ rules:
     fix:
       human: "Wait for the event or condition itself; keep real backoff and rate limiting with a comment saying so."
       agent: "Report each delay; replace it with waiting on the actual condition where that is evident, and leave deliberate backoff alone."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/variant-names
     title: No names with version or quality suffixes
@@ -179,7 +179,7 @@ rules:
     fix:
       human: "Change the original and update its callers; delete the other."
       agent: "Report the pair; merge into the original name only when the callers and tests make the intended behaviour clear."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/variant-files
     title: No files named as copies or variants
@@ -196,7 +196,7 @@ rules:
     fix:
       human: "Keep one file under the original name and delete the other."
       agent: "Report the pair; do not delete either without confirming which is in use."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/swallowed-errors
     title: Errors are not swallowed
@@ -213,7 +213,7 @@ rules:
     fix:
       human: "Handle the error, wrap and return it, or log it where it is handled."
       agent: "Propagate the error with context unless the surrounding code shows it is safe to ignore; then say why in a comment."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/escape-hatches
     title: Lint and type suppressions are reviewed
@@ -230,7 +230,7 @@ rules:
     fix:
       human: "Fix the code instead of suppressing, or state the reason on the same line."
       agent: "For each suppression, try the fix first; if it stays, add the specific rule name and a one-line reason."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/vague-errors
     title: Error messages say what failed
@@ -247,7 +247,7 @@ rules:
     fix:
       human: "Say what failed and with which input."
       agent: "Rewrite the message to name the operation and the offending input; do not include secrets."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/placeholder-values
     title: No placeholder values outside tests
@@ -264,7 +264,7 @@ rules:
     fix:
       human: "Read the value from configuration and fail at startup when it is missing."
       agent: "Replace with a configuration lookup validated at startup; ask where the real value comes from if that is unclear."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/insecure-patterns
     title: No disabled TLS verification or similar shortcuts
@@ -281,7 +281,7 @@ rules:
     fix:
       human: "Scope the exception to one host or one path with explicit opt-in, or remove it."
       agent: "Report each occurrence with what it disables; replace only when the secure equivalent is evident."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/skipped-tests
     title: No skipped tests are committed
@@ -298,7 +298,7 @@ rules:
     fix:
       human: "Fix or delete the test; if it must be quarantined, reference the issue."
       agent: "Report each skipped test with its reason; do not un-skip tests that then fail without fixing the cause."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/trivial-asserts
     title: No assertions that cannot fail
@@ -315,7 +315,7 @@ rules:
     fix:
       human: "Assert the behaviour, or delete the test."
       agent: "Replace with an assertion on the observable outcome; delete the test if there is none."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/emoji-headings
     title: No emoji in documentation headings
@@ -332,7 +332,7 @@ rules:
     fix:
       human: "Remove the emoji from the heading."
       agent: "Remove emoji from headings and update links to the changed anchors."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/dumping-ground-files
     title: No utils or helpers dumping grounds
@@ -349,7 +349,7 @@ rules:
     fix:
       human: "Move each function to the module it belongs to."
       agent: "Report the file with its functions grouped by concept; move them only as a separate, behaviour-neutral change."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/vague-commit-messages
     title: Commit subjects say what changed
@@ -369,7 +369,7 @@ rules:
     fix:
       human: "Write the subject from the diff; squash work-in-progress commits before merging."
       agent: "Write subjects from the diff. Do not rewrite pushed history without the user's decision."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/non-conventional-commits
     title: Commit subjects follow Conventional Commits
@@ -389,7 +389,7 @@ rules:
     fix:
       human: "Install the commit-msg hook so new commits are checked."
       agent: "Use Conventional Commits for new commits. Do not rewrite pushed history without the user's decision."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/huge-commits
     title: Commits are reviewable
@@ -410,4 +410,4 @@ rules:
     fix:
       human: "Split work into commits of one concern each."
       agent: "Commit one concern at a time. Do not rewrite pushed history without the user's decision."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]

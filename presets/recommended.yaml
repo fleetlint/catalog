@@ -61,7 +61,7 @@ rules:
     fix:
       human: "Generate the lockfile with the package manager and commit it; remove it from .gitignore."
       agent: "Run the package manager to produce the lockfile, remove any .gitignore entry for it, and commit it."
-    refs: ["docs/baseline.md#dependencies"]
+    refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: repo/readme-present
     title: README exists and has a quickstart
@@ -77,7 +77,7 @@ rules:
     fix:
       human: "Write a README with purpose, requirements, quickstart and the task-runner targets."
       agent: "Write README.md: 2-3 sentence purpose, requirements, quickstart commands, the make targets, configuration table. Plain language, no marketing."
-    refs: ["docs/baseline.md#documentation"]
+    refs: ["https://fleetlint.org/baseline/#documentation"]
 
   - id: taskrunner/targets
     title: Task runner exposes the contract targets
@@ -105,7 +105,7 @@ rules:
       agent: "Add the missing targets to the task runner following its template. Fill each with the stack's real command, no TODO placeholders in check-fast or check."
       actions:
         - template: "{taskrunner}"
-    refs: ["docs/baseline.md#task-runner-contract"]
+    refs: ["https://fleetlint.org/baseline/#task-runner-contract"]
 
   - id: taskrunner/check-composition
     title: check runs the gates and excludes bench and release
@@ -231,7 +231,7 @@ rules:
       actions:
         - template: "{stack}/check.yml"
           to: .github/workflows/check.yml
-    refs: ["docs/baseline.md#continuous-integration"]
+    refs: ["https://fleetlint.org/baseline/#continuous-integration"]
 
   - id: ci/least-privilege
     title: Workflows declare minimal permissions
@@ -248,7 +248,7 @@ rules:
     fix:
       human: "Add `permissions: { contents: read }` at the top of each workflow and widen per job."
       agent: "Add top-level `permissions:\\n  contents: read` to every workflow lacking it; move any wider permission to the job that needs it."
-    refs: ["docs/baseline.md#security"]
+    refs: ["https://fleetlint.org/baseline/#security"]
 
   - id: ci/actions-pinned
     title: Actions are pinned to commit SHAs
@@ -268,7 +268,7 @@ rules:
     fix:
       human: "Run `pinact run` and commit; let Renovate keep the pins current."
       agent: "Run `pinact run` to pin all uses: references to SHAs with version comments; do not change anything else in the workflows."
-    refs: ["docs/baseline.md#security"]
+    refs: ["https://fleetlint.org/baseline/#security"]
 
   - id: lint/go-config
     title: A Go linter is configured strictly
@@ -297,7 +297,7 @@ rules:
       actions:
         - template: golangci.yml
           to: .golangci.yml
-    refs: ["docs/stacks.md#go"]
+    refs: ["https://fleetlint.org/stacks/#go"]
 
   - id: lint/python-config
     title: ruff and a strict type checker are configured
@@ -314,7 +314,7 @@ rules:
     fix:
       human: "Add [tool.ruff] and [tool.mypy] sections from the Python stack profile."
       agent: "Add [tool.ruff] with the profile's rule selection and [tool.mypy] strict = true to pyproject.toml; ratchet existing violations with `ruff check --add-noqa`."
-    refs: ["docs/stacks.md#python"]
+    refs: ["https://fleetlint.org/stacks/#python"]
 
   - id: lint/rust-config
     title: clippy lints are configured in Cargo.toml
@@ -471,7 +471,7 @@ rules:
     fix:
       human: "Add an SBOM step to the tag-triggered release workflow (syft, SPDX JSON, one per artifact) or a `sboms:` section to .goreleaser.yaml, and upload the files with the release."
       agent: "In the tag-triggered release workflow add a step running syft on each artifact producing SPDX JSON files, and include them in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
-    refs: ["docs/baseline.md#releases"]
+    refs: ["https://fleetlint.org/baseline/#releases"]
 
   # ---------------------------------------------------------------- 1.0 additions
 
@@ -492,7 +492,7 @@ rules:
     fix:
       human: "Move the file to git-lfs (`git lfs track <pattern>`) or publish it as a release asset and remove it from history."
       agent: "Report the file; do not rewrite history. Suggest `git lfs track` for the pattern or an external home for the file."
-    refs: ["docs/baseline.md#hygiene"]
+    refs: ["https://fleetlint.org/baseline/#hygiene"]
 
   - id: repo/codeowners
     title: CODEOWNERS names reviewers
@@ -535,7 +535,7 @@ rules:
     fix:
       human: "Add the missing linters to linters.enable in .golangci.yml."
       agent: "Add each reported linter to the linters.enable list in .golangci.yml; keep the rest of the file unchanged."
-    refs: ["docs/stacks.md#go"]
+    refs: ["https://fleetlint.org/stacks/#go"]
 
   - id: quality/no-slop-markers
     title: Documentation is free of marketing filler
@@ -551,7 +551,7 @@ rules:
     fix:
       human: "Rewrite the line to state the concrete behaviour; delete the adjective."
       agent: "Rewrite each flagged line without the flagged word, keeping the technical content; do not add new adjectives."
-    refs: ["docs/baseline.md#documentation"]
+    refs: ["https://fleetlint.org/baseline/#documentation"]
 
   - id: quality/coverage-threshold
     title: A coverage floor is enforced
@@ -591,7 +591,7 @@ rules:
     fix:
       human: "Make `make cover` fail below the floor (diff-cover --fail-under=80 is the stack-neutral option)."
       agent: "Add a threshold to the cover recipe using the stack profile's tool (go: cover.sh with a minimum; python: --cov-fail-under; node: coverageThreshold; rust: cargo llvm-cov --fail-under; kotlin: kover verify)."
-    refs: ["docs/baseline.md#tests"]
+    refs: ["https://fleetlint.org/baseline/#tests"]
 
   - id: docs/architecture
     title: Architecture is documented
@@ -608,7 +608,7 @@ rules:
     fix:
       human: "Write docs/ARCHITECTURE.md: components, boundaries, data flow, the three decisions that shaped it."
       agent: "Write docs/ARCHITECTURE.md from the actual package structure: one paragraph per component, one diagram, no marketing."
-    refs: ["docs/baseline.md#documentation"]
+    refs: ["https://fleetlint.org/baseline/#documentation"]
 
   - id: docs/adr-directory
     title: Decisions are recorded as ADRs
@@ -639,7 +639,7 @@ rules:
     fix:
       human: "Add renovate.json extending config:recommended with the pinned-actions preset."
       agent: "Add renovate.json: {\"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\", \"extends\": [\"config:recommended\", \"helpers:pinGitHubActionDigests\"]}."
-    refs: ["docs/baseline.md#dependencies"]
+    refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: ci/job-timeouts
     title: Workflow jobs have timeouts
@@ -689,7 +689,7 @@ rules:
     fix:
       human: "Use `pull_request` for anything that builds the PR; keep pull_request_target for labelling only."
       agent: "Change the trigger to pull_request, or remove the checkout of the PR head from the pull_request_target workflow."
-    refs: ["docs/baseline.md#security"]
+    refs: ["https://fleetlint.org/baseline/#security"]
 
   - id: release/signing
     title: Release artifacts are signed
@@ -728,7 +728,7 @@ rules:
     fix:
       human: "Add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."
       agent: "Add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
-    refs: ["docs/baseline.md#releases"]
+    refs: ["https://fleetlint.org/baseline/#releases"]
 
   - id: release/provenance
     title: Releases attest build provenance
@@ -775,7 +775,7 @@ rules:
       actions:
         - template: "{stack}/release.yml"
           to: .github/workflows/release.yml
-    refs: ["docs/baseline.md#releases"]
+    refs: ["https://fleetlint.org/baseline/#releases"]
 
   - id: release/semver-tags
     title: Tags are semantic versions
@@ -893,7 +893,7 @@ rules:
     fix:
       human: "Add the stack's version file with the version you build with today."
       agent: "Add the stack's toolchain pin (go.mod toolchain directive, .python-version, rust-toolchain.toml, .nvmrc, Gradle wrapper, .fvmrc) set to the version currently installed; do not upgrade the toolchain in the same change."
-    refs: ["docs/baseline.md#hygiene", "docs/stacks.md"]
+    refs: ["https://fleetlint.org/baseline/#hygiene", "https://fleetlint.org/stacks/"]
 
   - id: deps/vulnerability-scan
     title: Dependencies are scanned for known vulnerabilities
@@ -940,9 +940,9 @@ rules:
     requirement: "The task runner (any kind) or a CI workflow runs a dependency vulnerability scanner: govulncheck, pip-audit, cargo deny or cargo audit, npm/pnpm/yarn audit, osv-scanner, trivy, grype, OWASP dependency-check, Snyk, or GitHub dependency review. Another scanner is added with `accept:`."
     rationale: A lockfile pins yesterday's versions; only a scan says which of them are known to be exploitable today.
     fix:
-      human: "Add the stack's scanner to the `audit` target (see docs/stacks.md) so `check` runs it."
+      human: "Add the stack's scanner to the `audit` target (see https://fleetlint.org/stacks/) so `check` runs it."
       agent: "Add the stack's vulnerability scanner to the audit target of the task runner; use osv-scanner against the lockfile when the stack has no native tool. Do not fix the findings in the same change; list them."
-    refs: ["docs/baseline.md#dependencies"]
+    refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: deps/license-check
     title: Dependency licenses are checked against an allowlist
@@ -989,9 +989,9 @@ rules:
     requirement: "The task runner (any kind) or a CI workflow checks dependency licenses against an allowlist: go-licenses, pip-licenses, cargo deny, license-checker, licensee, osv-scanner with license scanning, REUSE, ScanCode, trivy, FOSSA or GitHub dependency review. Another checker is added with `accept:`."
     rationale: A dependency under an incompatible license is found cheaply before it is merged and expensively after a release.
     fix:
-      human: "Add the stack's license checker with an allowlist to the `audit` target (see docs/stacks.md)."
+      human: "Add the stack's license checker with an allowlist to the `audit` target (see https://fleetlint.org/stacks/)."
       agent: "Add the stack's license checker to the audit target with an allowlist compatible with the repository's own license; report dependencies outside it instead of widening the list."
-    refs: ["docs/baseline.md#dependencies"]
+    refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: deps/install-scripts-disabled
     title: Package install scripts are disabled
@@ -1011,7 +1011,7 @@ rules:
     fix:
       human: "Add `ignore-scripts=true` to .npmrc and allow the few packages that need a build step explicitly."
       agent: "Add ignore-scripts=true to .npmrc (or the package manager's equivalent), run a clean install and the tests, and list the packages that need their build script allowed."
-    refs: ["docs/baseline.md#dependencies"]
+    refs: ["https://fleetlint.org/baseline/#dependencies"]
 
   - id: lint/shell
     title: Shell scripts are linted
@@ -1029,7 +1029,7 @@ rules:
     fix:
       human: "Add the shellcheck hook to .pre-commit-config.yaml."
       agent: "Add the shellcheck hook (and shfmt) to .pre-commit-config.yaml and fix what it reports in the tracked scripts."
-    refs: ["docs/baseline.md#static-analysis"]
+    refs: ["https://fleetlint.org/baseline/#static-analysis"]
 
   - id: containers/dockerignore
     title: Container builds have a .dockerignore
@@ -1044,7 +1044,7 @@ rules:
     fix:
       human: "Add .dockerignore listing .git, .env*, build output and anything the image does not need."
       agent: "Add .dockerignore with .git, .env*, the stack's build output and dependency directories; check that the image still builds."
-    refs: ["docs/baseline.md#robustness"]
+    refs: ["https://fleetlint.org/baseline/#robustness"]
 
   - id: containers/non-root-user
     title: Containers do not run as root
@@ -1062,7 +1062,7 @@ rules:
     fix:
       human: "Create a user in the final stage and add `USER <name>` before the entrypoint."
       agent: "In the final stage add a dedicated user and a USER instruction before ENTRYPOINT/CMD; make sure files the process writes are owned by that user."
-    refs: ["docs/baseline.md#robustness"]
+    refs: ["https://fleetlint.org/baseline/#robustness"]
 
   - id: containers/base-image-pinned
     title: Base images are pinned by digest
@@ -1084,7 +1084,7 @@ rules:
     fix:
       human: "Append the digest to each base image (`image:tag@sha256:…`); Renovate updates both."
       agent: "Resolve each base image tag to its current digest and write it as image:tag@sha256:<digest>; do not change the tag."
-    refs: ["docs/baseline.md#robustness"]
+    refs: ["https://fleetlint.org/baseline/#robustness"]
 
   - id: public/manifest-license
     title: Package manifest declares the license
@@ -1106,7 +1106,7 @@ rules:
       actions:
         - set: {file: package.json, key: license, value: "{license}"}
         - set: {file: Cargo.toml, key: package.license, value: "{license}"}
-    refs: ["docs/baseline.md#public-repositories"]
+    refs: ["https://fleetlint.org/baseline/#public-repositories"]
 
   - id: public/issue-templates
     title: Public repository has issue or pull-request templates
@@ -1126,7 +1126,7 @@ rules:
     fix:
       human: "Add .github/ISSUE_TEMPLATE/bug.md asking for version, steps and expected result; add a pull-request template listing what `make check` must show."
       agent: "Add a bug-report issue template and a pull-request template under .github/ (Gitea reads them too); keep each under 20 lines."
-    refs: ["docs/baseline.md#public-repositories"]
+    refs: ["https://fleetlint.org/baseline/#public-repositories"]
 
   - id: slop/focused-tests
     title: No focused tests are committed
@@ -1143,7 +1143,7 @@ rules:
     fix:
       human: "Remove the focus marker."
       agent: "Remove the focus marker and run the whole suite."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/conflict-markers
     title: No merge conflict markers in source
@@ -1160,7 +1160,7 @@ rules:
     fix:
       human: "Resolve the conflict and remove the markers."
       agent: "Resolve the conflict using both sides' intent; ask when they contradict."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/scratch-scripts
     title: No scratch scripts at the repository root
@@ -1177,7 +1177,7 @@ rules:
     fix:
       human: "Delete the script, or move it into a tools directory with a name that says what it does."
       agent: "Report the script; delete it only if nothing references it, otherwise move it under scripts/ with a descriptive name."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: slop/report-documents
     title: No generated report documents are tracked
@@ -1194,7 +1194,7 @@ rules:
     fix:
       human: "Delete the file; move anything lasting into the README, an ADR or the changelog."
       agent: "Move lasting content into README, docs/adr or CHANGELOG and delete the file."
-    refs: ["docs/baseline.md#slop"]
+    refs: ["https://fleetlint.org/baseline/#slop"]
 
   - id: lint/python-rules-enabled
     title: ruff selects the baseline rule families
@@ -1216,7 +1216,7 @@ rules:
     fix:
       human: "Add the missing families to `select` under [tool.ruff.lint]."
       agent: "Add each reported family to [tool.ruff.lint] select; ratchet the violations that appear with `ruff check --add-noqa` instead of fixing them in the same change."
-    refs: ["docs/stacks.md#python"]
+    refs: ["https://fleetlint.org/stacks/#python"]
 
   - id: lint/node-strict-flags
     title: tsconfig enables the strict compiler flags
@@ -1237,7 +1237,7 @@ rules:
     fix:
       human: "Set the missing flags to true under compilerOptions."
       agent: "Set each reported flag to true in tsconfig.json compilerOptions, run tsc --noEmit and list the errors that appear instead of silencing them."
-    refs: ["docs/stacks.md#nodejs--typescript"]
+    refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
 
   - id: lint/rust-lints-denied
     title: clippy reports unwraps, panics and debug macros
@@ -1261,7 +1261,7 @@ rules:
     fix:
       human: "Add the missing lints to [lints.clippy] with level deny."
       agent: "Add each reported lint to [lints.clippy] as \"deny\"; where an unwrap is a proven invariant, replace it with expect and an INVARIANT comment instead of allowing the lint."
-    refs: ["docs/stacks.md#rust"]
+    refs: ["https://fleetlint.org/stacks/#rust"]
 
   - id: lint/flutter-strict-modes
     title: The Dart analyzer runs in all three strict modes
@@ -1282,7 +1282,7 @@ rules:
     fix:
       human: "Set the missing modes to true under analyzer.language."
       agent: "Set each reported mode to true under analyzer.language and list the analyzer errors that appear instead of adding ignores."
-    refs: ["docs/stacks.md#flutter--dart"]
+    refs: ["https://fleetlint.org/stacks/#flutter--dart"]
 
   - id: quality/policy-enforced
     title: fleetlint runs automatically
@@ -1299,9 +1299,9 @@ rules:
     requirement: "`fleetlint check` runs without anyone remembering to: as a git hook, in the task runner's `check` target, or in a CI workflow."
     rationale: A policy that is only checked by hand drifts with the first busy week; the report is then a description of last month.
     fix:
-      human: "Add `fleetlint check --fail-on error` to the `check` target, and the fleetlint hook to .pre-commit-config.yaml (see docs/integrations.md)."
+      human: "Add `fleetlint check --fail-on error` to the `check` target, and the fleetlint hook to .pre-commit-config.yaml (see https://fleetlint.org/integrations/)."
       agent: "Add `fleetlint check --fail-on error` as the last step of the task runner's check target and a local fleetlint hook to .pre-commit-config.yaml; make sure CI installs fleetlint before it runs the check."
-    refs: ["docs/integrations.md"]
+    refs: ["https://fleetlint.org/integrations/"]
 
   - id: repo/dev-environment
     title: The development tools are reproducible
@@ -1350,7 +1350,7 @@ rules:
       actions:
         - template: "{stack}/devcontainer.json"
           to: .devcontainer/devcontainer.json
-    refs: ["docs/baseline.md#task-runner-contract"]
+    refs: ["https://fleetlint.org/baseline/#task-runner-contract"]
 
   - id: taskrunner/container
     title: The task runner uses the container
@@ -1381,4 +1381,4 @@ rules:
       agent: "At the top of the task runner file add a CONTAINER switch defaulting to 1 and, when it is 1 and IN_CONTAINER is unset, run each target inside the container (devcontainer exec, docker run or podman run); keep the existing recipes for the other case. Set IN_CONTAINER=1 inside the container."
       actions:
         - template: "{taskrunner}"
-    refs: ["docs/baseline.md#task-runner-contract"]
+    refs: ["https://fleetlint.org/baseline/#task-runner-contract"]

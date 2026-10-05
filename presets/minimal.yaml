@@ -27,7 +27,7 @@ rules:
       actions:
         - untrack: "*"
           gitignore: [".DS_Store", "Thumbs.db", "*.bak", "*.orig", "*.swp", "*~", "*.log", "nohup.out", "__pycache__/"]
-    refs: ["docs/baseline.md#hygiene"]
+    refs: ["https://fleetlint.org/baseline/#hygiene"]
 
   - id: repo/no-tracked-env
     title: No .env files are tracked
@@ -42,7 +42,7 @@ rules:
     fix:
       human: "git rm --cached the .env file, add .env* to .gitignore, rotate any secret it contained."
       agent: "Untrack the .env file, add `.env` and `.env.*` (but not `.env.example`) to .gitignore, and tell the user which secrets must be rotated."
-    refs: ["docs/baseline.md#security"]
+    refs: ["https://fleetlint.org/baseline/#security"]
 
   - id: repo/gitignore-present
     title: A .gitignore exists
@@ -75,7 +75,7 @@ rules:
       actions:
         - template: "{stack}/pre-commit-config.yaml"
           to: .pre-commit-config.yaml
-    refs: ["docs/baseline.md#git-hooks"]
+    refs: ["https://fleetlint.org/baseline/#git-hooks"]
 
   - id: hooks/secret-scan
     title: Hooks scan for secrets
@@ -110,7 +110,7 @@ rules:
     fix:
       human: "git rm --cached the files and list them in .git/info/exclude so they stay local."
       agent: "Untrack the listed files with git rm --cached, add them to .git/info/exclude (not .gitignore), and commit."
-    refs: ["docs/baseline.md#public-repositories"]
+    refs: ["https://fleetlint.org/baseline/#public-repositories"]
 
   - id: public/no-ai-attribution
     title: Public history carries no AI attribution
@@ -134,4 +134,4 @@ rules:
     fix:
       human: "Turn off commit attribution in the agent's settings; rewrite only unpushed history."
       agent: "Stop adding Co-Authored-By trailers. Report the offending commits; rewriting pushed history needs the user's explicit decision."
-    refs: ["docs/baseline.md#public-repositories"]
+    refs: ["https://fleetlint.org/baseline/#public-repositories"]

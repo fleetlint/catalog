@@ -7,7 +7,7 @@ The rules [fleetlint](https://github.com/fleetlint/fleetlint) checks a repositor
 - `presets/slop.yaml`: an add-on with heuristics for the traces careless or generated code leaves behind.
 - `templates/`: what `fleetlint fix` creates (editor and git attributes, linter configuration, changelog, security policy, release workflows per stack, a Makefile, justfile and Taskfile with the task-runner contract) and the fragments it assembles the hook configuration and the check workflow from.
 
-What the rules stand for is described in fleetlint's `docs/baseline.md`, `docs/stacks.md` and `docs/slop.md`; the rule format in `docs/writing-rules.md`.
+What the rules stand for is described in [the baseline](https://fleetlint.org/baseline/), [the stack profiles](https://fleetlint.org/stacks/) and [the slop catalog](https://fleetlint.org/slop/); the rule format in [writing rules](https://fleetlint.org/writing-rules/). The source of those pages is [fleetlint/docs](https://github.com/fleetlint/docs).
 
 ## Quickstart
 
@@ -29,11 +29,11 @@ extends: [fleetlint:recommended]
 
 Each preset states the engine level it was written for (`metadata.engine`). A fleetlint that cannot run a version says so in one message instead of failing rule by rule.
 
-To build your own baseline on these presets, write a catalog that includes one and adjusts it with `overrides:` (see fleetlint's `docs/writing-rules.md`).
+To build your own baseline on these presets, write a catalog that includes one and adjusts it with `overrides:` (see [organisations](https://fleetlint.org/organisations/)).
 
 ## Changing a rule
 
-Rules are YAML with [CEL](https://cel.dev) predicates. This repository only checks that the files are present; the engine that evaluates them is in fleetlint, which tests every rule against a passing and a failing fixture. A rule change therefore has two parts: the change here, and in fleetlint the fixture, the new catalog version in `go.mod` and the regenerated rule pages (`make docs`).
+Rules are YAML with [CEL](https://cel.dev) predicates. This repository only checks that the files are present; the engine that evaluates them is in fleetlint, which tests every rule against a passing and a failing fixture. A rule change therefore has two parts: the change here, and in fleetlint the fixture and the new catalog version in `go.mod`; and in fleetlint/docs the regenerated rule pages.
 
 ```sh
 make check    # format, vet, tests
