@@ -19,14 +19,17 @@ version: 1
 extends: [fleetlint:recommended]
 ```
 
-To use a different version of a preset than your binary ships, reference the file in this repository at a tag or commit:
+To use another version of the catalog than your binary ships, pin it; rules and templates then come from that version, fetched once and cached:
 
 ```yaml
-extends:
-  - git+https://github.com/fleetlint/catalog.git//presets/recommended.yaml@<commit>
+version: 1
+catalog: { version: v0.2.0 }     # a tag or a full commit SHA of this repository
+extends: [fleetlint:recommended]
 ```
 
-A preset loaded this way is a remote catalog: its rules apply, and fixes take their templates from the binary.
+Each preset states the engine level it was written for (`metadata.engine`). A fleetlint that cannot run a version says so in one message instead of failing rule by rule.
+
+To build your own baseline on these presets, write a catalog that includes one and adjusts it with `overrides:` (see fleetlint's `docs/writing-rules.md`).
 
 ## Changing a rule
 

@@ -3,6 +3,7 @@ kind: Catalog
 metadata:
   name: fleetlint-slop
   version: 0.1.0
+  engine: 1
   description: >
     Heuristics for the traces careless or generated code leaves behind:
     narration comments, placeholders, swallowed errors, suppressions, skipped

@@ -3,6 +3,7 @@ kind: Catalog
 metadata:
   name: fleetlint-minimal
   version: 0.1.0
+  engine: 1
   description: >
     The floor for any repository, including experiments: nothing secret or
     accidental is tracked, hooks exist, and public repos carry no agent files.

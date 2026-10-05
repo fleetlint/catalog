@@ -3,6 +3,7 @@ kind: Catalog
 metadata:
   name: fleetlint-recommended
   version: 0.1.0
+  engine: 1
   description: >
     The default for repositories you rely on: the task-runner contract,
     hook content, lint configuration per stack, changelog and CI basics.
