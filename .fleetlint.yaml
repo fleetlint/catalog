@@ -5,7 +5,7 @@ extends:
 facts:
   tier: 2
   visibility: public
-  devcontainer: false   # data and one Go test: the gates run on the machine
+  container: none       # data and one Go test: the gates run on the machine
 scopes: []              # the templates are files for other repositories, not projects of this one
 rules:
   quality/coverage-threshold:
