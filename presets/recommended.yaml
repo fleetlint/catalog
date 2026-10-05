@@ -71,22 +71,30 @@ rules:
 
   - id: taskrunner/targets
     title: Task runner exposes the contract targets
-    kind: go
+    kind: expr
     severity: error
     tiers: [1, 2]
     scope: root
+    when: taskrunner.kind != "gradle"
     params:
       required: [fmt, lint, test, cover, audit, check, check-fast]
+    foreach: params.required
+    expr: >
+      item in taskrunner.targets
+      && !(item in taskrunner.recipes && taskrunner.recipes[item].size() > 0
+           && taskrunner.recipes[item].all(l, l.matches("(?i)echo\\s+\"?todo")))
+    message: "contract target is missing or still a TODO placeholder"
     requirement: >
-      The task runner (Makefile, or package.json scripts / Gradle where that is the stack's
-      convention) exposes fmt, lint, test, cover, audit, check and check-fast, so every tool
-      and person can run the same commands in every repository.
-    rationale: "Hooks, CI and the agent rules all depend on `make check` meaning the same thing everywhere."
+      The task runner exposes fmt, lint, test, cover, audit, check and check-fast (`params.required`), so every
+      tool and person can run the same commands in every repository. Any runner counts: a Makefile, a
+      justfile, a Taskfile or package.json scripts; with Gradle the built-in `check` task is accepted.
+      `facts.taskrunner` names the runner when a repository has more than one.
+    rationale: "Hooks, CI and automation all depend on `check` meaning the same thing everywhere."
     fix:
-      human: "Add the missing targets; `fleetlint fix --apply` writes a Makefile template when there is none."
-      agent: "Add the missing targets to the Makefile following the template (SHELL bash -euo pipefail, .PHONY, help target). Fill each with the stack's real command, no TODO placeholders in check-fast or check."
+      human: "Add the missing targets; `fleetlint fix --apply` writes a template for the runner (a Makefile unless `facts.taskrunner` says just or task) when there is none."
+      agent: "Add the missing targets to the task runner following its template. Fill each with the stack's real command, no TODO placeholders in check-fast or check."
       actions:
-        - template: Makefile
+        - template: "{taskrunner}"
     refs: ["docs/baseline.md#task-runner-contract"]
 
   - id: taskrunner/check-composition
@@ -94,16 +102,17 @@ rules:
     kind: expr
     severity: warning
     scope: root
-    when: file("Makefile") && "check" in makefile("Makefile").targets
+    when: taskrunner.kind in ["make", "just", "task"] && "check" in taskrunner.targets
     expr: >
-      ["lint", "test"].all(t, t in makefile("Makefile").deps["check"])
-      && !("bench" in makefile("Makefile").deps["check"])
-      && !("release" in makefile("Makefile").deps["check"])
+      "check" in taskrunner.deps
+      && ["lint", "test"].all(t, t in taskrunner.deps["check"])
+      && !("bench" in taskrunner.deps["check"])
+      && !("release" in taskrunner.deps["check"])
     message: "`check` must depend on lint and test and must not include bench or release"
-    requirement: "`make check` is the definition of green: lint, test, cover, audit and build. Benchmarks are noisy and release is a deliberate act, so neither is part of it."
+    requirement: "`check` is the definition of green: lint, test, cover, audit and build. Benchmarks are noisy and release is a deliberate act, so neither is part of it."
     rationale: "A `check` that is slow or flaky gets bypassed, and a bypassed gate is worse than none."
     fix:
-      human: "Set `check: lint test cover audit build` and move bench/release out."
+      human: "Make `check` depend on lint, test, cover, audit and build, and move bench/release out."
       agent: "Rewrite the check target's prerequisites to `lint test cover audit build`; keep bench and release as separate targets."
 
   - id: hooks/shared-hygiene
@@ -152,7 +161,7 @@ rules:
       yaml(".pre-commit-config.yaml").repos.exists(r, has(r.hooks) && r.hooks.exists(h,
         has(h.stages) && "pre-push" in h.stages && has(h.entry) && h.entry.contains("check")))
     message: "no pre-push hook runs the full check"
-    requirement: "`make check` (or the stack's equivalent) runs as a pre-push hook."
+    requirement: "The task runner's `check` (`make check`, `just check`, `task check`, `npm run check`, `./gradlew check`) runs as a pre-push hook."
     rationale: Pushing red is what breaks main for everyone else; the hook makes it impossible to do by accident.
     fix:
       human: "Add a local hook with entry `make check`, stages: [pre-push], always_run: true."
@@ -192,20 +201,23 @@ rules:
 
   - id: ci/check-workflow
     title: CI runs the check
-    kind: expr
+    kind: outcome
     severity: warning
     scope: root
     tiers: [1, 2]
-    expr: >
-      glob(".github/workflows/*.y*ml").exists(w, text(w).contains("make check"))
-      || glob(".gitea/workflows/*.y*ml").exists(w, text(w).contains("make check"))
-      || glob(".github/workflows/*.y*ml").exists(w, text(w).contains("gradlew check") || text(w).contains("npm run check"))
+    satisfiers:
+      - name: task-runner
+        expr: workflows().exists(w, text(w).contains(taskrunner.cmd + " check"))
+      - name: any-runner
+        expr: workflows().exists(w, text(w).matches("\\b(make|just|task|npm run|pnpm( run)?|yarn( run)?|bun run|\\./gradlew|gradle|mise run|nix flake) check\\b"))
+      - name: dev-container
+        expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("devcontainers/ci") && "runCmd" in s.with && string(s.with.runCmd).contains("check")))
     message: "no workflow runs the project's check"
-    requirement: "A CI workflow runs the same `check` the hooks run, on pushes to main and on pull requests."
+    requirement: "A CI workflow runs the same `check` the hooks run, on pushes to main and on pull requests, whatever the task runner is. A repository whose check has another name adds it with `accept:`."
     rationale: CI is the record that main was green; it must run the same gate as local, not a different subset.
     fix:
-      human: "Add a check workflow for the stack; `fleetlint fix --apply` writes the template."
-      agent: "Add .github/workflows/check.yml from the stack template (toolchain setup, shared tools, make check)."
+      human: "Add a check workflow for the stack; `fleetlint fix --apply` writes the template for the repository's task runner and container setting."
+      agent: "Add .github/workflows/check.yml from the stack template (toolchain setup, shared tools, the task runner's check)."
       actions:
         - template: "{stack}/check.yml"
           to: .github/workflows/check.yml
@@ -242,16 +254,25 @@ rules:
     refs: ["docs/baseline.md#security"]
 
   - id: lint/go-config
-    title: golangci-lint is configured strictly
-    kind: expr
+    title: A Go linter is configured strictly
+    kind: outcome
     severity: warning
     stacks: [go]
-    expr: >
-      (file(".golangci.yml") || file(".golangci.yaml"))
-      && (yaml(file(".golangci.yml") ? ".golangci.yml" : ".golangci.yaml").version == "2"
-          || yaml(file(".golangci.yml") ? ".golangci.yml" : ".golangci.yaml").version == 2)
-    message: "no golangci-lint v2 configuration (.golangci.yml with version: \"2\")"
-    requirement: A golangci-lint v2 config enables errcheck, govet, staticcheck, errorlint, gosec, gocognit and funlen at least.
+    satisfiers:
+      - name: golangci-lint-v2
+        when: file(".golangci.yml") || file(".golangci.yaml") || file(".golangci.toml") || file(".golangci.json")
+        expr: >
+          text(file(".golangci.yml") ? ".golangci.yml" : (file(".golangci.yaml") ? ".golangci.yaml" : (file(".golangci.toml") ? ".golangci.toml" : ".golangci.json")))
+            .matches("(?m)^\\s*\"?version\"?\\s*[:=]\\s*\"?2\"?")
+      - name: staticcheck-and-revive
+        expr: file("staticcheck.conf") && (file("revive.toml") || file(".revive.toml"))
+    partials:
+      - name: golangci-v1
+        severity: warning
+        expr: file(".golangci.yml") || file(".golangci.yaml") || file(".golangci.toml")
+        message: "the golangci-lint configuration is not in the v2 format (version: \"2\")"
+    message: "no Go linter configuration (golangci-lint v2, or staticcheck with revive)"
+    requirement: "A Go linter configuration is committed: golangci-lint v2 enabling errcheck, govet, staticcheck, errorlint, gosec, gocognit and funlen at least, or staticcheck together with revive. Another linter setup is added with `accept:`."
     rationale: Default linting misses the swallowed errors and oversized functions the baseline bans.
     fix:
       human: "Add .golangci.yml (version 2) from the Go stack profile."
@@ -522,10 +543,10 @@ rules:
     scope: root
     tiers: [1, 2]
     satisfiers:
-      - name: make-cover
-        when: taskrunner.kind == "make" && "cover" in makefile("Makefile").targets
+      - name: cover-target
+        when: '"cover" in taskrunner.recipes'
         expr: >
-          makefile("Makefile").recipes["cover"].exists(l,
+          taskrunner.recipes["cover"].exists(l,
             l.matches("fail[-_]?under|coverageThreshold|min(imum)?[-_]?coverage|COVER(AGE)?_MIN|-lt|< *\\$|diff-cover"))
       - name: codecov
         expr: >
@@ -859,36 +880,96 @@ rules:
 
   - id: deps/vulnerability-scan
     title: Dependencies are scanned for known vulnerabilities
-    kind: expr
+    kind: outcome
     severity: warning
     scope: root
     tiers: [1, 2]
-    expr: >
-      ["Makefile", "package.json", "build.gradle", "build.gradle.kts", "justfile", "Taskfile.yml"].exists(f,
-        text(f).matches("govulncheck|pip-audit|cargo[- ]deny|cargo[- ]audit|(npm|pnpm|yarn|yarn npm|bun) audit|osv-scanner|trivy|grype|dependency-check|dependencyCheck|snyk test"))
-      || workflows().exists(w,
-        text(w).matches("govulncheck|pip-audit|cargo[- ]deny|cargo[- ]audit|(npm|pnpm|yarn|yarn npm|bun) audit|osv-scanner|trivy|grype|dependency-check|dependencyCheck|snyk test|dependency-review-action"))
+    satisfiers:
+      - name: govulncheck
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("govulncheck"))
+          || workflows().exists(w, text(w).matches("govulncheck"))
+      - name: pip-audit
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("pip-audit"))
+          || workflows().exists(w, text(w).matches("pip-audit"))
+      - name: cargo-deny-or-audit
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("cargo[- ](deny|audit)"))
+          || workflows().exists(w, text(w).matches("cargo[- ](deny|audit)"))
+      - name: package-manager-audit
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("(npm|pnpm|yarn|yarn npm|bun) audit"))
+          || workflows().exists(w, text(w).matches("(npm|pnpm|yarn|yarn npm|bun) audit"))
+      - name: osv-scanner
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("osv-scanner"))
+          || workflows().exists(w, text(w).matches("osv-scanner"))
+      - name: trivy-or-grype
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("trivy|grype"))
+          || workflows().exists(w, text(w).matches("trivy|grype"))
+      - name: dependency-check
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("dependency-check|dependencyCheck"))
+          || workflows().exists(w, text(w).matches("dependency-check|dependencyCheck"))
+      - name: snyk
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).matches("snyk test"))
+          || workflows().exists(w, text(w).matches("snyk test"))
+      - name: dependency-review
+        expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("actions/dependency-review-action")))
     message: "no vulnerability scanner runs in the task runner or in CI"
-    requirement: "The `audit` target or a CI workflow runs a dependency vulnerability scanner: govulncheck, pip-audit, cargo deny or cargo audit, npm/pnpm/yarn audit, osv-scanner, trivy, grype, OWASP dependency-check."
+    requirement: "The task runner (any kind) or a CI workflow runs a dependency vulnerability scanner: govulncheck, pip-audit, cargo deny or cargo audit, npm/pnpm/yarn audit, osv-scanner, trivy, grype, OWASP dependency-check, Snyk, or GitHub dependency review. Another scanner is added with `accept:`."
     rationale: A lockfile pins yesterday's versions; only a scan says which of them are known to be exploitable today.
     fix:
-      human: "Add the stack's scanner to the `audit` target (see docs/stacks.md) so `make check` runs it."
+      human: "Add the stack's scanner to the `audit` target (see docs/stacks.md) so `check` runs it."
       agent: "Add the stack's vulnerability scanner to the audit target of the task runner; use osv-scanner against the lockfile when the stack has no native tool. Do not fix the findings in the same change; list them."
     refs: ["docs/baseline.md#dependencies"]
 
   - id: deps/license-check
     title: Dependency licenses are checked against an allowlist
-    kind: expr
+    kind: outcome
     severity: info
     scope: root
     tiers: [1]
-    expr: >
-      ["Makefile", "package.json", "build.gradle", "build.gradle.kts", "justfile", "Taskfile.yml", "deny.toml"].exists(f,
-        text(f).matches("go-licenses|pip-licenses|cargo[- ]deny|\\[licenses\\]|license-checker|licensee|osv-scanner[^\\n]*licenses|reuse lint|scancode|trivy[^\\n]*license|fossa"))
-      || workflows().exists(w,
-        text(w).matches("go-licenses|pip-licenses|cargo[- ]deny|license-checker|licensee|osv-scanner[^\\n]*licenses|reuse lint|scancode|trivy[^\\n]*license|fossa|dependency-review-action"))
+    satisfiers:
+      - name: go-licenses
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("go-licenses"))
+          || workflows().exists(w, text(w).matches("go-licenses"))
+      - name: pip-licenses
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("pip-licenses"))
+          || workflows().exists(w, text(w).matches("pip-licenses"))
+      - name: cargo-deny
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("cargo[- ]deny|\\[licenses\\]"))
+          || workflows().exists(w, text(w).matches("cargo[- ]deny|\\[licenses\\]"))
+      - name: license-checker
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("license-checker"))
+          || workflows().exists(w, text(w).matches("license-checker"))
+      - name: licensee
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("licensee"))
+          || workflows().exists(w, text(w).matches("licensee"))
+      - name: osv-scanner-licenses
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("osv-scanner[^\\n]*licenses"))
+          || workflows().exists(w, text(w).matches("osv-scanner[^\\n]*licenses"))
+      - name: reuse
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("reuse lint"))
+          || workflows().exists(w, text(w).matches("reuse lint"))
+      - name: scancode-trivy-fossa
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("scancode|trivy[^\\n]*license|fossa"))
+          || workflows().exists(w, text(w).matches("scancode|trivy[^\\n]*license|fossa"))
+      - name: dependency-review
+        expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("actions/dependency-review-action")))
     message: "no license check runs in the task runner or in CI"
-    requirement: "The `audit` target or a CI workflow checks dependency licenses against an allowlist: go-licenses, pip-licenses, cargo deny, license-checker, licensee, osv-scanner with license scanning."
+    requirement: "The task runner (any kind) or a CI workflow checks dependency licenses against an allowlist: go-licenses, pip-licenses, cargo deny, license-checker, licensee, osv-scanner with license scanning, REUSE, ScanCode, trivy, FOSSA or GitHub dependency review. Another checker is added with `accept:`."
     rationale: A dependency under an incompatible license is found cheaply before it is merged and expensively after a release.
     fix:
       human: "Add the stack's license checker with an allowlist to the `audit` target (see docs/stacks.md)."
@@ -923,10 +1004,10 @@ rules:
     when: tracked().exists(p, p.endsWith(".sh"))
     expr: >
       text(".pre-commit-config.yaml").contains("shellcheck")
-      || text("Makefile").contains("shellcheck")
+      || text(taskrunner.file).contains("shellcheck")
       || workflows().exists(w, text(w).contains("shellcheck"))
     message: "shell scripts are tracked but shellcheck runs nowhere"
-    requirement: "When the repository contains shell scripts, shellcheck runs as a hook, in the `lint` target or in CI."
+    requirement: "When the repository contains shell scripts, shellcheck runs as a hook, in the task runner or in CI."
     rationale: Unquoted variables and unchecked exit codes are the bugs shell scripts ship with, and shellcheck finds them without running anything.
     fix:
       human: "Add the shellcheck hook to .pre-commit-config.yaml."
@@ -1195,7 +1276,7 @@ rules:
     expr: >
       text(".pre-commit-config.yaml").contains("fleetlint")
       || text("lefthook.yml").contains("fleetlint")
-      || ["Makefile", "package.json", "build.gradle", "build.gradle.kts", "justfile", "Taskfile.yml"].exists(f, text(f).contains("fleetlint"))
+      || [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).contains("fleetlint"))
       || workflows().exists(w, text(w).contains("fleetlint"))
     message: "nothing runs fleetlint: not a hook, not the task runner, not a workflow"
     requirement: "`fleetlint check` runs without anyone remembering to: as a git hook, in the task runner's `check` target, or in a CI workflow."
@@ -1212,27 +1293,29 @@ rules:
     scope: root
     tiers: [1, 2]
     satisfiers:
+      # `repo.container` decides: in a container mode only that mechanism counts.
       - name: devcontainer
+        when: repo.container in ["none", "devcontainer"]
         expr: file(".devcontainer/devcontainer.json") || file(".devcontainer.json") || exists(".devcontainer/*/devcontainer.json")
-      # With the dev container flag set (`repo.devcontainer`), only the container counts.
+      - name: container-image
+        when: repo.container in ["docker", "podman"]
+        expr: text(taskrunner.file).matches("\\b(docker|podman|nerdctl)(-compose)?\\b[^\\n|;&]*\\b(run|exec)\\b")
       - name: nix
-        when: "!repo.devcontainer"
+        when: repo.container == "none"
         expr: file("flake.nix") || file("shell.nix") || file("devenv.nix") || file("devenv.yaml")
       - name: version-manager
-        when: "!repo.devcontainer"
+        when: repo.container == "none"
         expr: file("mise.toml") || file(".mise.toml") || file(".tool-versions")
       - name: tools-target
-        when: "!repo.devcontainer && file(\"Makefile\")"
+        when: repo.container == "none" && "tools" in taskrunner.recipes
         expr: >
-          "tools" in makefile("Makefile").recipes
-          && makefile("Makefile").recipes["tools"].exists(l, l.matches("(@v?[0-9]|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
-          && !makefile("Makefile").recipes["tools"].exists(l, l.contains("@latest"))
+          taskrunner.recipes["tools"].exists(l, l.matches("(@v?[0-9]|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
+          && !taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
     partials:
       - name: tools-unpinned
         severity: info
         expr: >
-          file("Makefile") && "tools" in makefile("Makefile").recipes
-          && makefile("Makefile").recipes["tools"].exists(l, l.contains("@latest"))
+          "tools" in taskrunner.recipes && taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
         message: "the tools target installs @latest: two machines get different tools"
     message: "nothing in the repository says which tools to install, or how"
     requirement: >
@@ -1240,35 +1323,45 @@ rules:
       repository: a dev container (`.devcontainer/devcontainer.json`), a Nix flake or devenv, a version
       manager file (`mise.toml`, `.tool-versions`), or a `tools` target that installs pinned versions.
       Any one of them is enough; the task runner stays the interface that hooks and CI use.
-      When the dev container flag is set (a devcontainer.json exists, or `facts.devcontainer: true`), the
-      dev container is the mechanism and has to be there.
+      `facts.container` selects the mechanism: `devcontainer` (the default when a devcontainer.json exists)
+      needs the dev container, `docker` or `podman` a task runner that runs its targets in an image, and
+      `none` one of the others.
     rationale: Lint and test results that depend on which linter version a contributor happens to have are not results; a second contributor's first hour should not go into guessing tools.
     fix:
-      human: "Choose. For a dev container set `facts.devcontainer: true` and run `fleetlint fix --apply`: it writes the container for the repository's stacks, and the Makefile and check workflow it writes run inside it. To stay on the machine, give the `tools` target pinned versions or add a version-manager file."
-      agent: "Ask which mechanism the user wants. Dev container: set facts.devcontainer true in .fleetlint.yaml and run `fleetlint fix --apply`. Machine: add a `tools` target to the task runner that installs every tool at a fixed version. Do not add more than one mechanism."
+      human: "Choose. For a container set `facts.container` to devcontainer, docker or podman and run `fleetlint fix --apply`: the task runner file and check workflow it writes run inside it (and for devcontainer it writes the container). To stay on the machine, give the `tools` target pinned versions or add a version-manager file."
+      agent: "Ask which mechanism the user wants. Container: set facts.container (devcontainer, docker or podman) in .fleetlint.yaml and run `fleetlint fix --apply`. Machine: add a `tools` target to the task runner that installs every tool at a fixed version. Do not add more than one mechanism."
       actions:
         - template: "{stack}/devcontainer.json"
           to: .devcontainer/devcontainer.json
     refs: ["docs/baseline.md#task-runner-contract"]
 
-  - id: taskrunner/devcontainer
-    title: The task runner uses the dev container
-    kind: expr
+  - id: taskrunner/container
+    title: The task runner uses the container
+    kind: outcome
     severity: warning
     scope: root
     tiers: [1, 2]
-    when: repo.devcontainer && taskrunner.kind == "make"
-    expr: text("Makefile").matches("devcontainer (exec|up)")
-    message: "the repository has a dev container but `make` runs on the machine"
+    when: repo.container != "none" && taskrunner.kind in ["make", "just", "task"]
+    satisfiers:
+      - name: devcontainer-cli
+        expr: text(taskrunner.file).matches("devcontainer (exec|up)")
+      - name: docker
+        expr: text(taskrunner.file).matches("\\bdocker(-compose)?\\b[^\\n|;&]*\\b(run|exec)\\b")
+      - name: podman
+        expr: text(taskrunner.file).matches("\\bpodman(-compose)?\\b[^\\n|;&]*\\b(run|exec)\\b")
+      - name: other-engine
+        expr: text(taskrunner.file).matches("\\b(nerdctl|toolbox|distrobox)\\b[^\\n|;&]*\\b(run|exec|enter)\\b")
+    message: "the repository is set to run in a container but the task runner runs on the machine"
     requirement: >
-      When the dev container flag is set (a devcontainer.json exists, or `facts.devcontainer: true`), `make <target>`
-      called outside the container runs the target inside it, so results do not depend on what is installed on
-      the machine. A switch (`DEVCONTAINER=0`) keeps running on the machine possible. Repositories that do not
-      use a dev container run on the machine and are not checked; `facts.devcontainer: false` says so explicitly.
-    rationale: A dev container that the gates do not use is a second environment next to the real one, and the two drift apart.
+      When `facts.container` is devcontainer (the default once a devcontainer.json exists), docker or podman, a
+      target called outside the container runs inside it, so results do not depend on what is installed on the
+      machine. Any way of getting there counts: the devcontainer CLI, `docker run` or `docker compose exec`,
+      podman; another one is added with `accept:`. A switch (`CONTAINER=0`) keeps running on the machine
+      possible, and `facts.container: none` says the repository runs there.
+    rationale: A container that the gates do not use is a second environment next to the real one, and the two drift apart.
     fix:
-      human: "Forward the targets into the container when make runs outside it (`fleetlint explain taskrunner/devcontainer` shows the switch), or set `facts.devcontainer: false`."
-      agent: "At the top of the Makefile add `DEVCONTAINER ?= 1` and, when `$(DEVCONTAINER)$(IN_DEVCONTAINER)` equals 1, define every target as `devcontainer up --workspace-folder . && devcontainer exec --workspace-folder . make $@ DEVCONTAINER=0`; keep the existing recipes in the else branch. Set containerEnv IN_DEVCONTAINER=1 in devcontainer.json."
+      human: "Forward the targets into the container when the runner is called outside it (`fleetlint fix` writes such a runner file when there is none), or set `facts.container: none`."
+      agent: "At the top of the task runner file add a CONTAINER switch defaulting to 1 and, when it is 1 and IN_CONTAINER is unset, run each target inside the container (devcontainer exec, docker run or podman run); keep the existing recipes for the other case. Set IN_CONTAINER=1 inside the container."
       actions:
-        - template: Makefile
+        - template: "{taskrunner}"
     refs: ["docs/baseline.md#task-runner-contract"]

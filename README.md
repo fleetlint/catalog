@@ -5,7 +5,7 @@ The rules [fleetlint](https://github.com/fleetlint/fleetlint) checks a repositor
 - `presets/minimal.yaml`: the floor for any repository.
 - `presets/recommended.yaml`: the default; includes `minimal`.
 - `presets/slop.yaml`: an add-on with heuristics for the traces careless or generated code leaves behind.
-- `templates/`: what `fleetlint fix` creates (editor and git attributes, linter configuration, changelog, security policy, release workflows per stack) and the fragments it assembles the hook configuration and the check workflow from.
+- `templates/`: what `fleetlint fix` creates (editor and git attributes, linter configuration, changelog, security policy, release workflows per stack, a Makefile, justfile and Taskfile with the task-runner contract) and the fragments it assembles the hook configuration and the check workflow from.
 
 What the rules stand for is described in fleetlint's `docs/baseline.md`, `docs/stacks.md` and `docs/slop.md`; the rule format in `docs/writing-rules.md`.
 

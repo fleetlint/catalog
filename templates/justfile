@@ -1,0 +1,46 @@
+# Task-runner contract: fmt, lint, test, cover, audit, build, check, check-fast. Replace each TODO with the stack's commands.
+# Recipes are the interface the git hooks and CI rely on; keep their names.
+set shell := ["bash", "-euo", "pipefail", "-c"]
+%SWITCH%
+default: check-fast
+
+# install the pinned tools the other recipes use
+tools:
+    %RUN%echo "TODO: install each tool at a fixed version (go install pkg@v1.2.3, uv tool install name==1.2.3)"
+
+# format in place
+fmt:
+    %RUN%echo "TODO: formatter"
+
+# format check + linter + type check, warnings as errors
+lint:
+    %RUN%echo "TODO: linter"
+
+# all tests (race detector / sanitizers where available)
+test:
+    %RUN%echo "TODO: tests"
+
+# tests with coverage; fail if changed lines fall below the threshold
+cover:
+    %RUN%echo "TODO: coverage, then: diff-cover coverage.xml --compare-branch=origin/main --fail-under=80"
+
+# vulnerabilities + licenses + secrets + unused deps
+audit:
+    %RUN%gitleaks git --no-banner .
+    %RUN%echo "TODO: osv-scanner / license check / unused deps"
+
+# production build
+build:
+    %RUN%echo "TODO: build"
+
+# release artifacts into dist/ (the release workflow signs and publishes them)
+dist:
+    %RUN%echo "TODO: build the release artifacts into dist/"
+
+# before every commit (< 30 s)
+check-fast: lint
+    %RUN%echo "TODO: unit tests on changed packages"
+
+# definition of green (< 10 min)
+check: lint test cover audit build
+    %RUN%fleetlint check --fail-on error

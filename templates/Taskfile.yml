@@ -1,0 +1,64 @@
+# Task-runner contract: fmt, lint, test, cover, audit, build, check, check-fast. Replace each TODO with the stack's commands.
+# Tasks are the interface the git hooks and CI rely on; keep their names.
+version: "3"
+%SWITCH%
+tasks:
+  default:
+    deps: [check-fast]
+
+  tools:
+    desc: install the pinned tools the other tasks use
+    cmds:
+      - '%RUN%echo "TODO: install each tool at a fixed version (go install pkg@v1.2.3, uv tool install name==1.2.3)"'
+
+  fmt:
+    desc: format in place
+    cmds:
+      - '%RUN%echo "TODO: formatter"'
+
+  lint:
+    desc: format check + linter + type check, warnings as errors
+    cmds:
+      - '%RUN%echo "TODO: linter"'
+
+  test:
+    desc: all tests (race detector / sanitizers where available)
+    cmds:
+      - '%RUN%echo "TODO: tests"'
+
+  cover:
+    desc: tests with coverage; fail if changed lines fall below the threshold
+    cmds:
+      - '%RUN%echo "TODO: coverage, then: diff-cover coverage.xml --compare-branch=origin/main --fail-under=80"'
+
+  audit:
+    desc: vulnerabilities + licenses + secrets + unused deps
+    cmds:
+      - '%RUN%gitleaks git --no-banner .'
+      - '%RUN%echo "TODO: osv-scanner / license check / unused deps"'
+
+  build:
+    desc: production build
+    cmds:
+      - '%RUN%echo "TODO: build"'
+
+  dist:
+    desc: release artifacts into dist/ (the release workflow signs and publishes them)
+    cmds:
+      - '%RUN%echo "TODO: build the release artifacts into dist/"'
+
+  check-fast:
+    desc: before every commit (< 30 s)
+    deps: [lint]
+    cmds:
+      - '%RUN%echo "TODO: unit tests on changed packages"'
+
+  check:
+    desc: definition of green (< 10 min)
+    cmds:
+      - task: lint
+      - task: test
+      - task: cover
+      - task: audit
+      - task: build
+      - '%RUN%fleetlint check --fail-on error'
