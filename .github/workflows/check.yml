@@ -52,6 +52,6 @@ jobs:
       - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
       - name: fleetlint (the check target runs it; pin the version you use)
         run: |
-          go install github.com/fleetlint/fleetlint/cmd/fleetlint@latest
+          go install github.com/fleetlint/fleetlint/cmd/fleetlint@55252cf5728b3295c7ec6178e81f1228d5c7ac58   # the commit whose grammar .fleetlint.yaml uses; a tag after the next release
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - run: make check
