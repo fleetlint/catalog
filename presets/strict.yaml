@@ -1,0 +1,77 @@
+apiVersion: fleetlint.org/v1
+kind: Catalog
+metadata:
+  name: fleetlint-strict
+  version: 0.1.0
+  engine: 1
+  description: >
+    Everything in recommended, held to a higher standard: every warning is an
+    error, every informational rule a warning, and the security rules take no
+    exceptions. For repositories whose gate must not be argued with.
+  includes: [fleetlint:recommended]
+
+# Severity order is kept (error > warning > info); nothing is disabled.
+overrides:
+  repo/no-tracked-env: { exceptions: false }
+  repo/gitignore-present: { severity: error }
+  hooks/secret-scan: { exceptions: false }
+  public/no-agent-files: { exceptions: false }
+  public/no-ai-attribution: { exceptions: false }
+  repo/editorconfig: { severity: error }
+  repo/gitattributes: { severity: error }
+  repo/lockfile-committed: { exceptions: false }
+  repo/readme-present: { severity: error }
+  taskrunner/check-composition: { severity: error }
+  hooks/shared-hygiene: { severity: error }
+  hooks/conventional-commits: { severity: error }
+  hooks/pre-push-check: { severity: error }
+  changelog/present: { severity: error }
+  changelog/generator-configured: { severity: warning }
+  ci/check-workflow: { severity: error }
+  ci/least-privilege: { severity: error, exceptions: false }
+  ci/actions-pinned: { severity: error, exceptions: false }
+  lint/go-config: { severity: error }
+  lint/python-config: { severity: error }
+  lint/rust-config: { severity: error }
+  lint/node-config: { severity: error }
+  lint/flutter-config: { severity: error }
+  lint/kotlin-config: { severity: error }
+  public/license: { exceptions: false }
+  public/security-policy: { severity: error }
+  repo/no-large-files: { severity: error }
+  repo/codeowners: { severity: warning }
+  lint/go-linters-enabled: { severity: error }
+  quality/no-slop-markers: { severity: error }
+  quality/coverage-threshold: { severity: error }
+  docs/architecture: { severity: error }
+  docs/adr-directory: { severity: warning }
+  deps/update-automation: { severity: error }
+  ci/job-timeouts: { severity: warning }
+  ci/concurrency-cancel: { severity: warning }
+  ci/no-pull-request-target: { exceptions: false }
+  release/signing: { exceptions: false }
+  release/provenance: { severity: error, exceptions: false }
+  release/semver-tags: { severity: error }
+  release/checksums: { severity: error, exceptions: false }
+  release/changelog-in-release: { severity: warning }
+  public/contributing: { severity: warning }
+  public/code-of-conduct: { severity: warning }
+  repo/toolchain-pinned: { severity: error }
+  deps/vulnerability-scan: { severity: error, exceptions: false }
+  deps/license-check: { severity: warning }
+  deps/install-scripts-disabled: { severity: warning }
+  lint/shell: { severity: warning }
+  containers/dockerignore: { severity: error }
+  containers/non-root-user: { severity: error }
+  containers/base-image-pinned: { severity: warning }
+  public/manifest-license: { severity: warning }
+  public/issue-templates: { severity: warning }
+  slop/scratch-scripts: { severity: error }
+  slop/report-documents: { severity: error }
+  lint/python-rules-enabled: { severity: error }
+  lint/node-strict-flags: { severity: error }
+  lint/rust-lints-denied: { severity: error }
+  lint/flutter-strict-modes: { severity: error }
+  quality/policy-enforced: { severity: error }
+  repo/dev-environment: { severity: error }
+  taskrunner/container: { severity: error }

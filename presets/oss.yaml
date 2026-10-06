@@ -1,0 +1,22 @@
+apiVersion: fleetlint.org/v1
+kind: Catalog
+metadata:
+  name: fleetlint-oss
+  version: 0.1.0
+  engine: 1
+  description: >
+    recommended with the public/* family switched on whatever the detected
+    visibility: for repositories that are, or are about to become, open source
+    (private mirrors, pre-publication work, forges without a visibility API).
+  includes: [fleetlint:recommended]
+
+# The public rules normally run `when: repo.public`; here they always run.
+overrides:
+  public/no-agent-files: { when: "true" }
+  public/no-ai-attribution: { when: repo.has_git }
+  public/license: { when: "true" }
+  public/security-policy: { when: repo.tier == 1 }
+  public/contributing: { when: "true" }
+  public/code-of-conduct: { when: "true" }
+  public/manifest-license: { when: "true" }
+  public/issue-templates: { when: "true" }
