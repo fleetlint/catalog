@@ -1,0 +1,30 @@
+# One file for GitHub and Gitea:
+# Gitea Actions reads .github/workflows/ too, and both forges set github.server_url.
+# Actions are pinned to commit SHAs; `pinact run -u` updates them
+# (Renovate keeps the pins current via renovate.json).
+name: release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: release            # GitHub: protect with required reviewers / tag rules; ignored on Gitea
+    permissions:
+      contents: write               # create the release and upload assets
+      id-token: write               # GitHub only: keyless cosign + attestations (ignored on Gitea)
+      attestations: write           # GitHub only
+      packages: write               # container images / packages, if used
+    env:
+      IS_GITHUB: ${{ github.server_url == 'https://github.com' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2

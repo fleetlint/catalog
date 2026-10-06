@@ -1,0 +1,4 @@
+      - name: Verify tag is on main and check passes
+        run: |
+          git merge-base --is-ancestor "$GITHUB_SHA" origin/main || { echo "tag not on main"; exit 1; }
+          make check

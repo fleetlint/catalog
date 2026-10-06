@@ -1,0 +1,6 @@
+
+      - name: Publish to npm with provenance (GitHub only)
+        if: env.IS_GITHUB == 'true'
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}   # or configure npm trusted publishing and drop the token

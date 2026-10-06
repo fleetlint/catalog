@@ -38,10 +38,15 @@ func TestPresetsAndTemplatesArePresent(t *testing.T) {
 		t.Fatalf("templates: %d files, err=%v", files, err)
 	}
 	for _, stack := range []string{"go", "python", "rust", "node", "kotlin", "flutter"} {
-		for _, name := range []string{"pre-commit/" + stack + ".yaml", "check/" + stack + ".yml", stack + "/release.yml"} {
+		for _, name := range []string{"pre-commit/" + stack + ".yaml", "check/" + stack + ".yml"} {
 			if _, err := catalog.Templates.ReadFile("templates/" + name); err != nil {
 				t.Errorf("stack %s lacks %s", stack, name)
 			}
+		}
+	}
+	for _, name := range []string{"head.yml", "verify.yml", "goreleaser.yml", "dist.yml"} {
+		if _, err := catalog.Templates.ReadFile("templates/release/" + name); err != nil {
+			t.Errorf("release fragment %s missing", name)
 		}
 	}
 }
