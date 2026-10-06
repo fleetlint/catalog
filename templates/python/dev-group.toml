@@ -1,0 +1,3 @@
+
+[dependency-groups]
+dev = ["ruff>=0.16,<1", "mypy>=2.4,<3"]

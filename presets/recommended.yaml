@@ -315,10 +315,11 @@ rules:
     requirement: pyproject.toml configures ruff with a broad rule selection and mypy --strict or (based)pyright strict.
     rationale: Untyped Python with default linting is where AI-written code hides most bugs.
     fix:
-      human: "Add [tool.ruff] and [tool.mypy] sections from the Python stack profile."
+      human: "Add [tool.ruff] and [tool.mypy] sections; `fleetlint fix --apply` appends them and a `dev` dependency group with ruff and mypy to pyproject.toml (then `uv sync`)."
       agent: "Add [tool.ruff] with the profile's rule selection and [tool.mypy] strict = true to pyproject.toml; ratchet existing violations with `ruff check --add-noqa`."
       actions:
         - append: {file: pyproject.toml, template: python/ruff.toml, unless: '(?m)^\[tool\.ruff\]'}
+        - append: {file: pyproject.toml, template: python/dev-group.toml, unless: '(?m)^\[dependency-groups\]|ruff[>=~<]'}
     refs: ["https://fleetlint.org/stacks/#python"]
 
   - id: lint/rust-config
@@ -349,12 +350,13 @@ rules:
     requirement: "tsconfig.json has strict: true (plus noUncheckedIndexedAccess) and ESLint strictTypeChecked or Biome is configured."
     rationale: Without strict types and a type-aware linter, floating promises and any-typed code go unnoticed.
     fix:
-      human: "Enable strict in tsconfig.json and add eslint.config.js per the Node stack profile."
-      agent: "Set compilerOptions.strict and noUncheckedIndexedAccess in tsconfig.json; add eslint.config.js with typescript-eslint strictTypeChecked."
+      human: "Enable strict in tsconfig.json and add an eslint flat config; `fleetlint fix --apply` writes eslint.config.mjs, merges the strict flags into tsconfig.json and adds the eslint packages to devDependencies (then run the package manager's install)."
+      agent: "Set compilerOptions.strict and noUncheckedIndexedAccess in tsconfig.json; add eslint.config.mjs with typescript-eslint strictTypeChecked and the plugins to devDependencies; install and fix what the linter reports."
       actions:
         - template: node/eslint.config.mjs
           to: eslint.config.mjs
         - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
+        - merge: {file: package.json, template: node/devdeps-lint.json}
 
   - id: lint/flutter-config
     title: Dart analysis is strict
@@ -446,11 +448,12 @@ rules:
     requirement: "`.rubocop.yml` with `NewCops: enable` and the project's metrics, or Standard's `.standard.yml`; a `.rubocop_todo.yml` is the ratchet, not a permanent allowlist."
     rationale: Ruby's flexibility is only safe with a linter that holds the line on method length, complexity and swallowed exceptions.
     fix:
-      human: "Add .rubocop.yml (`fleetlint fix --apply` writes one) and the rubocop gems to the Gemfile's development group."
+      human: "Add .rubocop.yml and the rubocop gems to the Gemfile's development group (`fleetlint fix --apply` does both)."
       agent: "Add .rubocop.yml from the template, add rubocop with rubocop-performance and rubocop-rspec to the Gemfile, and run `rubocop --autocorrect`."
       actions:
         - template: ruby/rubocop.yml
           to: .rubocop.yml
+        - append: {file: Gemfile, template: ruby/Gemfile-lint, unless: '(?m)^\s*gem\s+["'']rubocop["'']'}
     refs: ["https://fleetlint.org/stacks/#ruby"]
 
   - id: lint/php-config
@@ -465,13 +468,14 @@ rules:
     requirement: "PHPStan (`phpstan.neon.dist`, level max with strict rules) or Psalm, plus PHP CS Fixer, Pint or PHP_CodeSniffer, all configured in the repository and run by the lint target."
     rationale: PHP's type system is enforced at runtime only; the analyzer is the compile step the language lacks.
     fix:
-      human: "Add phpstan.neon.dist and .php-cs-fixer.dist.php (`fleetlint fix --apply` writes both) and the packages to require-dev."
+      human: "Add phpstan.neon.dist, .php-cs-fixer.dist.php and the packages in require-dev (`fleetlint fix --apply` does all three)."
       agent: "Add phpstan.neon.dist and .php-cs-fixer.dist.php from the templates, require phpstan/phpstan, phpstan/phpstan-strict-rules and friendsofphp/php-cs-fixer in require-dev, and fix what they report."
       actions:
         - template: php/phpstan.neon.dist
           to: phpstan.neon.dist
         - template: php/php-cs-fixer.dist.php
           to: .php-cs-fixer.dist.php
+        - merge: {file: composer.json, template: php/require-dev-lint.json}
     refs: ["https://fleetlint.org/stacks/#php"]
 
   - id: lint/hugo-strict-build
