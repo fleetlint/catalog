@@ -35,6 +35,7 @@ overrides:
   lint/rust-config: { severity: error }
   lint/node-config: { severity: error }
   lint/flutter-config: { severity: error }
+  lint/hugo-strict-build: { severity: error }
   lint/kotlin-config: { severity: error }
   public/license: { exceptions: false }
   public/security-policy: { severity: error }

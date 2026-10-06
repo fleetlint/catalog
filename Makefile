@@ -11,7 +11,7 @@ GOVULNCHECK_VERSION ?= v1.8.0
 # Tools are built with this module's toolchain: golangci-lint refuses code that targets a newer Go than it was built with.
 TOOLCHAIN := $(shell go env GOVERSION)
 
-.PHONY: help tools fmt lint test cover audit build check-fast check
+.PHONY: help tools fmt lint test cover audit build check-fast check gen
 
 help: ## list targets
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | awk -F':.*##' '{printf "  %-12s %s\n", $$1, $$2}'
@@ -23,10 +23,15 @@ tools: ## install the pinned tools (gitleaks and fleetlint come from their own i
 fmt: ## format in place
 	golangci-lint fmt
 
-lint: ## format check, linters, vet
+lint: ## format check, linters, vet, strict preset current
 	golangci-lint fmt --diff
 	golangci-lint run
 	go vet ./...
+	@cp presets/strict.yaml /tmp/strict.before && python3 scripts/gen-strict.py >/dev/null && \
+	  (diff -q /tmp/strict.before presets/strict.yaml >/dev/null || { echo "presets/strict.yaml was stale; regenerated, review and commit"; exit 1; })
+
+gen: ## regenerate presets/strict.yaml from minimal and recommended
+	python3 scripts/gen-strict.py
 
 test: ## the presence test for presets and templates
 	go test -race ./...
