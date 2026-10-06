@@ -1389,3 +1389,148 @@ rules:
       actions:
         - template: "{taskrunner}"
     refs: ["https://fleetlint.org/baseline/#task-runner-contract"]
+
+  - id: lint/kotlin-detekt-strict
+    title: detekt enforces the exception and size rules
+    kind: expr
+    severity: warning
+    stacks: [kotlin]
+    when: exists("**/detekt*.yml") || exists("**/detekt*.yaml")
+    params:
+      required: [exceptions.SwallowedException, exceptions.TooGenericExceptionCaught, empty-blocks.EmptyCatchBlock, complexity.LongMethod, complexity.CognitiveComplexMethod]
+    foreach: params.required
+    expr: >
+      glob("**/detekt*.y*ml").exists(f, yaml(f) != null
+        && item.split(".")[0] in yaml(f)
+        && item.split(".")[1] in yaml(f)[item.split(".")[0]]
+        && has(yaml(f)[item.split(".")[0]][item.split(".")[1]].active)
+        && yaml(f)[item.split(".")[0]][item.split(".")[1]].active == true)
+    message: "detekt rule is not active"
+    requirement: "The detekt configuration sets `active: true` for every rule in `params.required` (ruleset.Rule): swallowed and too-generic exceptions, empty catch blocks, method length and cognitive complexity. `detekt --generate-config` writes a full configuration to edit."
+    rationale: The compiler accepts a swallowed exception and a 400-line method; detekt is the only place these are refused, and only when the rules are on.
+    fix:
+      human: "Set the reported rules to `active: true` in the detekt configuration (thresholds: LongMethod 50, CognitiveComplexMethod 15)."
+      agent: "Set each reported rule to active: true in the detekt configuration and fix the findings it produces instead of adding a baseline entry."
+    refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+
+  - id: quality/duplication-gate
+    title: Duplicated code is measured
+    kind: outcome
+    severity: info
+    scope: root
+    tiers: [1]
+    satisfiers:
+      - name: task-runner-or-ci
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f,
+            text(f).matches("\\b(jscpd|cpdCheck|pmd[- ]cpd|simian|duplo|duplicate-code)\\b"))
+          || workflows().exists(w, text(w).matches("\\b(jscpd|cpdCheck|pmd[- ]cpd|simian|duplo|duplicate-code)\\b"))
+      - name: golangci-dupl
+        expr: grep(".golangci.y*ml", "^\\s*-\\s*dupl\\s*$|^\\s*dupl:").size() > 0
+      - name: config-file
+        expr: exists(".jscpd.json") || exists("sonar-project.properties")
+    message: "no duplication check is configured"
+    requirement: "A duplication detector runs in the task runner, the hooks or CI: golangci-lint `dupl` for Go, `jscpd` for any stack, PMD CPD for JVM, pylint `duplicate-code`, or Sonar. Another tool is added with `accept:`."
+    rationale: Near-duplicate implementations are how a fix lands in one copy and not the other; a detector makes the second copy visible at review time.
+    fix:
+      human: "Enable `dupl` in .golangci.yml, or add `jscpd` to the lint target (see https://fleetlint.org/stacks/ for the stack's tool)."
+      agent: "Add the stack's duplication detector to the lint target with a threshold, and remove or merge the duplicates it reports rather than raising the threshold."
+    refs: ["https://fleetlint.org/baseline/#design"]
+
+  - id: quality/mutation-gate
+    title: Mutation testing runs on the core
+    kind: outcome
+    severity: info
+    scope: root
+    tiers: [1]
+    satisfiers:
+      - name: task-runner-or-ci
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml"].exists(f,
+            text(f).matches("\\b(gremlins|mutmut|cargo[- ]mutants|stryker|pitest|mutation_test|cosmic-ray|go-mutesting|infection)\\b"))
+          || workflows().exists(w, text(w).matches("\\b(gremlins|mutmut|cargo[- ]mutants|stryker|pitest|mutation_test|cosmic-ray|go-mutesting|infection)\\b"))
+      - name: config-file
+        expr: exists("stryker.conf.*") || exists("stryker.config.*") || exists(".gremlins.y*ml") || file("mutmut_config.py") || text("pyproject.toml").contains("[tool.mutmut]")
+    message: "no mutation testing is configured"
+    requirement: "A mutation testing tool runs on the core packages, in the task runner or a (scheduled) workflow: gremlins for Go, mutmut for Python, cargo-mutants for Rust, Stryker for TypeScript, Pitest for the JVM, mutation_test for Dart. Another tool is added with `accept:`."
+    rationale: Coverage says a line ran; a surviving mutant says the tests would not notice if it were wrong.
+    fix:
+      human: "Add the stack's mutation tool for the core packages, as a `mutate` target run weekly or on release (see https://fleetlint.org/stacks/)."
+      agent: "Add a mutate target that runs the stack's mutation tool on the core packages with a survivor threshold, and a weekly workflow that calls it."
+    refs: ["https://fleetlint.org/baseline/#tests"]
+
+  - id: release/api-compatibility
+    title: A library checks its API against the previous release
+    kind: outcome
+    severity: info
+    scope: root
+    tiers: [1]
+    when: >
+      ("node" in repo.stacks && json("package.json") != null && !(has(json("package.json").private) && json("package.json").private == true)
+        && (has(json("package.json").main) || has(json("package.json").exports) || has(json("package.json").types)))
+      || ("rust" in repo.stacks && (file("src/lib.rs") || text("Cargo.toml").contains("[lib]")))
+      || ("python" in repo.stacks && toml("pyproject.toml") != null && has(toml("pyproject.toml").project) && !has(toml("pyproject.toml").project.scripts))
+      || ("go" in repo.stacks && !exists("**/main.go"))
+      || ("kotlin" in repo.stacks && grep("**/build.gradle*", "maven-publish").size() > 0)
+    satisfiers:
+      - name: task-runner-or-ci
+        expr: >
+          [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f,
+            text(f).matches("\\b(gorelease|apidiff|griffe check|cargo[- ]semver-checks|api-extractor|apiCheck|binary-compatibility-validator|japicmp|revapi|dart_apitool)\\b"))
+          || workflows().exists(w, text(w).matches("\\b(gorelease|apidiff|griffe check|cargo[- ]semver-checks|api-extractor|apiCheck|binary-compatibility-validator|japicmp|revapi|dart_apitool)\\b"))
+      - name: api-report-committed
+        expr: file("api-extractor.json") || exists("api/*.api") || exists("**/api/*.api")
+    message: "no API compatibility check against the previous release"
+    requirement: "A repository that publishes a library (a package manifest without `private`, a `src/lib.rs` or `[lib]`, a pyproject `[project]` without scripts, a Go module without a `main` package, a Gradle module with maven-publish) runs the stack's API check: gorelease or apidiff, griffe, cargo semver-checks, api-extractor with a committed report, binary-compatibility-validator. Another tool is added with `accept:`."
+    rationale: A breaking change in a minor release is found by every user at once; the check finds it before the tag.
+    fix:
+      human: "Add the stack's API compatibility check to the release target or workflow, comparing against the previous tag (see https://fleetlint.org/stacks/)."
+      agent: "Add the stack's API compatibility tool to the release workflow, comparing against the latest tag; on a breaking change bump the major version instead of silencing the tool."
+    refs: ["https://fleetlint.org/baseline/#releases"]
+
+  - id: release/signed-tags
+    title: Release tags are signed
+    kind: expr
+    severity: warning
+    scope: root
+    tiers: [1]
+    when: repo.has_git && tags().exists(t, t.matches("^v?[0-9]+\\.[0-9]+\\.[0-9]+"))
+    params:
+      recent: 3
+    foreach: >
+      tags().filter(t, t.matches("^v?[0-9]+\\.[0-9]+\\.[0-9]+")).slice(0,
+        tags().filter(t, t.matches("^v?[0-9]+\\.[0-9]+\\.[0-9]+")).size() < int(params.recent)
+          ? tags().filter(t, t.matches("^v?[0-9]+\\.[0-9]+\\.[0-9]+")).size() : int(params.recent))
+    expr: tag_signed(item)
+    message: "release tag is not signed"
+    requirement: "The newest `params.recent` version tags are annotated tags with a PGP, SSH or X.509 signature (`git tag -s`). Tags created through a forge's release page are lightweight and fail; create the tag locally and push it, then publish the release from it."
+    rationale: A signed tag ties the released commit to a maintainer's key; the release pipeline then builds from something that can be verified, not just from a name.
+    fix:
+      human: "Set `git config tag.gpgsign true` (and `gpg.format ssh` with your SSH key) so every tag is signed; recreate unsigned release tags only if nothing depends on them."
+      agent: "Tell the user which tags are unsigned and how to configure tag.gpgsign; do not delete or move tags."
+    refs: ["https://fleetlint.org/baseline/#releases"]
+
+  - id: deps/forks-documented
+    title: Forked or patched dependencies are documented
+    kind: expr
+    severity: info
+    scope: root
+    tiers: [1, 2]
+    when: >
+      grep("go.mod", "^replace\\s").size() > 0 || grep("Cargo.toml", "^\\[patch").size() > 0
+      || grep("package.json", "\"(github:|git\\+|git://|https://github\\.com/[^\"]+\\.git)").size() > 0
+      || grep("pyproject.toml", "@ ?git\\+").size() > 0 || grep("requirements*.txt", "git\\+").size() > 0
+    expr: >
+      exists("FORKS.md") || exists("docs/FORKS.md") || exists("docs/forks.md")
+      || grep("README.md", "^#+ .*\\b(forks?|vendored|patched|patches)\\b").size() > 0
+      || grep("docs/**/*.md", "^#+ .*\\b(forks?|vendored|patched|patches)\\b").size() > 0
+      || (grep("go.mod", "^replace\\s([^/]|/[^/])*$").size() == 0 && grep("Cargo.toml", "^\\[patch").size() == 0
+          && grep("package.json", "\"(github:|git\\+|git://|https://github\\.com/[^\"]+\\.git)").size() == 0
+          && grep("pyproject.toml", "@ ?git\\+[^#]*$").size() == 0 && grep("requirements*.txt", "git\\+[^#]*$").size() == 0)
+    message: "forked or patched dependencies are not documented"
+    requirement: "Every dependency taken from a fork or patched locally (go.mod `replace`, Cargo `[patch]`, a git URL in package.json or a Python requirement) is documented: upstream, base version, what changed and why. A `FORKS.md` (root or docs/), a `Forks` section in the README or docs, or an inline comment on each go.mod or requirement line counts."
+    rationale: A fork without a note outlives the reason for it; the next upgrade either drops the fix or keeps the fork forever.
+    fix:
+      human: "Add docs/FORKS.md listing each forked or patched dependency with upstream, base version, the change and why, or comment each replace line."
+      agent: "Document each forked or patched dependency (upstream, base version, change, reason) in docs/FORKS.md; ask the user for the reason where the history does not say."
+    refs: ["https://fleetlint.org/baseline/#dependencies"]

@@ -75,3 +75,9 @@ overrides:
   quality/policy-enforced: { severity: error }
   repo/dev-environment: { severity: error }
   taskrunner/container: { severity: error }
+  lint/kotlin-detekt-strict: { severity: error }
+  quality/duplication-gate: { severity: warning }
+  quality/mutation-gate: { severity: warning }
+  release/api-compatibility: { severity: warning }
+  release/signed-tags: { severity: error, exceptions: false }
+  deps/forks-documented: { severity: warning }
