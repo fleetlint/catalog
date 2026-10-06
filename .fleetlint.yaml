@@ -7,7 +7,7 @@ facts:
   visibility: public
   container: none       # data and one Go test: the gates run on the machine
 scopes: []              # the templates are files for other repositories, not projects of this one
-rules:
+overrides:
   quality/coverage-threshold:
     enabled: false
     reason: "the module is data plus one embed declaration; there is no code to cover"
