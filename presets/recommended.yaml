@@ -1335,12 +1335,20 @@ rules:
         expr: >
           taskrunner.recipes["tools"].exists(l, l.matches("(@v?[0-9]|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
           && !taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
+          && grep(taskrunner.file, "^[A-Za-z_]*VERSION\\s*[:?]*=").all(m,
+               m.text.matches("=\\s*[\"']?(v?[0-9]+(\\.[0-9]+)*([-+.][0-9A-Za-z.]+)?|[0-9a-f]{7,64})[\"']?\\s*(#.*)?$"))
     partials:
       - name: tools-unpinned
         severity: info
         expr: >
           "tools" in taskrunner.recipes && taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
         message: "the tools target installs @latest: two machines get different tools"
+      - name: tools-version-not-a-version
+        severity: info
+        expr: >
+          "tools" in taskrunner.recipes && grep(taskrunner.file, "^[A-Za-z_]*VERSION\\s*[:?]*=").exists(m,
+            !m.text.matches("=\\s*[\"']?(v?[0-9]+(\\.[0-9]+)*([-+.][0-9A-Za-z.]+)?|[0-9a-f]{7,64})[\"']?\\s*(#.*)?$"))
+        message: "a *_VERSION variable holds a branch or a word, not a version or commit: the tools target is not pinned"
     message: "nothing in the repository says which tools to install, or how"
     requirement: >
       Someone with a fresh machine gets the same toolchain and tools as everyone else from what is in the
