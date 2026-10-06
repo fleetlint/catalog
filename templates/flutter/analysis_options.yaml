@@ -1,0 +1,28 @@
+# Dart analyzer configuration (see https://fleetlint.org/stacks/#flutter--dart). Written by fleetlint fix.
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    missing_required_param: error
+    missing_return: error
+    todo: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+linter:
+  rules:
+    # Slop guards: TODOs in one style, no prints, trailing commas for stable diffs, every ignore explained.
+    flutter_style_todos: true
+    avoid_print: true
+    require_trailing_commas: true
+    always_declare_return_types: true
+    avoid_dynamic_calls: true
+    prefer_final_locals: true
+    unawaited_futures: true
+    cancel_subscriptions: true
+    close_sinks: true

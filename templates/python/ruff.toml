@@ -1,0 +1,21 @@
+
+# Lint and type checking (see https://fleetlint.org/stacks/#python). Appended by fleetlint fix; adjust freely.
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F pyflakes+pycodestyle, I imports, B bugbear, UP pyupgrade, SIM simplify, BLE blind except,
+# S bandit, C90 complexity, T20 print, TD/FIX todo hygiene, ERA commented-out code, N naming, RUF ruff's own.
+select = ["E", "F", "I", "B", "UP", "SIM", "BLE", "S", "C90", "T20", "TD", "FIX", "ERA", "N", "RUF"]
+ignore = ["TD002"]   # TD003 keeps the issue link mandatory; an author tag (TD002) is not
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "S106"]   # asserts and test credentials are what tests are made of
+
+[tool.mypy]
+strict = true
+warn_unreachable = true

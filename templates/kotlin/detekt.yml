@@ -1,0 +1,51 @@
+# detekt configuration (see https://fleetlint.org/stacks/#kotlin-jvm--android). Written by fleetlint fix.
+# Apply with the detekt Gradle plugin: detekt { buildUponDefaultConfig = true; config.setFrom("config/detekt/detekt.yml") }.
+# Only what differs from detekt's defaults is listed; `detekt --generate-config` prints everything.
+build:
+  maxIssues: 0
+
+exceptions:
+  SwallowedException:
+    active: true
+    ignoredExceptionTypes: [InterruptedException, MalformedURLException, NumberFormatException, ParseException]
+  TooGenericExceptionCaught:
+    active: true
+  TooGenericExceptionThrown:
+    active: true
+  PrintStackTrace:
+    active: true
+
+empty-blocks:
+  EmptyCatchBlock:
+    active: true
+    allowedExceptionNameRegex: "_|(ignore|expected).*"
+
+complexity:
+  LongMethod:
+    active: true
+    threshold: 50
+  CognitiveComplexMethod:
+    active: true
+    threshold: 15
+  LargeClass:
+    active: true
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 20
+    thresholdInClasses: 20
+
+style:
+  ForbiddenComment:
+    active: true
+    comments:
+      - reason: "a TODO or FIXME needs an issue reference, e.g. TODO(#123)"
+        value: "TODO:"
+      - reason: "a TODO or FIXME needs an issue reference, e.g. FIXME(#123)"
+        value: "FIXME:"
+  UnusedPrivateMember:
+    active: true
+  UnusedParameter:
+    active: true
+  MagicNumber:
+    active: true
+    ignoreNumbers: ["-1", "0", "1", "2", "100", "1000"]

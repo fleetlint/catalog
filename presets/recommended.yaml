@@ -306,7 +306,7 @@ rules:
     stacks: [python]
     when: file("pyproject.toml")
     expr: >
-      has(toml("pyproject.toml").tool.ruff)
+      toml("pyproject.toml") != null && has(toml("pyproject.toml").tool) && has(toml("pyproject.toml").tool.ruff)
       && (has(toml("pyproject.toml").tool.mypy) || has(toml("pyproject.toml").tool.pyright) || has(toml("pyproject.toml").tool.basedpyright))
     message: "pyproject.toml lacks [tool.ruff] or a type checker section"
     requirement: pyproject.toml configures ruff with a broad rule selection and mypy --strict or (based)pyright strict.
@@ -314,6 +314,8 @@ rules:
     fix:
       human: "Add [tool.ruff] and [tool.mypy] sections from the Python stack profile."
       agent: "Add [tool.ruff] with the profile's rule selection and [tool.mypy] strict = true to pyproject.toml; ratchet existing violations with `ruff check --add-noqa`."
+      actions:
+        - append: {file: pyproject.toml, template: python/ruff.toml, unless: '(?m)^\[tool\.ruff\]'}
     refs: ["https://fleetlint.org/stacks/#python"]
 
   - id: lint/rust-config
@@ -321,13 +323,15 @@ rules:
     kind: expr
     severity: warning
     stacks: [rust]
-    expr: has(toml("Cargo.toml").lints) || has(toml("Cargo.toml").workspace.lints)
+    expr: toml("Cargo.toml") != null && (has(toml("Cargo.toml").lints) || (has(toml("Cargo.toml").workspace) && has(toml("Cargo.toml").workspace.lints)))
     message: "Cargo.toml has no [lints] table"
     requirement: Cargo.toml configures clippy (pedantic warn, unwrap_used/expect_used/panic deny outside tests) in a [lints] table.
     rationale: Unwrap-driven crashes are the Rust equivalent of swallowed errors.
     fix:
       human: "Add the [lints] table from the Rust stack profile."
       agent: "Add [lints.rust] and [lints.clippy] tables per the Rust profile to Cargo.toml."
+      actions:
+        - append: {file: Cargo.toml, template: rust/cargo-lints.toml, unless: '(?m)^\[(workspace\.)?lints'}
 
   - id: lint/node-config
     title: TypeScript strict mode and a linter are configured
@@ -335,7 +339,8 @@ rules:
     severity: warning
     stacks: [node]
     expr: >
-      (file("tsconfig.json") && json("tsconfig.json").compilerOptions.strict == true)
+      (file("tsconfig.json") && json("tsconfig.json") != null && has(json("tsconfig.json").compilerOptions)
+        && has(json("tsconfig.json").compilerOptions.strict) && json("tsconfig.json").compilerOptions.strict == true)
       && (exists("eslint.config.*") || file("biome.json") || file("biome.jsonc"))
     message: "tsconfig strict mode or linter config (eslint.config.* / biome.json) is missing"
     requirement: "tsconfig.json has strict: true (plus noUncheckedIndexedAccess) and ESLint strictTypeChecked or Biome is configured."
@@ -343,6 +348,10 @@ rules:
     fix:
       human: "Enable strict in tsconfig.json and add eslint.config.js per the Node stack profile."
       agent: "Set compilerOptions.strict and noUncheckedIndexedAccess in tsconfig.json; add eslint.config.js with typescript-eslint strictTypeChecked."
+      actions:
+        - template: node/eslint.config.mjs
+          to: eslint.config.mjs
+        - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
 
   - id: lint/flutter-config
     title: Dart analysis is strict
@@ -350,8 +359,9 @@ rules:
     severity: warning
     stacks: [flutter]
     expr: >
-      file("analysis_options.yaml")
-      && has(yaml("analysis_options.yaml").analyzer.language)
+      file("analysis_options.yaml") && yaml("analysis_options.yaml") != null
+      && has(yaml("analysis_options.yaml").analyzer) && has(yaml("analysis_options.yaml").analyzer.language)
+      && "strict-casts" in yaml("analysis_options.yaml").analyzer.language
       && yaml("analysis_options.yaml").analyzer.language["strict-casts"] == true
     message: "analysis_options.yaml lacks strict-casts/strict-inference/strict-raw-types"
     requirement: analysis_options.yaml enables strict-casts, strict-inference and strict-raw-types and does not disable use_build_context_synchronously or unawaited_futures.
@@ -359,6 +369,28 @@ rules:
     fix:
       human: "Set analyzer.language strict-* to true and include very_good_analysis."
       agent: "Edit analysis_options.yaml: include very_good_analysis, set analyzer.language strict-casts/strict-inference/strict-raw-types true, remove rules that disable use_build_context_synchronously or unawaited_futures."
+      actions:
+        - template: flutter/analysis_options.yaml
+          to: analysis_options.yaml
+        - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
+
+  - id: lint/hugo-strict-build
+    title: The Hugo build treats warnings as errors
+    kind: outcome
+    severity: warning
+    stacks: [hugo]
+    satisfiers:
+      - name: task-runner-or-hooks
+        expr: >
+          [taskrunner.file, ".pre-commit-config.yaml"].exists(f, text(f).contains("--panicOnWarning"))
+          || workflows().exists(w, text(w).contains("--panicOnWarning"))
+    message: "no hugo build runs with --panicOnWarning"
+    requirement: "The task runner's lint or build target, a hook, or CI runs `hugo --panicOnWarning` so a missing layout, a broken ref or a deprecated setting fails the build instead of printing a warning nobody reads."
+    rationale: Hugo prints warnings for broken references and deprecated configuration and still exits 0; the flag is the only thing that turns them into a failed build.
+    fix:
+      human: "Add `--panicOnWarning` to the hugo invocation in the lint or build target (see https://fleetlint.org/stacks/#hugo--static-sites)."
+      agent: "Add --panicOnWarning to the hugo build in the lint or build target and fix the warnings it surfaces instead of removing the flag."
+    refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
 
   - id: lint/kotlin-config
     title: detekt is configured
@@ -372,6 +404,9 @@ rules:
     fix:
       human: "Add config/detekt/detekt.yml and the detekt Gradle plugin."
       agent: "Add the detekt Gradle plugin with buildUponDefaultConfig and a config/detekt/detekt.yml enabling the rules from the Kotlin stack profile."
+      actions:
+        - template: kotlin/detekt.yml
+          to: config/detekt/detekt.yml
 
   - id: public/license
     title: Public repository has a LICENSE
@@ -1223,6 +1258,8 @@ rules:
     fix:
       human: "Add the missing families to `select` under [tool.ruff.lint]."
       agent: "Add each reported family to [tool.ruff.lint] select; ratchet the violations that appear with `ruff check --add-noqa` instead of fixing them in the same change."
+      actions:
+        - append: {file: pyproject.toml, template: python/ruff-lint.toml, unless: '(?m)^\[tool\.ruff\.lint\]|^select\s*='}
     refs: ["https://fleetlint.org/stacks/#python"]
 
   - id: lint/node-strict-flags
@@ -1244,6 +1281,8 @@ rules:
     fix:
       human: "Set the missing flags to true under compilerOptions."
       agent: "Set each reported flag to true in tsconfig.json compilerOptions, run tsc --noEmit and list the errors that appear instead of silencing them."
+      actions:
+        - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
     refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
 
   - id: lint/rust-lints-denied
@@ -1289,6 +1328,8 @@ rules:
     fix:
       human: "Set the missing modes to true under analyzer.language."
       agent: "Set each reported mode to true under analyzer.language and list the analyzer errors that appear instead of adding ignores."
+      actions:
+        - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
     refs: ["https://fleetlint.org/stacks/#flutter--dart"]
 
   - id: quality/policy-enforced

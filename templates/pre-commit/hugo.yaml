@@ -1,0 +1,13 @@
+  - repo: local
+    hooks:
+      - id: hugo-build
+        name: hugo build (warnings are errors)
+        entry: hugo --quiet --panicOnWarning --destination /tmp/hugo-precommit
+        language: system
+        pass_filenames: false
+        files: ^(content|layouts|assets|static|archetypes|config|i18n|data)/|^(hugo|config)\.(toml|yaml|yml|json)$
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.49.1
+    hooks:
+      - id: markdownlint
+        args: [--fix]
