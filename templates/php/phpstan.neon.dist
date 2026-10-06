@@ -1,0 +1,13 @@
+# PHPStan configuration (see https://fleetlint.org/stacks/#php). Written by fleetlint fix; adjust freely.
+# Composer: phpstan/phpstan, phpstan/phpstan-strict-rules. Ratchet with a baseline: vendor/bin/phpstan analyse --generate-baseline.
+includes:
+  - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+  level: max
+  paths:
+    - src
+    - tests
+  checkMissingIterableValueType: true
+  treatPhpDocTypesAsCertain: false
+  reportUnmatchedIgnoredErrors: true

@@ -1,0 +1,13 @@
+  - repo: local
+    hooks:
+      - id: rubocop
+        name: rubocop
+        entry: bundle exec rubocop --autocorrect --fail-level warning
+        language: system
+        types: [ruby]
+      - id: bundle-lock
+        name: Gemfile.lock in sync
+        entry: bundle lock --quiet
+        language: system
+        files: ^(Gemfile|.*\.gemspec)$
+        pass_filenames: false

@@ -1,0 +1,4 @@
+      - name: C/C++ toolchain
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends cmake ninja-build clang clang-tidy clang-format

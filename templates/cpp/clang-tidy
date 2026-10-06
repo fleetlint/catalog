@@ -1,0 +1,25 @@
+# clang-tidy configuration (see https://fleetlint.org/stacks/#cc). Written by fleetlint fix; adjust freely.
+# Needs compile_commands.json: configure with -DCMAKE_EXPORT_COMPILE_COMMANDS=ON.
+Checks: >
+  -*,
+  bugprone-*,
+  cert-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  portability-*,
+  readability-*,
+  -modernize-use-trailing-return-type,
+  -readability-identifier-length,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-magic-numbers
+WarningsAsErrors: '*'
+HeaderFilterRegex: '^(src|include)/'
+CheckOptions:
+  readability-function-cognitive-complexity.Threshold: 15
+  readability-function-size.LineThreshold: 50
+  readability-function-size.ParameterThreshold: 6
+  misc-include-cleaner.IgnoreHeaders: ''

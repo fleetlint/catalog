@@ -55,6 +55,9 @@ rules:
       && (item != "node" || tracked().exists(f, f in ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb", "bun.lock"]))
       && (item != "flutter" || "pubspec.lock" in tracked())
       && (item != "kotlin" || tracked().exists(f, f in ["gradle.lockfile", "gradle/verification-metadata.xml"]))
+      && (item != "ruby" || "Gemfile.lock" in tracked() || !file("Gemfile"))
+      && (item != "php" || "composer.lock" in tracked() || !text("composer.json").contains("\"require\""))
+      && (item != "dotnet" || tracked().exists(f, f.endsWith("packages.lock.json")) || !exists("**/*.csproj"))
     message: "no lockfile is tracked for this stack"
     requirement: Every stack's lockfile (go.sum, uv.lock/poetry.lock, Cargo.lock, package-lock.json/pnpm-lock.yaml/yarn.lock, pubspec.lock, gradle.lockfile) is tracked.
     rationale: Builds are reproducible only when dependency versions are pinned in git.
@@ -373,6 +376,103 @@ rules:
         - template: flutter/analysis_options.yaml
           to: analysis_options.yaml
         - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
+
+  - id: lint/java-config
+    title: Checkstyle or Error Prone is configured
+    kind: expr
+    severity: warning
+    stacks: [java]
+    expr: >
+      exists("config/checkstyle/*.xml") || file("checkstyle.xml")
+      || grep("pom.xml", "maven-checkstyle-plugin|error_prone|errorprone|spotbugs-maven-plugin").size() > 0
+    message: "no checkstyle configuration, Error Prone or SpotBugs in the build"
+    requirement: "A static analysis beyond the compiler runs on every build: Checkstyle with a committed configuration (`config/checkstyle/checkstyle.xml`), Error Prone as a compiler plugin, or SpotBugs; `failOnViolation` set so findings fail the build."
+    rationale: javac accepts swallowed exceptions, star imports and 400-line methods; the analyzer is where they are refused.
+    fix:
+      human: "Add config/checkstyle/checkstyle.xml (`fleetlint fix --apply` writes one) and the maven-checkstyle-plugin with failOnViolation to pom.xml."
+      agent: "Add config/checkstyle/checkstyle.xml from the template and wire maven-checkstyle-plugin in pom.xml with configLocation and failOnViolation true; fix what it reports."
+      actions:
+        - template: java/checkstyle.xml
+          to: config/checkstyle/checkstyle.xml
+    refs: ["https://fleetlint.org/stacks/#java"]
+
+  - id: lint/dotnet-config
+    title: Nullable, analyzers and warnings as errors are on for every project
+    kind: expr
+    severity: warning
+    stacks: [dotnet]
+    expr: >
+      (file("Directory.Build.props") && text("Directory.Build.props").matches("<Nullable>\\s*enable")
+        && text("Directory.Build.props").matches("<TreatWarningsAsErrors>\\s*true")
+        && text("Directory.Build.props").matches("<AnalysisLevel>\\s*latest"))
+      || (file(".editorconfig") && text(".editorconfig").contains("dotnet_analyzer_diagnostic.severity"))
+    message: "no Directory.Build.props enabling nullable, analyzers and warnings as errors"
+    requirement: "`Directory.Build.props` at the root sets `<Nullable>enable`, `<TreatWarningsAsErrors>true` and `<AnalysisLevel>latest-recommended` or `latest-all` for every project, or `.editorconfig` sets `dotnet_analyzer_diagnostic.severity`."
+    rationale: Per-project settings drift; one file at the root makes every project in the solution compile under the same rules.
+    fix:
+      human: "Add Directory.Build.props with Nullable, TreatWarningsAsErrors and AnalysisLevel (`fleetlint fix --apply` writes it)."
+      agent: "Add Directory.Build.props from the template at the repository root and fix the warnings that become errors instead of lowering the level."
+      actions:
+        - template: dotnet/Directory.Build.props
+          to: Directory.Build.props
+    refs: ["https://fleetlint.org/stacks/#net"]
+
+  - id: lint/cpp-config
+    title: clang-tidy and clang-format are configured
+    kind: expr
+    severity: warning
+    stacks: [cpp]
+    expr: file(".clang-tidy") && file(".clang-format")
+    message: ".clang-tidy or .clang-format is missing"
+    requirement: "A `.clang-tidy` with `WarningsAsErrors` and a `.clang-format` at the root; the build exports `compile_commands.json` so clang-tidy sees every translation unit."
+    rationale: Without a committed configuration every developer's editor runs different checks and the build runs none.
+    fix:
+      human: "Add .clang-tidy and .clang-format (`fleetlint fix --apply` writes both) and run clang-tidy in the lint target."
+      agent: "Add .clang-tidy and .clang-format from the templates and a lint target that runs clang-tidy over compile_commands.json; fix findings rather than disabling checks."
+      actions:
+        - template: cpp/clang-tidy
+          to: .clang-tidy
+        - template: cpp/clang-format
+          to: .clang-format
+    refs: ["https://fleetlint.org/stacks/#cc"]
+
+  - id: lint/ruby-config
+    title: RuboCop is configured
+    kind: expr
+    severity: warning
+    stacks: [ruby]
+    expr: file(".rubocop.yml") || file(".rubocop.yaml") || file(".standard.yml")
+    message: "no .rubocop.yml (or .standard.yml)"
+    requirement: "`.rubocop.yml` with `NewCops: enable` and the project's metrics, or Standard's `.standard.yml`; a `.rubocop_todo.yml` is the ratchet, not a permanent allowlist."
+    rationale: Ruby's flexibility is only safe with a linter that holds the line on method length, complexity and swallowed exceptions.
+    fix:
+      human: "Add .rubocop.yml (`fleetlint fix --apply` writes one) and the rubocop gems to the Gemfile's development group."
+      agent: "Add .rubocop.yml from the template, add rubocop with rubocop-performance and rubocop-rspec to the Gemfile, and run `rubocop --autocorrect`."
+      actions:
+        - template: ruby/rubocop.yml
+          to: .rubocop.yml
+    refs: ["https://fleetlint.org/stacks/#ruby"]
+
+  - id: lint/php-config
+    title: PHPStan or Psalm and a formatter are configured
+    kind: expr
+    severity: warning
+    stacks: [php]
+    expr: >
+      (exists("phpstan.neon*") || exists("phpstan.dist.neon") || file("psalm.xml") || file("psalm.xml.dist"))
+      && (exists(".php-cs-fixer*.php") || file("pint.json") || exists("phpcs.xml*") || exists(".php_cs*"))
+    message: "no static analyzer (phpstan.neon, psalm.xml) or formatter configuration (.php-cs-fixer.dist.php, pint.json, phpcs.xml)"
+    requirement: "PHPStan (`phpstan.neon.dist`, level max with strict rules) or Psalm, plus PHP CS Fixer, Pint or PHP_CodeSniffer, all configured in the repository and run by the lint target."
+    rationale: PHP's type system is enforced at runtime only; the analyzer is the compile step the language lacks.
+    fix:
+      human: "Add phpstan.neon.dist and .php-cs-fixer.dist.php (`fleetlint fix --apply` writes both) and the packages to require-dev."
+      agent: "Add phpstan.neon.dist and .php-cs-fixer.dist.php from the templates, require phpstan/phpstan, phpstan/phpstan-strict-rules and friendsofphp/php-cs-fixer in require-dev, and fix what they report."
+      actions:
+        - template: php/phpstan.neon.dist
+          to: phpstan.neon.dist
+        - template: php/php-cs-fixer.dist.php
+          to: .php-cs-fixer.dist.php
+    refs: ["https://fleetlint.org/stacks/#php"]
 
   - id: lint/hugo-strict-build
     title: The Hugo build treats warnings as errors
@@ -929,6 +1029,10 @@ rules:
       && (item != "node" || file(".nvmrc") || file(".node-version") || file(".tool-versions") || file("mise.toml") || scan("package.json", "\"volta\"\\s*:").size() > 0)
       && (item != "kotlin" || file("gradle/wrapper/gradle-wrapper.properties"))
       && (item != "flutter" || file(".fvmrc") || file(".fvm/fvm_config.json") || file(".tool-versions") || file("mise.toml"))
+      && (item != "java" || file(".java-version") || file(".sdkmanrc") || file(".tool-versions") || file("mise.toml") || file(".mvn/wrapper/maven-wrapper.properties"))
+      && (item != "dotnet" || file("global.json"))
+      && (item != "ruby" || file(".ruby-version") || file(".tool-versions") || file("mise.toml"))
+      && (item != "php" || file(".php-version") || file(".tool-versions") || file("mise.toml") || grep("composer.json", "\"platform\"").size() > 0)
     message: "the toolchain version for this stack is not pinned in the repository"
     requirement: "Each stack pins its toolchain in a file the tools read: a `toolchain` directive or a full `go 1.x.y` version in go.mod, `.python-version`, `rust-toolchain.toml`, `.nvmrc` or `.node-version`, the Gradle wrapper, `.fvmrc`; `.tool-versions` or `mise.toml` also count."
     rationale: Without a pin, every machine and every CI run builds with whatever compiler or runtime happens to be installed, and failures cannot be reproduced.

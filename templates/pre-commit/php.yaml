@@ -1,0 +1,19 @@
+  - repo: local
+    hooks:
+      - id: composer-validate
+        name: composer validate
+        entry: composer validate --strict --no-check-publish
+        language: system
+        files: ^composer\.(json|lock)$
+        pass_filenames: false
+      - id: php-cs-fixer
+        name: php-cs-fixer
+        entry: vendor/bin/php-cs-fixer fix --dry-run --diff
+        language: system
+        types: [php]
+      - id: phpstan
+        name: phpstan
+        entry: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+        language: system
+        types: [php]
+        pass_filenames: false

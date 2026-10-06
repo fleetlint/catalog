@@ -1,0 +1,32 @@
+# RuboCop configuration (see https://fleetlint.org/stacks/#ruby). Written by fleetlint fix; adjust freely.
+# Gems: rubocop, rubocop-performance, rubocop-rspec (drop what the project does not use).
+plugins:
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  Exclude:
+    - vendor/**/*
+    - tmp/**/*
+
+Metrics/MethodLength:
+  Max: 50
+Metrics/CyclomaticComplexity:
+  Max: 15
+Metrics/PerceivedComplexity:
+  Max: 15
+Metrics/ClassLength:
+  Max: 400
+Lint/SuppressedException:
+  Enabled: true
+  AllowComments: false
+Style/RescueStandardError:
+  EnforcedStyle: explicit
+Style/CommentAnnotation:
+  Enabled: true
+  Keywords: [TODO, FIXME, HACK]
+  RequireColon: true
+Style/Documentation:
+  Enabled: false

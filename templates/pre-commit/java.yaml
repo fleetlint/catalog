@@ -1,0 +1,14 @@
+  - repo: local
+    hooks:
+      - id: checkstyle
+        name: checkstyle
+        entry: ./mvnw -q -B -o checkstyle:check
+        language: system
+        files: \.java$
+        pass_filenames: false
+      - id: spotless
+        name: spotless (format check)
+        entry: ./mvnw -q -B -o spotless:check
+        language: system
+        files: \.(java|xml|kt)$
+        pass_filenames: false

@@ -1,0 +1,7 @@
+# clang-format configuration. Written by fleetlint fix; adjust freely.
+BasedOnStyle: Google
+ColumnLimit: 100
+IndentWidth: 2
+DerivePointerAlignment: false
+PointerAlignment: Left
+IncludeBlocks: Regroup
