@@ -1,0 +1,55 @@
+id: release/sbom
+title: Releases publish an SBOM
+kind: outcome
+severity: error
+tiers: [1]
+scope: root
+when: release.exists
+satisfiers:
+  - name: goreleaser
+    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
+    expr: >
+      has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").sboms)
+  - name: workflow-action
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.uses.startsWith("anchore/sbom-action") || s.uses.startsWith("CycloneDX/")))
+  - name: workflow-command
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.run.matches("\\b(syft|cyclonedx-[a-z]+|trivy sbom|cargo (sbom|cyclonedx)|npm sbom|cdxgen)\\b")))
+  - name: make-target
+    when: taskrunner.kind == "make"
+    expr: >
+      ("sbom" in makefile("Makefile").targets || "dist" in makefile("Makefile").targets)
+      && tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("make (sbom|dist)\\b")))
+  - name: build-plugin
+    expr: >
+      (file("build.gradle.kts") && text("build.gradle.kts").contains("cyclonedx"))
+      || (file("package.json") && text("package.json").contains("@cyclonedx/cyclonedx-npm"))
+      || (file("Cargo.toml") && text("Cargo.toml").contains("cyclonedx"))
+  - name: container
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.uses.startsWith("docker/build-push-action") && "sbom" in s.with && string(s.with.sbom) == "true"))
+partials:
+  - name: sbom-outside-release
+    severity: warning
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but no tag-triggered release workflow invokes it"
+message: "no release step generates an SBOM"
+requirement: >
+  Every release produces an SPDX or CycloneDX SBOM for its artifacts, generated inside
+  the release pipeline and published alongside them. Any recognised producer counts:
+  GoReleaser `sboms:`, anchore/sbom-action or CycloneDX actions, syft/cyclonedx/trivy
+  commands, a Makefile `sbom` target the release workflow calls, a build-tool plugin,
+  or `docker/build-push-action` with `sbom: true`. Repositories add producers with `accept:`.
+rationale: >
+  Consumers and scanners need to know what is inside an artifact; generating the SBOM
+  in the pipeline ties it to the exact build.
+fix:
+  human: "Add an SBOM step to the tag-triggered release workflow (syft, SPDX JSON, one per artifact) or a `sboms:` section to .goreleaser.yaml, and upload the files with the release."
+  agent: "In the tag-triggered release workflow add a step running syft on each artifact producing SPDX JSON files, and include them in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
+refs: ["https://fleetlint.org/baseline/#releases"]

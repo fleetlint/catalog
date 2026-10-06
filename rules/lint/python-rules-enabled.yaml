@@ -1,0 +1,23 @@
+id: lint/python-rules-enabled
+title: ruff selects the baseline rule families
+kind: expr
+severity: warning
+stacks: [python]
+when: file("pyproject.toml") && has(toml("pyproject.toml").tool) && has(toml("pyproject.toml").tool.ruff)
+params:
+  required: [E, F, I, B, UP, SIM, BLE, S, C90, T20]
+foreach: params.required
+expr: >
+  (has(toml("pyproject.toml").tool.ruff.lint) && has(toml("pyproject.toml").tool.ruff.lint.select)
+    && (item in toml("pyproject.toml").tool.ruff.lint.select || "ALL" in toml("pyproject.toml").tool.ruff.lint.select))
+  || (has(toml("pyproject.toml").tool.ruff.select)
+    && (item in toml("pyproject.toml").tool.ruff.select || "ALL" in toml("pyproject.toml").tool.ruff.select))
+message: "ruff rule family is not selected"
+requirement: "`[tool.ruff.lint] select` in pyproject.toml contains every family in `params.required` (pycodestyle, pyflakes, isort, bugbear, pyupgrade, simplify, blind-except, bandit, complexity, print), or `ALL`."
+rationale: ruff's default selection is a small subset; blind excepts, security findings and leftover prints are only reported when their families are selected.
+fix:
+  human: "Add the missing families to `select` under [tool.ruff.lint]."
+  agent: "Add each reported family to [tool.ruff.lint] select; ratchet the violations that appear with `ruff check --add-noqa` instead of fixing them in the same change."
+  actions:
+    - append: {file: pyproject.toml, template: python/ruff-lint.toml, unless: '(?m)^\[tool\.ruff\.lint\]|^select\s*='}
+refs: ["https://fleetlint.org/stacks/#python"]

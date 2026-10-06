@@ -1,0 +1,15 @@
+id: repo/readme-present
+title: README exists and has a quickstart
+kind: expr
+severity: warning
+scope: root
+expr: >
+  exists("README.md") && size(lines("README.md")) >= 10
+  && text("README.md").matches('(?i)(## |### )?(install|quick ?start|getting started|usage|setup)')
+message: "README.md is missing or has no install/quickstart section"
+requirement: README.md says what the project is and how to install, run and test it.
+rationale: The first screen of the README must be enough to run the project.
+fix:
+  human: "Write a README with purpose, requirements, quickstart and the task-runner targets."
+  agent: "Write README.md: 2-3 sentence purpose, requirements, quickstart commands, the make targets, configuration table. Plain language, no marketing."
+refs: ["https://fleetlint.org/baseline/#documentation"]

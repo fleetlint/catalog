@@ -1,0 +1,16 @@
+id: slop/skipped-tests
+title: No skipped tests are committed
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("test", r'\.skip\(|\bxit\(|\bxdescribe\(|@Ignore\b|@Disabled\b|t\.Skip\(|#\[ignore\]|@pytest\.mark\.skip|@unittest\.skip|\bskip:\s*(true|[\x22\x27])')
+expr: >
+  false
+message: "skipped test"
+requirement: "Tests are not skipped; a quarantined flaky test references an issue."
+rationale: "A skipped test is coverage that the numbers still count and the suite no longer provides."
+fix:
+  human: "Fix or delete the test; if it must be quarantined, reference the issue."
+  agent: "Report each skipped test with its reason; do not un-skip tests that then fail without fixing the cause."
+refs: ["https://fleetlint.org/baseline/#slop"]

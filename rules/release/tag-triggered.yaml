@@ -1,0 +1,18 @@
+id: release/tag-triggered
+title: Releases run from a tag-triggered workflow
+kind: expr
+severity: error
+tiers: [1]
+scope: root
+when: release.mechanisms.exists(m, m != "git-cliff")
+expr: tagged_workflows().size() > 0
+message: "a release mechanism exists but no workflow is triggered by tag pushes"
+requirement: "Releases are produced by CI from a `v*` tag, never from a laptop."
+rationale: A release built locally has no provenance and cannot be reproduced.
+fix:
+  human: "Add release.yml triggered on push.tags ['v*'] that runs the release tool; `fleetlint fix --apply` writes the stack's template (GoReleaser for Go and Rust, `make dist` plus syft and cosign otherwise) as a starting point."
+  agent: "Add .github/workflows/release.yml (or .gitea/workflows/) with `on: push: tags: ['v*']` running the existing release tool; keep permissions minimal. Adapt the template to the release tool already in the repository instead of replacing it."
+  actions:
+    - template: "{stack}/release.yml"
+      to: .github/workflows/release.yml
+refs: ["https://fleetlint.org/baseline/#releases"]

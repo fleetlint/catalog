@@ -1,0 +1,38 @@
+id: release/signing
+title: Release artifacts are signed
+kind: outcome
+severity: error
+tiers: [1]
+scope: root
+when: release.exists && tagged_workflows().size() > 0
+satisfiers:
+  - name: goreleaser-signs
+    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
+    expr: >
+      has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").signs)
+      || has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").binary_signs)
+  - name: cosign-in-workflow
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer"))
+        && steps(w).exists(s, s.run.matches("cosign (sign|sign-blob|attest)")))
+  - name: sigstore-python
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/gh-action-sigstore-python")))
+  - name: npm-provenance
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("npm publish.*--provenance")))
+  - name: gpg
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
+partials:
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but no tag-triggered release signs its artifacts"
+message: "release artifacts are not signed"
+requirement: >
+  Every release signs its artifacts: cosign keyless (OIDC) on GitHub, key-based cosign on Gitea,
+  GoReleaser `signs:`, sigstore-python for wheels, or npm provenance. Signatures are published with the release.
+  A container image is signed by digest with `cosign sign`.
+rationale: Checksums prove integrity; only a signature proves who built it.
+fix:
+  human: "Add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."
+  agent: "Add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
+refs: ["https://fleetlint.org/baseline/#releases"]

@@ -1,0 +1,16 @@
+id: slop/variant-names
+title: No names with version or quality suffixes
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'\b(func|fun|def|fn|function|class|struct|interface|type|void|const|final|let|var|val)\s+\w+?(V[2-9]|_v[2-9]|Improved|Enhanced|Old|New|Fixed|Temp|Simple|Robust|Better)\b')
+expr: >
+  false
+message: "declaration name carries a variant suffix"
+requirement: "No declaration is named as a variant of another (`parseV2`, `handlerNew`, `ClientImproved`, `syncOld`)."
+rationale: "It means two implementations exist and callers must know which one is right."
+fix:
+  human: "Change the original and update its callers; delete the other."
+  agent: "Report the pair; merge into the original name only when the callers and tests make the intended behaviour clear."
+refs: ["https://fleetlint.org/baseline/#slop"]

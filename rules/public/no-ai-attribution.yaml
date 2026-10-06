@@ -1,0 +1,23 @@
+id: public/no-ai-attribution
+title: Public history carries no AI attribution
+kind: expr
+severity: error
+scope: root
+when: repo.public && repo.has_git
+params:
+  commits: 200
+foreach: commits(params.commits)
+expr: >
+  !(item.email.endsWith("@anthropic.com")
+    || item.author.matches("(?i)\\b(claude|copilot|chatgpt|openai|gemini|cursor|codex|devin|aider)\\b")
+    || item.trailers.matches("(?i)co-authored-by:.*(claude|copilot|chatgpt|openai|gemini|cursor|codex|devin|aider|noreply@anthropic|noreply@github\\.com>\\s*$)")
+    || item.body.matches("(?i)(generated|written) (with|by) \\[?(claude|copilot|chatgpt|cursor|codex|aider)"))
+message: "commit carries AI attribution"
+requirement: >
+  No commit in the recent history (`params.commits`, default 200) names an AI tool as author or co-author
+  or carries a "generated with" footer. The owner's policy is that public repositories show human authorship only.
+rationale: Attribution trailers are added by default by agent tooling; preventing them is a settings matter, removing them is a history rewrite.
+fix:
+  human: "Turn off commit attribution in the agent's settings; rewrite only unpushed history."
+  agent: "Stop adding Co-Authored-By trailers. Report the offending commits; rewriting pushed history needs the user's explicit decision."
+refs: ["https://fleetlint.org/baseline/#public-repositories"]

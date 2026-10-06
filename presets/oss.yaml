@@ -3,7 +3,7 @@ kind: Catalog
 metadata:
   name: fleetlint-oss
   version: 0.1.0
-  engine: 1
+  engine: 2
   description: >
     recommended with the public/* family switched on whatever the detected
     visibility: for repositories that are, or are about to become, open source

@@ -1,0 +1,16 @@
+id: slop/focused-tests
+title: No focused tests are committed
+kind: expr
+severity: error
+scope: root
+foreach: >
+  codegrep("code", r'\b(fdescribe|fit|describe\.only|it\.only|test\.only)\(|\bsolo:\s*true')
+expr: >
+  false
+message: "a focused test is committed"
+requirement: "No test is marked to run alone (`fdescribe`, `fit`, `.only`, `solo: true`)."
+rationale: "A focused test silently disables every other test in the suite while CI stays green."
+fix:
+  human: "Remove the focus marker."
+  agent: "Remove the focus marker and run the whole suite."
+refs: ["https://fleetlint.org/baseline/#slop"]

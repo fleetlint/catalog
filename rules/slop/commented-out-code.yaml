@@ -1,0 +1,16 @@
+id: slop/commented-out-code
+title: No commented-out code
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'^\s*(//|#)\s*(if|for|while|return|await|const|let|var|final|val|def|func|fn|import|from)\b.*([;{)(]|:)\s*$')
+expr: >
+  false
+message: "commented-out code"
+requirement: "No code is kept in comments."
+rationale: "Version control keeps old code; commented-out code is never updated and nobody dares delete it."
+fix:
+  human: "Delete it."
+  agent: "Delete commented-out code."
+refs: ["https://fleetlint.org/baseline/#slop"]

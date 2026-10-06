@@ -1,0 +1,18 @@
+id: quality/policy-enforced
+title: fleetlint runs automatically
+kind: expr
+severity: warning
+scope: root
+tiers: [1, 2]
+expr: >
+  text(".pre-commit-config.yaml").contains("fleetlint")
+  || text("lefthook.yml").contains("fleetlint")
+  || [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).contains("fleetlint"))
+  || workflows().exists(w, text(w).contains("fleetlint"))
+message: "nothing runs fleetlint: not a hook, not the task runner, not a workflow"
+requirement: "`fleetlint check` runs without anyone remembering to: as a git hook, in the task runner's `check` target, or in a CI workflow."
+rationale: A policy that is only checked by hand drifts with the first busy week; the report is then a description of last month.
+fix:
+  human: "Add `fleetlint check --fail-on error` to the `check` target, and the fleetlint hook to .pre-commit-config.yaml (see https://fleetlint.org/integrations/)."
+  agent: "Add `fleetlint check --fail-on error` as the last step of the task runner's check target and a local fleetlint hook to .pre-commit-config.yaml; make sure CI installs fleetlint before it runs the check."
+refs: ["https://fleetlint.org/integrations/"]

@@ -1,0 +1,17 @@
+id: taskrunner/check-composition
+title: check runs the gates and excludes bench and release
+kind: expr
+severity: warning
+scope: root
+when: taskrunner.kind in ["make", "just", "task"] && "check" in taskrunner.targets
+expr: >
+  "check" in taskrunner.deps
+  && ["lint", "test"].all(t, t in taskrunner.deps["check"])
+  && !("bench" in taskrunner.deps["check"])
+  && !("release" in taskrunner.deps["check"])
+message: "`check` must depend on lint and test and must not include bench or release"
+requirement: "`check` is the definition of green: lint, test, cover, audit and build. Benchmarks are noisy and release is a deliberate act, so neither is part of it."
+rationale: "A `check` that is slow or flaky gets bypassed, and a bypassed gate is worse than none."
+fix:
+  human: "Make `check` depend on lint, test, cover, audit and build, and move bench/release out."
+  agent: "Rewrite the check target's prerequisites to `lint test cover audit build`; keep bench and release as separate targets."

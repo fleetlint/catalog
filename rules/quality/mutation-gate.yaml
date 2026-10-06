@@ -1,0 +1,21 @@
+id: quality/mutation-gate
+title: Mutation testing runs on the core
+kind: outcome
+severity: info
+scope: root
+tiers: [1]
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml"].exists(f,
+        text(f).matches("\\b(gremlins|mutmut|cargo[- ]mutants|stryker|pitest|mutation_test|cosmic-ray|go-mutesting|infection)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(gremlins|mutmut|cargo[- ]mutants|stryker|pitest|mutation_test|cosmic-ray|go-mutesting|infection)\\b"))
+  - name: config-file
+    expr: exists("stryker.conf.*") || exists("stryker.config.*") || exists(".gremlins.y*ml") || file("mutmut_config.py") || text("pyproject.toml").contains("[tool.mutmut]")
+message: "no mutation testing is configured"
+requirement: "A mutation testing tool runs on the core packages, in the task runner or a (scheduled) workflow: gremlins for Go, mutmut for Python, cargo-mutants for Rust, Stryker for TypeScript, Pitest for the JVM, mutation_test for Dart. Another tool is added with `accept:`."
+rationale: Coverage says a line ran; a surviving mutant says the tests would not notice if it were wrong.
+fix:
+  human: "Add the stack's mutation tool for the core packages, as a `mutate` target run weekly or on release (see https://fleetlint.org/stacks/)."
+  agent: "Add a mutate target that runs the stack's mutation tool on the core packages with a survivor threshold, and a weekly workflow that calls it."
+refs: ["https://fleetlint.org/baseline/#tests"]

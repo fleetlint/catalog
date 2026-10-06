@@ -1,0 +1,23 @@
+id: repo/lockfile-committed
+title: Dependency lockfile is committed
+kind: expr
+severity: error
+tiers: [1, 2]
+foreach: repo.stacks
+expr: >
+  (item != "go" || "go.sum" in tracked() || !text("go.mod").contains("require"))
+  && (item != "python" || tracked().exists(f, f in ["uv.lock", "poetry.lock", "pdm.lock", "Pipfile.lock", "requirements.lock", "requirements.txt"]))
+  && (item != "rust" || "Cargo.lock" in tracked() || !text("Cargo.toml").matches("\\[(workspace\\.)?dependencies\\]"))
+  && (item != "node" || tracked().exists(f, f in ["package-lock.json", "pnpm-lock.yaml", "yarn.lock", "bun.lockb", "bun.lock"]))
+  && (item != "flutter" || "pubspec.lock" in tracked())
+  && (item != "kotlin" || tracked().exists(f, f in ["gradle.lockfile", "gradle/verification-metadata.xml"]))
+  && (item != "ruby" || "Gemfile.lock" in tracked() || !file("Gemfile"))
+  && (item != "php" || "composer.lock" in tracked() || !text("composer.json").contains("\"require\""))
+  && (item != "dotnet" || tracked().exists(f, f.endsWith("packages.lock.json")) || !exists("**/*.csproj"))
+message: "no lockfile is tracked for this stack"
+requirement: Every stack's lockfile (go.sum, uv.lock/poetry.lock, Cargo.lock, package-lock.json/pnpm-lock.yaml/yarn.lock, pubspec.lock, gradle.lockfile) is tracked.
+rationale: Builds are reproducible only when dependency versions are pinned in git.
+fix:
+  human: "Generate the lockfile with the package manager and commit it; remove it from .gitignore."
+  agent: "Run the package manager to produce the lockfile, remove any .gitignore entry for it, and commit it."
+refs: ["https://fleetlint.org/baseline/#dependencies"]

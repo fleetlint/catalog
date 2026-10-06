@@ -1,0 +1,17 @@
+id: hooks/config-present
+title: Git hooks are configured
+kind: expr
+severity: error
+scope: root
+tiers: [1, 2]
+expr: file(".pre-commit-config.yaml") || file("lefthook.yml") || file(".lefthook.yml")
+message: "no hook configuration found (.pre-commit-config.yaml or lefthook.yml)"
+requirement: The repository declares pre-commit hooks that run on every commit.
+rationale: Hooks are the only gate that runs before code reaches the remote; everything else is after the fact.
+fix:
+  human: "Run `fleetlint fix --apply` to add .pre-commit-config.yaml for the stack, then `prek install`."
+  agent: "Create .pre-commit-config.yaml from the shared template plus the stack block, run `prek update` and `prek install`."
+  actions:
+    - template: "{stack}/pre-commit-config.yaml"
+      to: .pre-commit-config.yaml
+refs: ["https://fleetlint.org/baseline/#git-hooks"]

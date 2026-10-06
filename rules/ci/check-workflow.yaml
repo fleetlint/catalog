@@ -1,0 +1,23 @@
+id: ci/check-workflow
+title: CI runs the check
+kind: outcome
+severity: warning
+scope: root
+tiers: [1, 2]
+satisfiers:
+  - name: task-runner
+    expr: workflows().exists(w, text(w).contains(taskrunner.cmd + " check"))
+  - name: any-runner
+    expr: workflows().exists(w, text(w).matches("\\b(make|just|task|npm run|pnpm( run)?|yarn( run)?|bun run|\\./gradlew|gradle|mise run|nix flake) check\\b"))
+  - name: dev-container
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("devcontainers/ci") && "runCmd" in s.with && string(s.with.runCmd).contains("check")))
+message: "no workflow runs the project's check"
+requirement: "A CI workflow runs the same `check` the hooks run, on pushes to main and on pull requests, whatever the task runner is. A repository whose check has another name adds it with `accept:`."
+rationale: CI is the record that main was green; it must run the same gate as local, not a different subset.
+fix:
+  human: "Add a check workflow for the stack; `fleetlint fix --apply` writes the template for the repository's task runner and container setting."
+  agent: "Add .github/workflows/check.yml from the stack template (toolchain setup, shared tools, the task runner's check)."
+  actions:
+    - template: "{stack}/check.yml"
+      to: .github/workflows/check.yml
+refs: ["https://fleetlint.org/baseline/#continuous-integration"]

@@ -1,0 +1,14 @@
+id: public/code-of-conduct
+title: Public repository has a code of conduct
+kind: expr
+severity: info
+scope: root
+tiers: [1]
+when: repo.public
+expr: exists("CODE_OF_CONDUCT*") || exists(".github/CODE_OF_CONDUCT*")
+message: "CODE_OF_CONDUCT.md is missing"
+requirement: A code of conduct (Contributor Covenant is fine) with a contact address.
+rationale: Forges surface it in the community profile; contributors look for it before engaging.
+fix:
+  human: "Add CODE_OF_CONDUCT.md (Contributor Covenant 2.1) with a contact address."
+  agent: "Add CODE_OF_CONDUCT.md using the Contributor Covenant 2.1 text; ask the user for the contact address."

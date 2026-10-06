@@ -1,0 +1,22 @@
+id: lint/node-strict-flags
+title: tsconfig enables the strict compiler flags
+kind: expr
+severity: warning
+stacks: [node]
+when: file("tsconfig.json") && json("tsconfig.json") != null && !has(json("tsconfig.json").extends)
+params:
+  required: [strict, noUncheckedIndexedAccess, exactOptionalPropertyTypes, noImplicitOverride, noFallthroughCasesInSwitch]
+foreach: params.required
+expr: >
+  has(json("tsconfig.json").compilerOptions)
+  && item in json("tsconfig.json").compilerOptions
+  && json("tsconfig.json").compilerOptions[item] == true
+message: "strict compiler flag is not enabled"
+requirement: "tsconfig.json sets every flag in `params.required` to true. A tsconfig that `extends` another configuration is not checked, because the flags may come from there."
+rationale: "`strict` alone leaves indexed access, optional properties and switch fallthrough unchecked; these flags close the gaps that produce undefined at run time."
+fix:
+  human: "Set the missing flags to true under compilerOptions."
+  agent: "Set each reported flag to true in tsconfig.json compilerOptions, run tsc --noEmit and list the errors that appear instead of silencing them."
+  actions:
+    - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

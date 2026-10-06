@@ -1,0 +1,17 @@
+id: lint/shell
+title: Shell scripts are linted
+kind: expr
+severity: info
+scope: root
+when: tracked().exists(p, p.endsWith(".sh"))
+expr: >
+  text(".pre-commit-config.yaml").contains("shellcheck")
+  || text(taskrunner.file).contains("shellcheck")
+  || workflows().exists(w, text(w).contains("shellcheck"))
+message: "shell scripts are tracked but shellcheck runs nowhere"
+requirement: "When the repository contains shell scripts, shellcheck runs as a hook, in the task runner or in CI."
+rationale: Unquoted variables and unchecked exit codes are the bugs shell scripts ship with, and shellcheck finds them without running anything.
+fix:
+  human: "Add the shellcheck hook to .pre-commit-config.yaml."
+  agent: "Add the shellcheck hook (and shfmt) to .pre-commit-config.yaml and fix what it reports in the tracked scripts."
+refs: ["https://fleetlint.org/baseline/#static-analysis"]

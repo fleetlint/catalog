@@ -1,0 +1,19 @@
+id: repo/no-tracked-junk
+title: No editor, OS or backup files are tracked
+kind: expr
+severity: error
+foreach: >
+  tracked().filter(p, p.matches(r'(^|/)(\.DS_Store|Thumbs\.db|desktop\.ini|nohup\.out)$|\.(bak|orig|rej|swp|swo|log|pyc)$|~$|(^|/)(__pycache__|node_modules|\.venv|venv)/|(^|/)\.idea/workspace\.xml$|(^|/)\.vscode/settings\.json$'))
+expr: "false"
+message: "a file that does not belong in version control is tracked"
+requirement: >
+  Files such as .DS_Store, Thumbs.db, *.bak, *.orig, *.swp, *.log, nohup.out, Python bytecode,
+  dependency directories and personal IDE state are never committed.
+rationale: They are noise at best and leak local paths or data at worst.
+fix:
+  human: "git rm --cached the listed files and add their patterns to .gitignore."
+  agent: "Untrack the listed junk files with git rm --cached, add matching patterns to .gitignore, commit as chore."
+  actions:
+    - untrack: "*"
+      gitignore: [".DS_Store", "Thumbs.db", "*.bak", "*.orig", "*.swp", "*~", "*.log", "nohup.out", "__pycache__/"]
+refs: ["https://fleetlint.org/baseline/#hygiene"]

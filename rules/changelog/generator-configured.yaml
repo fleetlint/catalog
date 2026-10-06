@@ -1,0 +1,15 @@
+id: changelog/generator-configured
+title: Changelog generation is configured
+kind: expr
+severity: info
+scope: root
+tiers: [1]
+expr: file("cliff.toml") || (file(".goreleaser.yaml") && has(yaml(".goreleaser.yaml").changelog))
+message: "no changelog generator configured (cliff.toml or goreleaser changelog)"
+requirement: The changelog is generated from conventional commits (git-cliff or GoReleaser), then edited.
+rationale: Hand-written changelogs drift from the commits; generated ones can be trusted and edited.
+fix:
+  human: "Add cliff.toml; `fleetlint fix --apply` writes the template."
+  agent: "Add cliff.toml for git-cliff with Conventional Commits groups; `fleetlint fix --apply` writes the template."
+  actions:
+    - template: cliff.toml

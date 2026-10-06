@@ -1,0 +1,15 @@
+id: repo/editorconfig
+title: .editorconfig is present
+kind: expr
+severity: warning
+scope: root
+expr: file(".editorconfig")
+message: ".editorconfig is missing"
+requirement: An .editorconfig declares charset, line endings, final newline and indentation.
+rationale: It stops formatting churn between editors before any formatter runs.
+fix:
+  human: "Add .editorconfig with `root = true`; `fleetlint fix --apply` writes the template."
+  agent: "Create .editorconfig: utf-8, lf, insert_final_newline, trim_trailing_whitespace, 2-space default with 4 for Go/Kotlin/Python/Rust/Dart."
+  actions:
+    - template: editorconfig
+      to: .editorconfig

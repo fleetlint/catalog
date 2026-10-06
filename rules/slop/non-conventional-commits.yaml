@@ -1,0 +1,19 @@
+id: slop/non-conventional-commits
+title: Commit subjects follow Conventional Commits
+kind: expr
+severity: info
+scope: root
+when: repo.has_git
+params:
+  commits: 200
+foreach: >
+  commits(params.commits)
+expr: >
+  item.subject.matches(r'^(feat|fix|refactor|perf|test|docs|build|chore|revert|ci|style)(\([^)]+\))?!?: ') || item.subject.startsWith("Merge ")
+message: "commit subject is not a Conventional Commit"
+requirement: "Commit subjects in the recent history (`params.commits`, default 200) have the form `type(scope): subject`; merge commits are exempt."
+rationale: "The changelog and the next version number are computed from the subjects."
+fix:
+  human: "Install the commit-msg hook so new commits are checked."
+  agent: "Use Conventional Commits for new commits. Do not rewrite pushed history without the user's decision."
+refs: ["https://fleetlint.org/baseline/#slop"]

@@ -1,0 +1,16 @@
+id: slop/dumping-ground-files
+title: No utils or helpers dumping grounds
+kind: expr
+severity: info
+scope: root
+foreach: >
+  tracked().filter(p, p.matches(r'(^|/)(utils?|helpers?|common|misc|stuff|shared_utils)\.[a-z]+$'))
+expr: >
+  false
+message: "file is a dumping ground by name"
+requirement: "No source file is named `utils`, `helpers`, `common` or `misc`; a function lives in the module that owns its concept."
+rationale: "A file named after nothing collects everything, and everything then depends on it."
+fix:
+  human: "Move each function to the module it belongs to."
+  agent: "Report the file with its functions grouped by concept; move them only as a separate, behaviour-neutral change."
+refs: ["https://fleetlint.org/baseline/#slop"]

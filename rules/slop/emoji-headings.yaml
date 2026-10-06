@@ -1,0 +1,16 @@
+id: slop/emoji-headings
+title: No emoji in documentation headings
+kind: expr
+severity: info
+scope: root
+foreach: >
+  grep("**/*.md", r'^#{1,6}\s.*[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]')
+expr: >
+  item.path.endsWith("CHANGELOG.md")
+message: "emoji in a heading"
+requirement: "Headings in Markdown documentation contain no emoji."
+rationale: "They break anchors and search and mark the text as unedited generator output."
+fix:
+  human: "Remove the emoji from the heading."
+  agent: "Remove emoji from headings and update links to the changed anchors."
+refs: ["https://fleetlint.org/baseline/#slop"]

@@ -1,0 +1,16 @@
+id: slop/conflict-markers
+title: No merge conflict markers in source
+kind: expr
+severity: error
+scope: root
+foreach: >
+  codegrep("code", r'^(<{7}|>{7}|={7})( |$)')
+expr: >
+  false
+message: "a merge conflict marker is committed"
+requirement: "No source file contains conflict markers."
+rationale: "The file does not mean what either side intended and usually does not compile."
+fix:
+  human: "Resolve the conflict and remove the markers."
+  agent: "Resolve the conflict using both sides' intent; ask when they contradict."
+refs: ["https://fleetlint.org/baseline/#slop"]

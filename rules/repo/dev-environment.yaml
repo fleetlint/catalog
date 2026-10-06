@@ -1,0 +1,56 @@
+id: repo/dev-environment
+title: The development tools are reproducible
+kind: outcome
+severity: warning
+scope: root
+tiers: [1, 2]
+satisfiers:
+  # `repo.container` decides: in a container mode only that mechanism counts.
+  - name: devcontainer
+    when: repo.container in ["none", "devcontainer"]
+    expr: file(".devcontainer/devcontainer.json") || file(".devcontainer.json") || exists(".devcontainer/*/devcontainer.json")
+  - name: container-image
+    when: repo.container in ["docker", "podman"]
+    expr: text(taskrunner.file).matches("\\b(docker|podman|nerdctl)(-compose)?\\b[^\\n|;&]*\\b(run|exec)\\b")
+  - name: nix
+    when: repo.container == "none"
+    expr: file("flake.nix") || file("shell.nix") || file("devenv.nix") || file("devenv.yaml")
+  - name: version-manager
+    when: repo.container == "none"
+    expr: file("mise.toml") || file(".mise.toml") || file(".tool-versions")
+  - name: tools-target
+    when: repo.container == "none" && "tools" in taskrunner.recipes
+    expr: >
+      taskrunner.recipes["tools"].exists(l, l.matches("(@v?[0-9]|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
+      && !taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
+      && grep(taskrunner.file, "^[A-Za-z_]*VERSION\\s*[:?]*=").all(m,
+           m.text.matches("=\\s*[\"']?(v?[0-9]+(\\.[0-9]+)*([-+.][0-9A-Za-z.]+)?|[0-9a-f]{7,64})[\"']?\\s*(#.*)?$"))
+partials:
+  - name: tools-unpinned
+    severity: info
+    expr: >
+      "tools" in taskrunner.recipes && taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
+    message: "the tools target installs @latest: two machines get different tools"
+  - name: tools-version-not-a-version
+    severity: info
+    expr: >
+      "tools" in taskrunner.recipes && grep(taskrunner.file, "^[A-Za-z_]*VERSION\\s*[:?]*=").exists(m,
+        !m.text.matches("=\\s*[\"']?(v?[0-9]+(\\.[0-9]+)*([-+.][0-9A-Za-z.]+)?|[0-9a-f]{7,64})[\"']?\\s*(#.*)?$"))
+    message: "a *_VERSION variable holds a branch or a word, not a version or commit: the tools target is not pinned"
+message: "nothing in the repository says which tools to install, or how"
+requirement: >
+  Someone with a fresh machine gets the same toolchain and tools as everyone else from what is in the
+  repository: a dev container (`.devcontainer/devcontainer.json`), a Nix flake or devenv, a version
+  manager file (`mise.toml`, `.tool-versions`), or a `tools` target that installs pinned versions.
+  Any one of them is enough; the task runner stays the interface that hooks and CI use.
+  `facts.container` selects the mechanism: `devcontainer` (the default when a devcontainer.json exists)
+  needs the dev container, `docker` or `podman` a task runner that runs its targets in an image, and
+  `none` one of the others.
+rationale: Lint and test results that depend on which linter version a contributor happens to have are not results; a second contributor's first hour should not go into guessing tools.
+fix:
+  human: "Choose. For a container set `facts.container` to devcontainer, docker or podman and run `fleetlint fix --apply`: the task runner file and check workflow it writes run inside it (and for devcontainer it writes the container). To stay on the machine, give the `tools` target pinned versions or add a version-manager file."
+  agent: "Ask which mechanism the user wants. Container: set facts.container (devcontainer, docker or podman) in .fleetlint.yaml and run `fleetlint fix --apply`. Machine: add a `tools` target to the task runner that installs every tool at a fixed version. Do not add more than one mechanism."
+  actions:
+    - template: "{stack}/devcontainer.json"
+      to: .devcontainer/devcontainer.json
+refs: ["https://fleetlint.org/baseline/#task-runner-contract"]

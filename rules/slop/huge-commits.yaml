@@ -1,0 +1,20 @@
+id: slop/huge-commits
+title: Commits are reviewable
+kind: expr
+severity: info
+scope: root
+when: repo.has_git
+params:
+  commits: 200
+  max_lines: 1500
+foreach: >
+  commits(params.commits)
+expr: >
+  item.lines <= params.max_lines
+message: "commit changes more lines than the limit"
+requirement: "No commit in the recent history (`params.commits`, default 200) changes more than `params.max_lines` lines (default 1500)."
+rationale: "A commit that large was not reviewed line by line, and cannot be reverted without taking unrelated changes with it."
+fix:
+  human: "Split work into commits of one concern each."
+  agent: "Commit one concern at a time. Do not rewrite pushed history without the user's decision."
+refs: ["https://fleetlint.org/baseline/#slop"]

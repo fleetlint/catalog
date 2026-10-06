@@ -1,0 +1,13 @@
+id: docs/adr-directory
+title: Decisions are recorded as ADRs
+kind: expr
+severity: info
+scope: root
+tiers: [1]
+expr: exists("docs/adr/*.md") || exists("docs/decisions/*.md") || exists("adr/*.md") || exists("docs/adrs/*.md")
+message: "no architecture decision records"
+requirement: Significant decisions live in docs/adr/NNNN-title.md (context, decision, consequences).
+rationale: Without the why, the next person re-litigates every settled question.
+fix:
+  human: "Add docs/adr/0001-record-architecture-decisions.md and one ADR per existing major decision."
+  agent: "Create docs/adr/0001-record-architecture-decisions.md in MADR format; list the decisions already visible in the code as candidates."

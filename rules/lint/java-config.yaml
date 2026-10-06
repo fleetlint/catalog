@@ -1,0 +1,18 @@
+id: lint/java-config
+title: Checkstyle or Error Prone is configured
+kind: expr
+severity: warning
+stacks: [java]
+expr: >
+  exists("config/checkstyle/*.xml") || file("checkstyle.xml")
+  || grep("pom.xml", "maven-checkstyle-plugin|error_prone|errorprone|spotbugs-maven-plugin").size() > 0
+message: "no checkstyle configuration, Error Prone or SpotBugs in the build"
+requirement: "A static analysis beyond the compiler runs on every build: Checkstyle with a committed configuration (`config/checkstyle/checkstyle.xml`), Error Prone as a compiler plugin, or SpotBugs; `failOnViolation` set so findings fail the build."
+rationale: javac accepts swallowed exceptions, star imports and 400-line methods; the analyzer is where they are refused.
+fix:
+  human: "Add config/checkstyle/checkstyle.xml (`fleetlint fix --apply` writes one) and the maven-checkstyle-plugin with failOnViolation to pom.xml."
+  agent: "Add config/checkstyle/checkstyle.xml from the template and wire maven-checkstyle-plugin in pom.xml with configLocation and failOnViolation true; fix what it reports."
+  actions:
+    - template: java/checkstyle.xml
+      to: config/checkstyle/checkstyle.xml
+refs: ["https://fleetlint.org/stacks/#java"]

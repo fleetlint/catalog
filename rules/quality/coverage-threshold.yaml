@@ -1,0 +1,39 @@
+id: quality/coverage-threshold
+title: A coverage floor is enforced
+kind: outcome
+severity: warning
+scope: root
+tiers: [1, 2]
+satisfiers:
+  - name: cover-target
+    when: '"cover" in taskrunner.recipes'
+    expr: >
+      taskrunner.recipes["cover"].exists(l,
+        l.matches("fail[-_]?under|coverageThreshold|min(imum)?[-_]?coverage|COVER(AGE)?_MIN|-lt|< *\\$|diff-cover"))
+  - name: codecov
+    expr: >
+      (file(".codecov.yml") && text(".codecov.yml").contains("target"))
+      || (file("codecov.yml") && text("codecov.yml").contains("target"))
+  - name: pytest
+    when: file("pyproject.toml")
+    expr: text("pyproject.toml").matches("fail[-_]under")
+  - name: jest-or-vitest
+    expr: >
+      (file("package.json") && text("package.json").contains("coverageThreshold"))
+      || exists("jest.config.*") && glob("jest.config.*").exists(f, text(f).contains("coverageThreshold"))
+      || exists("vitest.config.*") && glob("vitest.config.*").exists(f, text(f).contains("thresholds"))
+  - name: kover-or-jacoco
+    expr: >
+      exists("**/build.gradle.kts") && glob("**/build.gradle.kts").exists(f, text(f).matches("minBound|minimum = |violationRules"))
+  - name: cargo-llvm-cov
+    expr: exists("**/*.toml") && (file("Makefile") && text("Makefile").contains("--fail-under"))
+message: "nothing enforces a minimum coverage"
+requirement: >
+  The `cover` target (or the CI coverage tool) fails below a floor: a total or diff-coverage threshold
+  in the Makefile recipe, codecov `target`, pytest `--cov-fail-under`, Jest/Vitest thresholds,
+  Kover/JaCoCo verification rules, or `cargo llvm-cov --fail-under`.
+rationale: A coverage number nobody enforces drifts down one "quick fix" at a time.
+fix:
+  human: "Make `make cover` fail below the floor (diff-cover --fail-under=80 is the stack-neutral option)."
+  agent: "Add a threshold to the cover recipe using the stack profile's tool (go: cover.sh with a minimum; python: --cov-fail-under; node: coverageThreshold; rust: cargo llvm-cov --fail-under; kotlin: kover verify)."
+refs: ["https://fleetlint.org/baseline/#tests"]

@@ -1,0 +1,14 @@
+id: release/semver-tags
+title: Tags are semantic versions
+kind: expr
+severity: warning
+scope: root
+when: repo.has_git && tags().size() > 0
+foreach: tags()
+expr: item.matches("^([A-Za-z0-9_.-]+/)?v?[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?(\\+[0-9A-Za-z.-]+)?$")
+message: "tag is not a semantic version"
+requirement: "Every tag is `vMAJOR.MINOR.PATCH[-prerelease]`, optionally prefixed with a component name and slash in monorepos."
+rationale: Release tooling, changelog generation and dependency resolvers all key on the pattern.
+fix:
+  human: "Delete or rename the offending tags; tag releases as vX.Y.Z from now on."
+  agent: "List the offending tags for the user; do not delete tags without confirmation."

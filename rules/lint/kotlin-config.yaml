@@ -1,0 +1,15 @@
+id: lint/kotlin-config
+title: detekt is configured
+kind: expr
+severity: warning
+stacks: [kotlin]
+expr: exists("**/detekt*.yml") || exists("**/detekt*.yaml") || exists("config/detekt/*")
+message: "no detekt configuration found"
+requirement: detekt runs with a config enforcing EmptyCatchBlock, SwallowedException, LongMethod and complexity limits.
+rationale: Kotlin's compiler accepts swallowed exceptions; detekt is where they are caught.
+fix:
+  human: "Add config/detekt/detekt.yml and the detekt Gradle plugin."
+  agent: "Add the detekt Gradle plugin with buildUponDefaultConfig and a config/detekt/detekt.yml enabling the rules from the Kotlin stack profile."
+  actions:
+    - template: kotlin/detekt.yml
+      to: config/detekt/detekt.yml

@@ -1,0 +1,16 @@
+id: slop/swallowed-errors
+title: Errors are not swallowed
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("nontest", r'catch\s*(\([^)]*\))?\s*\{\s*\}|except[^:]*:\s*pass\b|\b_\s*=\s*err\b|\.catch\(\s*\(\)\s*=>\s*(\{\s*\}|null|undefined)\s*\)|catch \(_\)')
+expr: >
+  false
+message: "error is caught or assigned and then ignored"
+requirement: "No empty catch blocks, no `except: pass`, no `_ = err`. Only single-line forms are detected; the stack's linter covers the rest."
+rationale: "A swallowed error turns a failure with a cause into a wrong result without one."
+fix:
+  human: "Handle the error, wrap and return it, or log it where it is handled."
+  agent: "Propagate the error with context unless the surrounding code shows it is safe to ignore; then say why in a comment."
+refs: ["https://fleetlint.org/baseline/#slop"]

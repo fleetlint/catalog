@@ -1,0 +1,16 @@
+id: slop/todo-without-issue
+title: TODOs reference an issue
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'(//|#|/\*).*\b(TODO|FIXME|XXX|HACK)\b')
+expr: >
+  item.text.matches(r'\b(TODO|FIXME|XXX|HACK)\b\s*\((#|[A-Z][A-Z0-9]+-)\d+\)')
+message: "TODO without an issue reference"
+requirement: "Every TODO, FIXME, XXX or HACK comment names an issue: `TODO(#123)` or `TODO(ABC-123)`."
+rationale: "An untracked TODO is a wish; a tracked one has an owner and can be closed."
+fix:
+  human: "Open an issue and reference it, or do the work, or delete the note."
+  agent: "Report each note; do not invent issue numbers."
+refs: ["https://fleetlint.org/baseline/#slop"]

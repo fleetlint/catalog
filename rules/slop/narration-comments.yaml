@@ -1,0 +1,16 @@
+id: slop/narration-comments
+title: Comments do not narrate the change
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'(//|#|/\*)\s*(Now (we|it|uses|handles|correctly|properly)\b|Updated? to\b|Changed (to|from)\b|Fix(ed)? for\b|(NEW|FIX|FIXED|CHANGED|UPDATED):|New:|Fix:|Previously\b|As requested\b|Per (your|the) request\b|This is the (key|main|critical|important) (fix|change|part)\b)')
+expr: >
+  false
+message: "comment narrates a change instead of explaining the code"
+requirement: "Comments say why the code is the way it is, not what was changed or asked for (\"Now uses…\", \"Fixed:\", \"As requested\")."
+rationale: "The history records what changed; a comment that repeats it is wrong after the next edit."
+fix:
+  human: "Delete the comment, or rewrite it to state the constraint the code satisfies."
+  agent: "Delete narration comments; keep a comment only if it explains a constraint, and rewrite it to say that."
+refs: ["https://fleetlint.org/baseline/#slop"]

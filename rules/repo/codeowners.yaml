@@ -1,0 +1,13 @@
+id: repo/codeowners
+title: CODEOWNERS names reviewers
+kind: expr
+severity: info
+scope: root
+tiers: [1]
+expr: file("CODEOWNERS") || file(".github/CODEOWNERS") || file("docs/CODEOWNERS") || file(".gitea/CODEOWNERS")
+message: "no CODEOWNERS file"
+requirement: A CODEOWNERS file routes review requests for every path.
+rationale: Review ownership that lives in people's heads does not survive a holiday.
+fix:
+  human: "Add .github/CODEOWNERS with a default owner line."
+  agent: "Add .github/CODEOWNERS containing `* @<owner>` and commit."

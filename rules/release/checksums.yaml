@@ -1,0 +1,26 @@
+id: release/checksums
+title: Releases publish checksums
+kind: outcome
+severity: warning
+tiers: [1]
+scope: root
+when: release.exists && tagged_workflows().size() > 0
+satisfiers:
+  - name: goreleaser
+    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
+    expr: >
+      !(has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum)
+        && has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum.disable)
+        && yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum.disable == true)
+  - name: workflow-command
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("sha256sum|shasum -a 256|sha512sum|b2sum")))
+  - name: python-publish
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("pypa/gh-action-pypi-publish")))
+  - name: container-image
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("docker/build-push-action")))
+message: "the release publishes no checksums file"
+requirement: A checksums.txt (sha256) covering every artifact is uploaded with the release, and is what gets signed. A container image pushed to a registry is addressed by its digest and needs no separate file.
+rationale: Checksums let a downloader verify integrity even without signature tooling.
+fix:
+  human: "Generate checksums.txt with sha256sum in the release job and upload it."
+  agent: "Add `sha256sum dist/* > dist/checksums.txt` before the upload step and include dist/checksums.txt in the release assets."

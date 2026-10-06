@@ -1,0 +1,19 @@
+id: ci/actions-pinned
+title: Actions are pinned to commit SHAs
+kind: expr
+severity: warning
+scope: root
+tiers: [1]
+when: workflows().size() > 0
+foreach: >
+  grep(".github/workflows/*.y*ml", r'^\s*-?\s*uses:\s*["\x27]?([^\s"\x27#]+)')
+  + grep(".gitea/workflows/*.y*ml", r'^\s*-?\s*uses:\s*["\x27]?([^\s"\x27#]+)')
+expr: >
+  item.match.startsWith("./") || item.match.startsWith("docker://") || item.match.matches("@[0-9a-f]{40}$")
+message: "action is not pinned to a commit SHA"
+requirement: "Every `uses:` reference in a workflow is pinned to a full 40-character commit SHA with a version comment. Local actions (`./path`) and `docker://` references are exempt."
+rationale: A tag can be moved; a SHA cannot. Pinning is what makes a workflow reproducible and tamper-evident.
+fix:
+  human: "Run `pinact run` and commit; let Renovate keep the pins current."
+  agent: "Run `pinact run` to pin all uses: references to SHAs with version comments; do not change anything else in the workflows."
+refs: ["https://fleetlint.org/baseline/#security"]

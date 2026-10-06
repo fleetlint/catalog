@@ -1,0 +1,27 @@
+id: release/provenance
+title: Releases attest build provenance
+kind: outcome
+severity: warning
+tiers: [1]
+scope: root
+when: release.exists && tagged_workflows().size() > 0
+satisfiers:
+  - name: attest-action
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
+  - name: slsa-generator
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
+  - name: cosign-attest
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.contains("cosign attest")))
+  - name: npm-provenance
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("npm publish.*--provenance")))
+  - name: container-provenance
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.uses.startsWith("docker/build-push-action")
+        && (("provenance" in s.with && string(s.with.provenance) != "false") || "attests" in s.with)))
+message: "no build provenance attestation in the release pipeline"
+requirement: The release pipeline produces a SLSA provenance attestation (actions/attest-build-provenance, the SLSA generator, cosign attest or npm provenance).
+rationale: Provenance ties the artifact to the exact source and workflow that built it, which a signature alone does not.
+fix:
+  human: "Add actions/attest-build-provenance (GitHub) or `cosign attest --predicate` (Gitea) to the release workflow."
+  agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release artifacts; grant `id-token: write` and `attestations: write` to that job only."

@@ -1,0 +1,20 @@
+id: lint/dotnet-config
+title: Nullable, analyzers and warnings as errors are on for every project
+kind: expr
+severity: warning
+stacks: [dotnet]
+expr: >
+  (file("Directory.Build.props") && text("Directory.Build.props").matches("<Nullable>\\s*enable")
+    && text("Directory.Build.props").matches("<TreatWarningsAsErrors>\\s*true")
+    && text("Directory.Build.props").matches("<AnalysisLevel>\\s*latest"))
+  || (file(".editorconfig") && text(".editorconfig").contains("dotnet_analyzer_diagnostic.severity"))
+message: "no Directory.Build.props enabling nullable, analyzers and warnings as errors"
+requirement: "`Directory.Build.props` at the root sets `<Nullable>enable`, `<TreatWarningsAsErrors>true` and `<AnalysisLevel>latest-recommended` or `latest-all` for every project, or `.editorconfig` sets `dotnet_analyzer_diagnostic.severity`."
+rationale: Per-project settings drift; one file at the root makes every project in the solution compile under the same rules.
+fix:
+  human: "Add Directory.Build.props with Nullable, TreatWarningsAsErrors and AnalysisLevel (`fleetlint fix --apply` writes it)."
+  agent: "Add Directory.Build.props from the template at the repository root and fix the warnings that become errors instead of lowering the level."
+  actions:
+    - template: dotnet/Directory.Build.props
+      to: Directory.Build.props
+refs: ["https://fleetlint.org/stacks/#net"]

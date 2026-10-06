@@ -1,0 +1,23 @@
+id: quality/duplication-gate
+title: Duplicated code is measured
+kind: outcome
+severity: info
+scope: root
+tiers: [1]
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f,
+        text(f).matches("\\b(jscpd|cpdCheck|pmd[- ]cpd|simian|duplo|duplicate-code)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(jscpd|cpdCheck|pmd[- ]cpd|simian|duplo|duplicate-code)\\b"))
+  - name: golangci-dupl
+    expr: grep(".golangci.y*ml", "^\\s*-\\s*dupl\\s*$|^\\s*dupl:").size() > 0
+  - name: config-file
+    expr: exists(".jscpd.json") || exists("sonar-project.properties")
+message: "no duplication check is configured"
+requirement: "A duplication detector runs in the task runner, the hooks or CI: golangci-lint `dupl` for Go, `jscpd` for any stack, PMD CPD for JVM, pylint `duplicate-code`, or Sonar. Another tool is added with `accept:`."
+rationale: Near-duplicate implementations are how a fix lands in one copy and not the other; a detector makes the second copy visible at review time.
+fix:
+  human: "Enable `dupl` in .golangci.yml, or add `jscpd` to the lint target (see https://fleetlint.org/stacks/ for the stack's tool)."
+  agent: "Add the stack's duplication detector to the lint target with a threshold, and remove or merge the duplicates it reports rather than raising the threshold."
+refs: ["https://fleetlint.org/baseline/#design"]

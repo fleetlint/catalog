@@ -1,0 +1,17 @@
+id: lint/hugo-strict-build
+title: The Hugo build treats warnings as errors
+kind: outcome
+severity: warning
+stacks: [hugo]
+satisfiers:
+  - name: task-runner-or-hooks
+    expr: >
+      [taskrunner.file, ".pre-commit-config.yaml"].exists(f, text(f).contains("--panicOnWarning"))
+      || workflows().exists(w, text(w).contains("--panicOnWarning"))
+message: "no hugo build runs with --panicOnWarning"
+requirement: "The task runner's lint or build target, a hook, or CI runs `hugo --panicOnWarning` so a missing layout, a broken ref or a deprecated setting fails the build instead of printing a warning nobody reads."
+rationale: Hugo prints warnings for broken references and deprecated configuration and still exits 0; the flag is the only thing that turns them into a failed build.
+fix:
+  human: "Add `--panicOnWarning` to the hugo invocation in the lint or build target (see https://fleetlint.org/stacks/#hugo--static-sites)."
+  agent: "Add --panicOnWarning to the hugo build in the lint or build target and fix the warnings it surfaces instead of removing the flag."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

@@ -1,0 +1,14 @@
+id: containers/dockerignore
+title: Container builds have a .dockerignore
+kind: expr
+severity: warning
+scope: root
+when: tracked().exists(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$"))
+expr: file(".dockerignore") || file(".containerignore") || exists("*.dockerignore")
+message: "a Dockerfile is tracked but there is no .dockerignore"
+requirement: "A repository with a Dockerfile has a `.dockerignore` that keeps `.git`, secrets and build output out of the build context."
+rationale: Without it the whole working tree, including `.env` files and the git history, is sent to the builder and can end up in a layer.
+fix:
+  human: "Add .dockerignore listing .git, .env*, build output and anything the image does not need."
+  agent: "Add .dockerignore with .git, .env*, the stack's build output and dependency directories; check that the image still builds."
+refs: ["https://fleetlint.org/baseline/#robustness"]

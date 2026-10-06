@@ -1,0 +1,18 @@
+id: repo/no-large-files
+title: No large files are tracked outside git-lfs
+kind: expr
+severity: warning
+scope: root
+params:
+  max_kb: 2048
+foreach: tracked()
+expr: >
+  filesize(item) <= params.max_kb * 1024
+  || lines(".gitattributes").exists(l, l.contains("filter=lfs") && globmatch(l.split(" ")[0], item))
+message: "tracked file is larger than the limit and not in git-lfs"
+requirement: "No tracked file exceeds `max_kb` (default 2 MiB) unless its pattern is routed to git-lfs in .gitattributes."
+rationale: Binaries in history make every clone slower forever; lfs or a release asset is the right home.
+fix:
+  human: "Move the file to git-lfs (`git lfs track <pattern>`) or publish it as a release asset and remove it from history."
+  agent: "Report the file; do not rewrite history. Suggest `git lfs track` for the pattern or an external home for the file."
+refs: ["https://fleetlint.org/baseline/#hygiene"]

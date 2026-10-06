@@ -1,0 +1,21 @@
+id: lint/php-config
+title: PHPStan or Psalm and a formatter are configured
+kind: expr
+severity: warning
+stacks: [php]
+expr: >
+  (exists("phpstan.neon*") || exists("phpstan.dist.neon") || file("psalm.xml") || file("psalm.xml.dist"))
+  && (exists(".php-cs-fixer*.php") || file("pint.json") || exists("phpcs.xml*") || exists(".php_cs*"))
+message: "no static analyzer (phpstan.neon, psalm.xml) or formatter configuration (.php-cs-fixer.dist.php, pint.json, phpcs.xml)"
+requirement: "PHPStan (`phpstan.neon.dist`, level max with strict rules) or Psalm, plus PHP CS Fixer, Pint or PHP_CodeSniffer, all configured in the repository and run by the lint target."
+rationale: PHP's type system is enforced at runtime only; the analyzer is the compile step the language lacks.
+fix:
+  human: "Add phpstan.neon.dist, .php-cs-fixer.dist.php and the packages in require-dev (`fleetlint fix --apply` does all three)."
+  agent: "Add phpstan.neon.dist and .php-cs-fixer.dist.php from the templates, require phpstan/phpstan, phpstan/phpstan-strict-rules and friendsofphp/php-cs-fixer in require-dev, and fix what they report."
+  actions:
+    - template: php/phpstan.neon.dist
+      to: phpstan.neon.dist
+    - template: php/php-cs-fixer.dist.php
+      to: .php-cs-fixer.dist.php
+    - merge: {file: composer.json, template: php/require-dev-lint.json}
+refs: ["https://fleetlint.org/stacks/#php"]

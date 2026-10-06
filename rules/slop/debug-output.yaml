@@ -1,0 +1,16 @@
+id: slop/debug-output
+title: No debug prints outside tests
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("nontest", r'(^|[^.\w])print\(|\bconsole\.(log|debug|info)\(|(^|[^.\w])println!?\(|\bfmt\.Print|\bdebugPrint\(|\bdbg!\(')
+expr: >
+  false
+message: "raw print call outside tests"
+requirement: "Non-test code writes through the logger or the program's output layer, not through raw print calls."
+rationale: "Raw prints cannot be levelled, redacted or switched off, and they leak into the output of anything that embeds the code."
+fix:
+  human: "Use the logger; for a CLI, the output stream the command was given."
+  agent: "Replace with the project's logger or output writer; delete prints that are debugging leftovers."
+refs: ["https://fleetlint.org/baseline/#slop"]

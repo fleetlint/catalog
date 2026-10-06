@@ -1,0 +1,48 @@
+id: deps/license-check
+title: Dependency licenses are checked against an allowlist
+kind: outcome
+severity: info
+scope: root
+tiers: [1]
+satisfiers:
+  - name: go-licenses
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("go-licenses"))
+      || workflows().exists(w, text(w).matches("go-licenses"))
+  - name: pip-licenses
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("pip-licenses"))
+      || workflows().exists(w, text(w).matches("pip-licenses"))
+  - name: cargo-deny
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("cargo[- ]deny|\\[licenses\\]"))
+      || workflows().exists(w, text(w).matches("cargo[- ]deny|\\[licenses\\]"))
+  - name: license-checker
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("license-checker"))
+      || workflows().exists(w, text(w).matches("license-checker"))
+  - name: licensee
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("licensee"))
+      || workflows().exists(w, text(w).matches("licensee"))
+  - name: osv-scanner-licenses
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("osv-scanner[^\\n]*licenses"))
+      || workflows().exists(w, text(w).matches("osv-scanner[^\\n]*licenses"))
+  - name: reuse
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("reuse lint"))
+      || workflows().exists(w, text(w).matches("reuse lint"))
+  - name: scancode-trivy-fossa
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "deny.toml"].exists(f, text(f).matches("scancode|trivy[^\\n]*license|fossa"))
+      || workflows().exists(w, text(w).matches("scancode|trivy[^\\n]*license|fossa"))
+  - name: dependency-review
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("actions/dependency-review-action")))
+message: "no license check runs in the task runner or in CI"
+requirement: "The task runner (any kind) or a CI workflow checks dependency licenses against an allowlist: go-licenses, pip-licenses, cargo deny, license-checker, licensee, osv-scanner with license scanning, REUSE, ScanCode, trivy, FOSSA or GitHub dependency review. Another checker is added with `accept:`."
+rationale: A dependency under an incompatible license is found cheaply before it is merged and expensively after a release.
+fix:
+  human: "Add the stack's license checker with an allowlist to the `audit` target (see https://fleetlint.org/stacks/)."
+  agent: "Add the stack's license checker to the audit target with an allowlist compatible with the repository's own license; report dependencies outside it instead of widening the list."
+refs: ["https://fleetlint.org/baseline/#dependencies"]

@@ -1,0 +1,16 @@
+id: slop/emoji-in-code
+title: No emoji in source code
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}\x{2B50}]')
+expr: >
+  false
+message: "emoji in source code"
+requirement: "Source code, log messages and comments contain no emoji or decorative symbols."
+rationale: "They render inconsistently in terminals and logs and carry no information a word would not."
+fix:
+  human: "Replace the symbol with a word or remove it."
+  agent: "Replace each symbol with plain text; keep symbols that are test data."
+refs: ["https://fleetlint.org/baseline/#slop"]

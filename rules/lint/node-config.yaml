@@ -1,0 +1,20 @@
+id: lint/node-config
+title: TypeScript strict mode and a linter are configured
+kind: expr
+severity: warning
+stacks: [node]
+expr: >
+  (file("tsconfig.json") && json("tsconfig.json") != null && has(json("tsconfig.json").compilerOptions)
+    && has(json("tsconfig.json").compilerOptions.strict) && json("tsconfig.json").compilerOptions.strict == true)
+  && (exists("eslint.config.*") || file("biome.json") || file("biome.jsonc"))
+message: "tsconfig strict mode or linter config (eslint.config.* / biome.json) is missing"
+requirement: "tsconfig.json has strict: true (plus noUncheckedIndexedAccess) and ESLint strictTypeChecked or Biome is configured."
+rationale: Without strict types and a type-aware linter, floating promises and any-typed code go unnoticed.
+fix:
+  human: "Enable strict in tsconfig.json and add an eslint flat config; `fleetlint fix --apply` writes eslint.config.mjs, merges the strict flags into tsconfig.json and adds the eslint packages to devDependencies (then run the package manager's install)."
+  agent: "Set compilerOptions.strict and noUncheckedIndexedAccess in tsconfig.json; add eslint.config.mjs with typescript-eslint strictTypeChecked and the plugins to devDependencies; install and fix what the linter reports."
+  actions:
+    - template: node/eslint.config.mjs
+      to: eslint.config.mjs
+    - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
+    - merge: {file: package.json, template: node/devdeps-lint.json}

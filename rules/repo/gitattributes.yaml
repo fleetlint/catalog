@@ -1,0 +1,15 @@
+id: repo/gitattributes
+title: .gitattributes normalizes line endings
+kind: expr
+severity: warning
+scope: root
+expr: file(".gitattributes") && text(".gitattributes").contains("text=auto")
+message: ".gitattributes with `* text=auto` is missing"
+requirement: ".gitattributes sets `* text=auto eol=lf` and marks binaries."
+rationale: Prevents CRLF/LF diffs and corrupted binaries across operating systems.
+fix:
+  human: "Add .gitattributes with `* text=auto eol=lf`; `fleetlint fix --apply` writes the template."
+  agent: "Create .gitattributes with `* text=auto eol=lf` and `binary` for image, font, archive and media extensions."
+  actions:
+    - template: gitattributes
+      to: .gitattributes

@@ -1,0 +1,16 @@
+id: slop/trivial-asserts
+title: No assertions that cannot fail
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("test", r'expect\((true|1)\)\.(toBe|toEqual)\((true|1)\)|assert\s+True\b|assertTrue\(true\)|assert!\(true\)|expect\(true,\s*(isTrue|true)\)')
+expr: >
+  false
+message: "assertion that cannot fail"
+requirement: "No test asserts a constant (`expect(true).toBe(true)`, `assert True`)."
+rationale: "It raises coverage and tests nothing."
+fix:
+  human: "Assert the behaviour, or delete the test."
+  agent: "Replace with an assertion on the observable outcome; delete the test if there is none."
+refs: ["https://fleetlint.org/baseline/#slop"]

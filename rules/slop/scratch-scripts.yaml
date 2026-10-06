@@ -1,0 +1,16 @@
+id: slop/scratch-scripts
+title: No scratch scripts at the repository root
+kind: expr
+severity: warning
+scope: root
+foreach: >
+  tracked().filter(p, p.matches(r'^(test|fix|debug|temp|tmp|scratch|try|quick)[_-][^/]*\.(py|js|ts|sh|go|dart|kt|rs)$'))
+expr: >
+  false
+message: "scratch script at the repository root"
+requirement: "No one-off scripts such as `fix_imports.py`, `debug-auth.js` or `tmp_check.sh` are tracked at the root."
+rationale: "They were written to answer one question once; nobody knows later whether they are safe to run or to delete."
+fix:
+  human: "Delete the script, or move it into a tools directory with a name that says what it does."
+  agent: "Report the script; delete it only if nothing references it, otherwise move it under scripts/ with a descriptive name."
+refs: ["https://fleetlint.org/baseline/#slop"]

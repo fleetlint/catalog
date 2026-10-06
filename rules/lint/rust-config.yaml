@@ -1,0 +1,14 @@
+id: lint/rust-config
+title: clippy lints are configured in Cargo.toml
+kind: expr
+severity: warning
+stacks: [rust]
+expr: toml("Cargo.toml") != null && (has(toml("Cargo.toml").lints) || (has(toml("Cargo.toml").workspace) && has(toml("Cargo.toml").workspace.lints)))
+message: "Cargo.toml has no [lints] table"
+requirement: Cargo.toml configures clippy (pedantic warn, unwrap_used/expect_used/panic deny outside tests) in a [lints] table.
+rationale: Unwrap-driven crashes are the Rust equivalent of swallowed errors.
+fix:
+  human: "Add the [lints] table from the Rust stack profile."
+  agent: "Add [lints.rust] and [lints.clippy] tables per the Rust profile to Cargo.toml."
+  actions:
+    - append: {file: Cargo.toml, template: rust/cargo-lints.toml, unless: '(?m)^\[(workspace\.)?lints'}

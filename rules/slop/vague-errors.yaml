@@ -1,0 +1,16 @@
+id: slop/vague-errors
+title: Error messages say what failed
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'(?i)\x22(something went wrong|an error (has )?occurred|unknown error|oops)\x22')
+expr: >
+  false
+message: "error message says nothing"
+requirement: "No error message is just \"something went wrong\", \"an error occurred\" or \"unknown error\"."
+rationale: "The person reading it cannot act on it and the person debugging it cannot find it."
+fix:
+  human: "Say what failed and with which input."
+  agent: "Rewrite the message to name the operation and the offending input; do not include secrets."
+refs: ["https://fleetlint.org/baseline/#slop"]

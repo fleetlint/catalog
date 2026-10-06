@@ -1,0 +1,16 @@
+id: slop/arbitrary-delays
+title: No sleeps outside tests
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("nontest", r'\b(sleep|Thread\.sleep|time\.Sleep|Future\.delayed|setTimeout|delay)\s*\(')
+expr: >
+  false
+message: "sleep or fixed delay outside tests"
+requirement: "Non-test code does not wait a fixed time for something to happen."
+rationale: "A delay that papers over an ordering problem fails on a slower machine and wastes time on a faster one."
+fix:
+  human: "Wait for the event or condition itself; keep real backoff and rate limiting with a comment saying so."
+  agent: "Report each delay; replace it with waiting on the actual condition where that is evident, and leave deliberate backoff alone."
+refs: ["https://fleetlint.org/baseline/#slop"]

@@ -1,0 +1,24 @@
+id: release/changelog-in-release
+title: Release notes are generated from commits
+kind: outcome
+severity: info
+tiers: [1]
+scope: root
+when: release.exists && tagged_workflows().size() > 0
+satisfiers:
+  - name: goreleaser-changelog
+    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
+    expr: >
+      !(has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").changelog)
+        && has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").changelog.disable)
+        && yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").changelog.disable == true)
+  - name: git-cliff
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("orhun/git-cliff-action") || s.run.contains("git-cliff")))
+  - name: release-please-or-changesets
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("googleapis/release-please-action") || s.uses.startsWith("changesets/action")))
+message: "release notes are not generated from the commit history"
+requirement: Release notes come from git-cliff, GoReleaser's changelog, release-please or changesets, so they match the CHANGELOG.
+rationale: Hand-written release notes drift from the changelog and from what was shipped.
+fix:
+  human: "Use git-cliff --latest --strip header as the release body."
+  agent: "Add a step that runs `git-cliff --latest --strip header -o release-notes.md` and pass it as the release body."

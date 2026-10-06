@@ -1,0 +1,16 @@
+id: slop/banner-comments
+title: No banner or divider comments
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'^\s*(//|#)\s*[─━═=\-*#~]{4,}')
+expr: >
+  false
+message: "banner or divider comment"
+requirement: "No comment lines made of repeated symbols."
+rationale: "A file that needs dividers needs splitting."
+fix:
+  human: "Delete the banner; split the file if the sections are separate concerns."
+  agent: "Delete banner comments; do not restructure the file in the same change."
+refs: ["https://fleetlint.org/baseline/#slop"]

@@ -1,0 +1,17 @@
+id: ci/no-pull-request-target
+title: pull_request_target never runs untrusted code
+kind: expr
+severity: error
+scope: root
+when: repo.public && workflows().exists(w, "pull_request_target" in triggers(w))
+foreach: workflows().filter(w, "pull_request_target" in triggers(w))
+expr: >
+  !steps(item).exists(s, s.uses.startsWith("actions/checkout")
+    && has(s.with.ref) && string(s.with.ref).matches("head|pull_request"))
+message: "pull_request_target workflow checks out the pull request head"
+requirement: "A `pull_request_target` workflow runs with repository secrets and must never check out or execute the PR's code."
+rationale: This is the canonical workflow injection, used in real supply-chain attacks.
+fix:
+  human: "Use `pull_request` for anything that builds the PR; keep pull_request_target for labelling only."
+  agent: "Change the trigger to pull_request, or remove the checkout of the PR head from the pull_request_target workflow."
+refs: ["https://fleetlint.org/baseline/#security"]

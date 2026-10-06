@@ -1,0 +1,19 @@
+id: slop/vague-commit-messages
+title: Commit subjects say what changed
+kind: expr
+severity: info
+scope: root
+when: repo.has_git
+params:
+  commits: 200
+foreach: >
+  commits(params.commits)
+expr: >
+  !item.subject.matches(r'(?i)^(fix(es)?|update[sd]?|wip|changes?|misc|stuff|tmp|test|minor|cleanup|\.)\.?$')
+message: "commit subject says nothing"
+requirement: "No commit in the recent history (`params.commits`, default 200) has a subject that is only `fix`, `update`, `wip`, `changes`, `misc` or `cleanup`."
+rationale: "The history is the record of why the code changed; a one-word subject records nothing."
+fix:
+  human: "Write the subject from the diff; squash work-in-progress commits before merging."
+  agent: "Write subjects from the diff. Do not rewrite pushed history without the user's decision."
+refs: ["https://fleetlint.org/baseline/#slop"]

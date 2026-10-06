@@ -1,0 +1,15 @@
+id: hooks/conventional-commits
+title: Commit messages are checked
+kind: expr
+severity: warning
+scope: root
+when: file(".pre-commit-config.yaml")
+expr: >
+  yaml(".pre-commit-config.yaml").repos.exists(r,
+    r.repo.contains("conventional") || (has(r.hooks) && r.hooks.exists(h, h.id.contains("commit"))))
+message: "no commit-msg hook enforcing conventional commits"
+requirement: A commit-msg hook rejects messages that are not conventional commits.
+rationale: The changelog and version bump are generated from commit types; one bad message breaks both.
+fix:
+  human: "Add the conventional-pre-commit hook with stages: [commit-msg]."
+  agent: "Add compilerla/conventional-pre-commit to .pre-commit-config.yaml with stages: [commit-msg] and the allowed types."

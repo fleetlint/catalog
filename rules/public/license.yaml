@@ -1,0 +1,13 @@
+id: public/license
+title: Public repository has a LICENSE
+kind: expr
+severity: error
+scope: root
+when: repo.public
+expr: exists("LICENSE*") || exists("COPYING*")
+message: "LICENSE file is missing"
+requirement: A public repository has a LICENSE file (and an SPDX identifier in the package manifest).
+rationale: Without a license, nobody may legally use the code.
+fix:
+  human: "Add LICENSE (MIT or Apache-2.0) with the current year and your name."
+  agent: "Ask the user which license; add the LICENSE file and the SPDX identifier to the package manifest."

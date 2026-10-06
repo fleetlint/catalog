@@ -1,0 +1,14 @@
+id: ci/job-timeouts
+title: Workflow jobs have timeouts
+kind: expr
+severity: info
+scope: root
+when: workflows().size() > 0
+foreach: workflows()
+expr: jobs(item).all(j, j.timeout_minutes > 0 || j.uses != "")
+message: "a job has no timeout-minutes"
+requirement: "Every job sets `timeout-minutes` (reusable-workflow jobs excepted) so a hang cannot burn the runner budget."
+rationale: The default job timeout is six hours.
+fix:
+  human: "Add `timeout-minutes: 15` (or what the job needs) to each job."
+  agent: "Add timeout-minutes to each job in the flagged workflow, sized to roughly twice its typical duration."

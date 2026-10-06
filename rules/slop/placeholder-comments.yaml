@@ -1,0 +1,16 @@
+id: slop/placeholder-comments
+title: No placeholder implementations
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("code", r'(?i)(//|#|/\*)\s*.*\b(in a real (app|implementation|world|project|scenario)|for simplicity|simplified (version|implementation|logic)|placeholder (implementation|logic|for now)|mock (data|implementation) for now|not (yet )?implemented|implement (this|later|me)|dummy (data|value|implementation)|you (would|should|could|might) (want|need) to)')
+expr: >
+  false
+message: "comment marks a placeholder or simplified implementation"
+requirement: "No code is marked as a stand-in (\"in a real app\", \"for simplicity\", \"not implemented\", \"mock data for now\")."
+rationale: "The comment admits the code does not do what its name says."
+fix:
+  human: "Implement it, or remove the code and track the gap in an issue."
+  agent: "Report each placeholder; implement it only when the intended behaviour is clear from the callers, otherwise ask."
+refs: ["https://fleetlint.org/baseline/#slop"]

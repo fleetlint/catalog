@@ -1,0 +1,28 @@
+id: lint/go-config
+title: A Go linter is configured strictly
+kind: outcome
+severity: warning
+stacks: [go]
+satisfiers:
+  - name: golangci-lint-v2
+    when: file(".golangci.yml") || file(".golangci.yaml") || file(".golangci.toml") || file(".golangci.json")
+    expr: >
+      text(file(".golangci.yml") ? ".golangci.yml" : (file(".golangci.yaml") ? ".golangci.yaml" : (file(".golangci.toml") ? ".golangci.toml" : ".golangci.json")))
+        .matches("(?m)^\\s*\"?version\"?\\s*[:=]\\s*\"?2\"?")
+  - name: staticcheck-and-revive
+    expr: file("staticcheck.conf") && (file("revive.toml") || file(".revive.toml"))
+partials:
+  - name: golangci-v1
+    severity: warning
+    expr: file(".golangci.yml") || file(".golangci.yaml") || file(".golangci.toml")
+    message: "the golangci-lint configuration is not in the v2 format (version: \"2\")"
+message: "no Go linter configuration (golangci-lint v2, or staticcheck with revive)"
+requirement: "A Go linter configuration is committed: golangci-lint v2 enabling errcheck, govet, staticcheck, errorlint, gosec, gocognit and funlen at least, or staticcheck together with revive. Another linter setup is added with `accept:`."
+rationale: Default linting misses the swallowed errors and oversized functions the baseline bans.
+fix:
+  human: "Add .golangci.yml (version 2) from the Go stack profile."
+  agent: "Create .golangci.yml with version: \"2\" and the linters listed in the Go stack profile, with a new-from-rev ratchet."
+  actions:
+    - template: golangci.yml
+      to: .golangci.yml
+refs: ["https://fleetlint.org/stacks/#go"]

@@ -1,0 +1,16 @@
+id: slop/placeholder-values
+title: No placeholder values outside tests
+kind: expr
+severity: info
+scope: root
+foreach: >
+  codegrep("nontest", r'(?i)lorem ipsum|your[-_ ]?(api[-_ ]?key|token|secret|password)|\bchange[-_]?me\b|\breplace[-_]?me\b|example\.(com|org)\b')
+expr: >
+  false
+message: "placeholder value outside tests"
+requirement: "Non-test code contains no `lorem ipsum`, `your-api-key`, `changeme` or `example.com` values."
+rationale: "A placeholder that ships is a broken feature or a default credential."
+fix:
+  human: "Read the value from configuration and fail at startup when it is missing."
+  agent: "Replace with a configuration lookup validated at startup; ask where the real value comes from if that is unclear."
+refs: ["https://fleetlint.org/baseline/#slop"]

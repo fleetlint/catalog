@@ -1,0 +1,14 @@
+id: repo/gitignore-present
+title: A .gitignore exists
+kind: expr
+severity: warning
+scope: root
+expr: file(".gitignore")
+message: ".gitignore is missing"
+requirement: The repository root has a .gitignore.
+rationale: Without one, build output and local files end up tracked.
+fix:
+  human: "Add a .gitignore for the stack (gitignore.io or the stack template)."
+  agent: "Create .gitignore with the standard patterns for the detected stacks and OS/editor files."
+  actions:
+    - gitignore: [".DS_Store", "*.log", ".env", ".env.*", "!.env.example"]

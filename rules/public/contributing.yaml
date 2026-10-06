@@ -1,0 +1,14 @@
+id: public/contributing
+title: Public repository explains how to contribute
+kind: expr
+severity: info
+scope: root
+tiers: [1]
+when: repo.public
+expr: exists("CONTRIBUTING*") || exists(".github/CONTRIBUTING*") || exists("docs/CONTRIBUTING*")
+message: "CONTRIBUTING.md is missing"
+requirement: "CONTRIBUTING.md states how to set up, run `make check`, and what a pull request needs."
+rationale: It is the difference between a drive-by issue and a merged fix.
+fix:
+  human: "Add CONTRIBUTING.md: setup, make check, commit convention, PR expectations."
+  agent: "Write CONTRIBUTING.md from the Makefile targets and hook configuration actually present; keep it under one page."

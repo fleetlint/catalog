@@ -1,0 +1,15 @@
+id: changelog/present
+title: CHANGELOG.md exists
+kind: expr
+severity: warning
+scope: root
+tiers: [1, 2]
+expr: file("CHANGELOG.md")
+message: "CHANGELOG.md is missing"
+requirement: The repository keeps a CHANGELOG.md in Keep a Changelog format.
+rationale: Users and future you need to know what changed between versions without reading commits.
+fix:
+  human: "Add cliff.toml and generate CHANGELOG.md with git-cliff."
+  agent: "Add cliff.toml from the template and run `git-cliff -o CHANGELOG.md`."
+  actions:
+    - template: CHANGELOG.md

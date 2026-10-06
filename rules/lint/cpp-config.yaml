@@ -1,0 +1,18 @@
+id: lint/cpp-config
+title: clang-tidy and clang-format are configured
+kind: expr
+severity: warning
+stacks: [cpp]
+expr: file(".clang-tidy") && file(".clang-format")
+message: ".clang-tidy or .clang-format is missing"
+requirement: "A `.clang-tidy` with `WarningsAsErrors` and a `.clang-format` at the root; the build exports `compile_commands.json` so clang-tidy sees every translation unit."
+rationale: Without a committed configuration every developer's editor runs different checks and the build runs none.
+fix:
+  human: "Add .clang-tidy and .clang-format (`fleetlint fix --apply` writes both) and run clang-tidy in the lint target."
+  agent: "Add .clang-tidy and .clang-format from the templates and a lint target that runs clang-tidy over compile_commands.json; fix findings rather than disabling checks."
+  actions:
+    - template: cpp/clang-tidy
+      to: .clang-tidy
+    - template: cpp/clang-format
+      to: .clang-format
+refs: ["https://fleetlint.org/stacks/#cc"]

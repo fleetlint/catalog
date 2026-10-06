@@ -1,0 +1,15 @@
+id: public/security-policy
+title: Public repository has SECURITY.md
+kind: expr
+severity: warning
+scope: root
+when: repo.public && repo.tier == 1
+expr: file("SECURITY.md") || file(".github/SECURITY.md")
+message: "SECURITY.md is missing"
+requirement: SECURITY.md explains how to report a vulnerability privately.
+rationale: Reporters otherwise open public issues, which disclose the problem before a fix exists.
+fix:
+  human: "Add SECURITY.md with a private contact and expected response time."
+  agent: "Add SECURITY.md: supported versions, private reporting channel, response expectation."
+  actions:
+    - template: SECURITY.md

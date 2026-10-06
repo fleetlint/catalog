@@ -1,0 +1,16 @@
+id: ci/concurrency-cancel
+title: PR workflows cancel superseded runs
+kind: expr
+severity: info
+scope: root
+when: workflows().exists(w, "pull_request" in triggers(w))
+foreach: workflows().filter(w, "pull_request" in triggers(w))
+expr: >
+  yaml(item) != null && has(yaml(item).concurrency)
+  && yaml(item).concurrency["cancel-in-progress"] != false
+message: "pull-request workflow has no concurrency group with cancel-in-progress"
+requirement: "Workflows triggered by pull requests declare `concurrency: {group: ..., cancel-in-progress: true}`."
+rationale: Every push to a PR otherwise queues another full run behind the obsolete one.
+fix:
+  human: "Add a concurrency block keyed on the workflow and ref with cancel-in-progress: true."
+  agent: "Add `concurrency:\\n  group: ${{ github.workflow }}-${{ github.ref }}\\n  cancel-in-progress: true` at the top level of the workflow."

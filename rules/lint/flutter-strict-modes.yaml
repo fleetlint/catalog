@@ -1,0 +1,22 @@
+id: lint/flutter-strict-modes
+title: The Dart analyzer runs in all three strict modes
+kind: expr
+severity: warning
+stacks: [flutter]
+when: file("analysis_options.yaml") && yaml("analysis_options.yaml") != null
+params:
+  required: [strict-casts, strict-inference, strict-raw-types]
+foreach: params.required
+expr: >
+  has(yaml("analysis_options.yaml").analyzer) && has(yaml("analysis_options.yaml").analyzer.language)
+  && item in yaml("analysis_options.yaml").analyzer.language
+  && yaml("analysis_options.yaml").analyzer.language[item] == true
+message: "analyzer strict mode is not enabled"
+requirement: "`analyzer.language` in analysis_options.yaml sets every mode in `params.required` to true."
+rationale: Each mode closes a different hole through which `dynamic` enters the program unnoticed.
+fix:
+  human: "Set the missing modes to true under analyzer.language."
+  agent: "Set each reported mode to true under analyzer.language and list the analyzer errors that appear instead of adding ignores."
+  actions:
+    - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]
