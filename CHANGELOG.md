@@ -21,4 +21,6 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ### Fixed
 
+- `slop/focused-tests` reads test files only, and looks for `fdescribe`, `fit` and `.only` in JavaScript and TypeScript and for `solo: true` in Dart; a Go function called `fit` was an error before.
+- `repo/no-tracked-env` accepts encrypted environment files (`.sops`, `.enc`, `.age`, `.gpg`, `.asc`).
 - The agent instructions of `ci/least-privilege` and `ci/concurrency-cancel` showed an escaped `\n`; they now give the YAML in flow form.

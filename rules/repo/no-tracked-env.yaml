@@ -4,10 +4,10 @@ kind: expr
 severity: error
 foreach: >
   tracked().filter(f, f.matches('(^|/)\\.env(\\.[^/]*)?$')
-                   && !f.matches('\\.(example|sample|template|dist)$'))
+                   && !f.matches('\\.(example|sample|template|dist|sops|enc|age|gpg|asc)$'))
 expr: "false"
 message: "a .env file is tracked; only .env.example-style templates belong in git"
-requirement: Environment files that may hold credentials are never committed; templates with placeholder values are fine.
+requirement: Environment files that may hold credentials are never committed; templates with placeholder values (`.env.example`, `.sample`, `.template`, `.dist`) and encrypted files (`.sops`, `.enc`, `.age`, `.gpg`, `.asc`) are fine.
 rationale: A tracked .env is the most common way credentials leak into history.
 fix:
   human: "git rm --cached the .env file, add .env* to .gitignore, rotate any secret it contained."
