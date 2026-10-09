@@ -4,9 +4,10 @@ kind: expr
 severity: error
 scope: root
 when: repo.public
-expr: >
-  !tracked().exists(f, f.matches('(^|/)(CLAUDE|CLAUDE\\.local|AGENTS)\\.md$')
-                    || f.startsWith('.claude/') || f.startsWith('.agent/'))
+foreach: >
+  tracked().filter(f, f.matches('(^|/)(CLAUDE|CLAUDE\\.local|AGENTS)\\.md$')
+                   || f.startsWith('.claude/') || f.startsWith('.agent/'))
+expr: "false"
 message: "an agent instruction file is tracked in a public repository"
 requirement: CLAUDE.md, AGENTS.md, .claude/ and .agent/ stay untracked in public repositories (listed in .git/info/exclude).
 rationale: The owner's policy is that public repositories carry no AI tooling artefacts.

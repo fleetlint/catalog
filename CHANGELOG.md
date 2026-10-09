@@ -17,3 +17,4 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 - `repo/no-tracked-junk`, `repo/lockfile-committed` and `ci/actions-pinned` are expressions now instead of code in fleetlint; `ci/actions-pinned` uses `item.match` from `grep`. Only `quality/check-passes` remains `kind: go`.
 - Rules that depend on a tool are outcome rules that list the known alternatives and accept more through `accept:`: `ci/check-workflow`, `lint/go-config`, `deps/vulnerability-scan`, `deps/license-check`, `repo/dev-environment`, and `taskrunner/container` (which replaces `taskrunner/devcontainer`).
 - `taskrunner/targets` and `taskrunner/check-composition` read any task runner (make, just, task, package.json scripts) through `taskrunner.targets`, `taskrunner.deps` and `taskrunner.recipes`; they need a fleetlint that provides those.
+- `repo/no-tracked-env` and `public/no-agent-files` report one finding per offending file with its path, instead of one finding without a location.
