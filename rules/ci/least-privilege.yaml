@@ -12,5 +12,5 @@ requirement: "Every workflow sets top-level `permissions` (normally `contents: r
 rationale: The default token has write access to the repo; a compromised action in a read-only workflow can do far less.
 fix:
   human: "Add `permissions: { contents: read }` at the top of each workflow and widen per job."
-  agent: "Add top-level `permissions:\\n  contents: read` to every workflow lacking it; move any wider permission to the job that needs it."
+  agent: "Add top-level `permissions: { contents: read }` to every workflow lacking it; move any wider permission to the job that needs it."
 refs: ["https://fleetlint.org/baseline/#security"]

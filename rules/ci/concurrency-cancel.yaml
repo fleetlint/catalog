@@ -13,4 +13,4 @@ requirement: "Workflows triggered by pull requests declare `concurrency: {group:
 rationale: Every push to a PR otherwise queues another full run behind the obsolete one.
 fix:
   human: "Add a concurrency block keyed on the workflow and ref with cancel-in-progress: true."
-  agent: "Add `concurrency:\\n  group: ${{ github.workflow }}-${{ github.ref }}\\n  cancel-in-progress: true` at the top level of the workflow."
+  agent: "Add `concurrency: { group: ${{ github.workflow }}-${{ github.ref }}, cancel-in-progress: true }` at the top level of the workflow."
