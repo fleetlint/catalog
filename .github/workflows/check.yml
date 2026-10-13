@@ -52,7 +52,7 @@ jobs:
       - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
       - name: fleetlint (the check target runs it; pin the version you use)
         run: |
-          go install github.com/fleetlint/fleetlint/cmd/fleetlint@ebb5452d8e4130d9103c20f66f3220fb46328027   # the commit whose grammar .fleetlint.yaml uses; a tag after the next release
+          go install github.com/fleetlint/fleetlint/cmd/fleetlint@763cd587e9f4b260407cf0eb3b8d40fd14d87d15   # the commit whose grammar .fleetlint.yaml uses; a tag after the next release
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - run: make check
 
@@ -77,7 +77,7 @@ jobs:
       - uses: oras-project/setup-oras@005458ad77f1c8facd38a094e4af2e69e5607ff4 # v2.0.2
       - name: fleetlint, to load the artifact
         env:
-          FLEETLINT_REF: ebb5452d8e4130d9103c20f66f3220fb46328027   # the fleetlint commit that reads catalog: {oci: ...}
+          FLEETLINT_REF: 763cd587e9f4b260407cf0eb3b8d40fd14d87d15   # the fleetlint commit that reads catalog: {oci: ...}
         run: |
           go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
