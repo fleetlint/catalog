@@ -52,6 +52,36 @@ jobs:
       - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
       - name: fleetlint (the check target runs it; pin the version you use)
         run: |
-          go install github.com/fleetlint/fleetlint/cmd/fleetlint@55252cf5728b3295c7ec6178e81f1228d5c7ac58   # the commit whose grammar .fleetlint.yaml uses; a tag after the next release
+          go install github.com/fleetlint/fleetlint/cmd/fleetlint@FLEETLINT_COMMIT   # the commit whose grammar .fleetlint.yaml uses; a tag after the next release
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
       - run: make check
+
+  # The artifact a tag publishes (publish.yml), built and loaded on every
+  # change: a catalog version that fleetlint cannot read fails here, not
+  # after an immutable tag.
+  artifact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      registry:
+        image: docker.io/library/registry@sha256:46faa9a1ae6813194b53921a370f2f4f8c5e1aae228a89bceafef5847a6a3278 # 2
+        ports: ["5000:5000"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: true
+      - uses: oras-project/setup-oras@005458ad77f1c8facd38a094e4af2e69e5607ff4 # v2.0.2
+      - name: fleetlint, to load the artifact
+        env:
+          FLEETLINT_REF: FLEETLINT_COMMIT   # the fleetlint commit that reads catalog: {oci: ...}
+        run: |
+          go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Push to a throwaway registry and load every preset from it
+        run: |
+          digest=$(scripts/oci-push.sh localhost:5000/fleetlint/catalog:ci --plain-http)
+          scripts/oci-check.sh "localhost:5000/fleetlint/catalog:ci@${digest}"

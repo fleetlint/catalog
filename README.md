@@ -30,6 +30,8 @@ catalog: { version: v0.1.0 }     # a tag or a full commit SHA of this repository
 extends: [fleetlint:recommended]
 ```
 
+The same version is published as a signed OCI artifact with every tag (`.github/workflows/publish.yml`), the whole tree in one artifact; pin it with `catalog: { oci: ghcr.io/fleetlint/catalog:v0.1.0 }`. `scripts/oci-push.sh` builds it and `scripts/oci-check.sh` loads it with fleetlint; the check workflow runs both against a throwaway registry on every change, so a tag publishes only what already loaded.
+
 Each preset states the engine level it was written for (`metadata.engine`). A fleetlint that cannot run a version says so in one message instead of failing rule by rule.
 
 To build your own baseline on these presets, write a catalog that includes one and adjusts it with `overrides:` (see [organisations](https://fleetlint.org/organisations/)).

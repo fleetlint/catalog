@@ -1,7 +1,10 @@
-# Publishes the catalog as a signed OCI artifact on every tag, so sources
-# files can reference `oci://ghcr.io/fleetlint/catalog:<tag>` with
-#   signers: [{issuer: https://token.actions.githubusercontent.com,
-#              subject_regex: '^https://github\.com/fleetlint/catalog/\.github/workflows/publish\.yml@refs/tags/v'}]
+# Publishes this catalog version as a signed OCI artifact on every tag: the
+# whole tree (presets/, rules/, stacks/, templates/, aliases.yaml), the same
+# version the git tag holds. A repository pins it with
+#   catalog: {oci: ghcr.io/fleetlint/catalog:<tag>}
+# and fleetlint verifies the signature of this workflow on a version tag.
+# check.yml loads the same artifact on every push to main, so a tag only
+# publishes what was already tested.
 # Actions are pinned to commit SHAs; Renovate keeps the pins current.
 name: publish
 on:
@@ -25,23 +28,26 @@ jobs:
           persist-credentials: false
       - uses: oras-project/setup-oras@005458ad77f1c8facd38a094e4af2e69e5607ff4 # v2.0.2
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
-      - name: Push presets and templates as one artifact
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+          cache: false   # a release build reads no cache a pull request could have written
+      - name: fleetlint, to load what was published
+        env:
+          FLEETLINT_REF: FLEETLINT_COMMIT   # the fleetlint commit that reads catalog: {oci: ...}
+        run: |
+          go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+      - name: Push the catalog version as one artifact
+        id: push
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "$GHCR_TOKEN" | oras login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
-          # Every preset becomes a root-level catalog file; templates keep their paths.
-          files=()
-          for p in presets/*.yaml; do cp "$p" "./$(basename "$p")"; files+=("$(basename "$p")"); done
-          while IFS= read -r t; do files+=("$t"); done < <(find templates -type f | sort)
-          ref="ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}"
-          oras push --artifact-type application/vnd.fleetlint.catalog.v1 \
-            --annotation "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
-            --annotation "org.opencontainers.image.version=${GITHUB_REF_NAME}" \
-            --format go-template='{{.digest}}' "$ref" "${files[@]}" > digest.txt
-          echo "digest=$(cat digest.txt)" >> "$GITHUB_OUTPUT"
-        id: push
+          digest=$(scripts/oci-push.sh "ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}" \
+            --annotation "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}")
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
       - name: Sign the artifact (keyless, sigstore bundle attached as a referrer)
         run: cosign sign --yes --new-bundle-format "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
       - name: Verify what was just signed
@@ -50,3 +56,5 @@ jobs:
             --certificate-identity-regexp "^${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/\.github/workflows/publish\.yml@refs/tags/v" \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com \
             "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+      - name: Load it the way a repository pins it (by tag, through the signature)
+        run: scripts/oci-check.sh "ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}"
