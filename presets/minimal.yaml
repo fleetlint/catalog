@@ -2,19 +2,20 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-minimal
-  version: 0.1.0
-  engine: 2
+  engine: 3
   description: >
-    The floor for any repository, including experiments: nothing secret or
-    accidental is tracked, hooks exist, and public repos carry no agent files.
+    The floor for any repository, including experiments: nothing secret,
+    accidental or oversized is tracked, no conflict markers are committed,
+    hooks exist, and public repos have a license.
 
 
 # The rules live in rules/<family>/<name>.yaml; a preset selects them.
 rules:
   - use: repo/no-tracked-junk
   - use: repo/no-tracked-env
+  - use: repo/no-large-files
   - use: repo/gitignore-present
   - use: hooks/config-present
   - use: hooks/secret-scan
-  - use: public/no-agent-files
-  - use: public/no-ai-attribution
+  - use: slop/conflict-markers
+  - use: public/license

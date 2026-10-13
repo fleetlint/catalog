@@ -3,13 +3,15 @@ title: Public repository has SECURITY.md
 kind: expr
 severity: warning
 scope: root
-when: repo.public && repo.tier == 1
-expr: file("SECURITY.md") || file(".github/SECURITY.md")
+tiers: [1]
+when: repo.public
+expr: exists("SECURITY*") || exists(".github/SECURITY*") || exists("docs/SECURITY*") || exists(".gitea/SECURITY*")
 message: "SECURITY.md is missing"
-requirement: SECURITY.md explains how to report a vulnerability privately.
+requirement: "A SECURITY file at the root or in `.github/`, `docs/` or `.gitea/` explains how to report a vulnerability privately."
 rationale: Reporters otherwise open public issues, which disclose the problem before a fix exists.
 fix:
   human: "Add SECURITY.md with a private contact and expected response time."
   agent: "Add SECURITY.md: supported versions, private reporting channel, response expectation."
   actions:
     - template: SECURITY.md
+refs: ["https://fleetlint.org/baseline/#public-repositories"]

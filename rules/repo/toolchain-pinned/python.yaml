@@ -1,0 +1,12 @@
+id: repo/toolchain-pinned/python
+kind: expr
+expr: >
+  scan(".python-version", r'^\s*\d').size() > 0
+  || scan(".tool-versions", r'^\s*(python)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(python)"?\s*=\s*[^#\n]*\d').size() > 0)
+message: "no Python version is pinned"
+requirement: "`.python-version` names a version, or `.tool-versions`/mise names python with a version. `requires-python` is a range, not a pin."
+fix:
+  human: "Run `uv python pin 3.x` (writes .python-version)."
+refs: ["https://fleetlint.org/stacks/#python"]

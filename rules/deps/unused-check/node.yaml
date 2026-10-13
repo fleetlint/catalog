@@ -1,0 +1,15 @@
+id: deps/unused-check/node
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: knip-or-depcheck
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\b(knip|depcheck)\b') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\b(knip|depcheck)\b') && !l.matches(params.skip))))
+  - name: package-json-script
+    expr: grep("package.json", r'^\s*"[^"]+"\s*:\s*"[^"]*\b(knip|depcheck)\b').size() > 0
+requirement: "A recipe, a package.json script or a CI step runs knip (or depcheck)."
+fix:
+  human: "Run `npx knip --dependencies` in the `audit` target."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

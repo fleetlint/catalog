@@ -1,0 +1,15 @@
+id: repo/toolchain-pinned/java
+kind: expr
+expr: >
+  scan(".java-version", r'^\s*\d').size() > 0 || scan(".sdkmanrc", r'^\s*java\s*=\s*\d').size() > 0
+  || (file("gradle/gradle-daemon-jvm.properties") && text("gradle/gradle-daemon-jvm.properties").matches(r'toolchainVersion\s*=\s*\d'))
+  || glob("**/build.gradle*").exists(f, text(f).matches(r'languageVersion(\.set\(|\s*=\s*)\s*JavaLanguageVersion\.of\(\s*\d|jvmToolchain\s*\(\s*\d'))
+  || (file("pom.xml") && text("pom.xml").matches(r'<requireJavaVersion>\s*<version>\s*[\[(]?\d'))
+  || scan(".tool-versions", r'^\s*(java)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(java)"?\s*=\s*[^#\n]*\d').size() > 0)
+message: "no JDK version is pinned"
+requirement: "The JDK is pinned: `.java-version`, `.sdkmanrc` with `java=`, a Gradle toolchain (`JavaLanguageVersion.of(n)`, `jvmToolchain(n)`) or `gradle-daemon-jvm.properties`, the Maven enforcer's `requireJavaVersion`, or `.tool-versions`/mise naming java. The Gradle and Maven wrappers pin the build tool, not the JDK, and `maven.compiler.release` only sets the bytecode level; none of them counts."
+fix:
+  human: "Add a Gradle toolchain (`java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }`) or a .java-version file."
+refs: ["https://fleetlint.org/stacks/#java"]

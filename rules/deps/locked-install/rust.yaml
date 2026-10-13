@@ -1,0 +1,13 @@
+id: deps/locked-install/rust
+kind: expr
+params:
+  noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+expr: >
+  (taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\bcargo\s[^;&|]*--(locked|frozen)\b'))
+message: "no cargo invocation uses --locked"
+requirement: "A recipe or CI step runs cargo with `--locked` (or `--frozen`), so a Cargo.lock that no longer matches Cargo.toml fails the build instead of being rewritten."
+fix:
+  human: "Add `--locked` to the cargo build/test commands in CI and the check targets."
+refs: ["https://fleetlint.org/stacks/#rust"]

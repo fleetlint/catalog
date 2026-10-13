@@ -1,0 +1,32 @@
+id: ci/sast
+title: Code is scanned by a SAST tool
+kind: outcome
+severity: info
+scope: root
+tiers: [1]
+satisfiers:
+  - name: codeql
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("github/codeql-action/")))
+  - name: semgrep
+    expr: >
+      workflows().exists(w, steps(w).exists(s, s.run.matches("\\b(semgrep|opengrep) (ci|scan)\\b") || s.uses.matches("^(semgrep|returntocorp)/")))
+      || [".pre-commit-config.yaml", taskrunner.file].exists(f, text(f).matches("\\b(semgrep|opengrep)\\b"))
+  - name: gitlab-sast
+    expr: >
+      workflows().exists(w, ci_kind(w) == "gitlab" && includes(w).exists(i,
+        (i.type == "template" && i.target.matches("(^|/)SAST(\\.latest)?\\.gitlab-ci\\.yml$"))
+        || (i.type == "component" && i.target.matches("/components/sast(/|$)"))))
+  - name: sonarqube
+    expr: >
+      workflows().exists(w, steps(w).exists(s, s.uses.matches("^SonarSource/sonar(qube|cloud)-(scan-)?(github-)?action") || s.run.matches("\\bsonar-scanner\\b")))
+message: "no SAST scan (CodeQL, Semgrep, GitLab SAST, SonarQube) runs on the code"
+requirement: >
+  A static application security test runs in CI or the task runner: CodeQL (github/codeql-action),
+  Semgrep or Opengrep, the GitLab SAST template or component, or SonarQube. Linters with security
+  rules count under the lint rules, not here. CodeQL default setup, which leaves no file in the
+  repository, and other scanners are declared with `accept:`.
+rationale: SAST follows data from input to dangerous sinks across files, which per-file linters do not; on GitHub CodeQL is free for public repositories.
+fix:
+  human: "Add a CodeQL workflow (GitHub advanced setup), include the GitLab SAST component, or add a Semgrep step to CI; with CodeQL default setup, declare it with `accept:`."
+  agent: "Add a CodeQL workflow (github/codeql-action init/analyze, pinned) for the repository's languages, or on GitLab include `components/sast`; run it on pull requests and weekly."
+refs: ["https://fleetlint.org/baseline/#security"]

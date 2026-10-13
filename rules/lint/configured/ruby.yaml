@@ -1,0 +1,22 @@
+id: lint/configured/ruby
+kind: outcome
+satisfiers:
+  # RuboCop uses the nearest .rubocop.yml above each file.
+  - name: rubocop
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".rubocop.yml") || file(d + ".rubocop.yaml"))
+  - name: standard
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".standard.yml"))
+      || (file("Gemfile") && text("Gemfile").matches("(?m)^\\s*gem\\s+[\"']standard[\"']"))
+message: "no RuboCop or Standard configuration"
+requirement: "RuboCop is configured (`.rubocop.yml` in the project or a parent directory) or Standard is used (`.standard.yml` or the `standard` gem); a `.rubocop_todo.yml` is the ratchet, not a permanent allowlist."
+rationale: Ruby's flexibility is only safe with a linter that holds the line on method length, complexity and swallowed exceptions.
+fix:
+  human: "Add .rubocop.yml and the rubocop gems to the Gemfile's development group (`fleetlint fix --apply` does both)."
+  agent: "Add .rubocop.yml from the template, add rubocop with rubocop-performance and rubocop-rspec to the Gemfile, and run `rubocop --autocorrect`."
+  actions:
+    - template: ruby/rubocop.yml
+      to: .rubocop.yml
+    - append: {file: Gemfile, template: ruby/Gemfile-lint, unless: '(?m)^\s*gem\s+["'']rubocop["'']'}
+refs: ["https://fleetlint.org/stacks/#ruby"]

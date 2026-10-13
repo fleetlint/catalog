@@ -1,0 +1,8 @@
+id: repo/lockfile-committed/ruby
+kind: expr
+expr: '"Gemfile.lock" in tracked() || !file("Gemfile")'
+message: "Gemfile.lock is not tracked"
+requirement: "Gemfile.lock is tracked when there is a Gemfile."
+fix:
+  human: "Run `bundle lock` and commit Gemfile.lock."
+refs: ["https://fleetlint.org/stacks/#ruby"]

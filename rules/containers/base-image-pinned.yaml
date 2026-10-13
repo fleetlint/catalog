@@ -4,8 +4,8 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
-when: tracked().exists(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$"))
-foreach: tracked().filter(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$") && !p.endsWith(".dockerignore"))
+when: tracked().exists(p, p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$"))
+foreach: tracked().filter(p, p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$") && !p.endsWith(".dockerignore") && !p.endsWith(".containerignore"))
 expr: >
   lines(item).filter(l, l.matches("(?i)^\\s*FROM\\s+")).all(l,
     l.contains("@sha256:")

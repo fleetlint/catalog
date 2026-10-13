@@ -1,0 +1,18 @@
+id: deps/unused-check/kotlin
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: analyze-task
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bdependency:analyze(-only)?\b|\bbuildHealth\b') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bdependency:analyze(-only)?\b|\bbuildHealth\b') && !l.matches(params.skip))))
+  - name: build-plugin
+    expr: >
+      (file("pom.xml") && text("pom.xml").matches(r'<goal>\s*analyze(-only)?\s*</goal>') && text("pom.xml").matches(r'<failOnWarning>\s*true'))
+      || glob("**/build.gradle*").exists(f, text(f).contains("com.autonomousapps.dependency-analysis")
+           && text(f).matches(r'dependsOn\W[^\n]*buildHealth|onAny\s*\{[^}]*severity\s*\(\s*"fail"'))
+requirement: "maven-dependency-plugin's `analyze` runs with `failOnWarning` (bound in pom.xml or invoked as `dependency:analyze`), or the Gradle dependency-analysis plugin's `buildHealth` runs (in a recipe, a CI step, a task dependency, or with `severity(\"fail\")`)."
+fix:
+  human: "Gradle: apply com.autonomousapps.dependency-analysis and run `buildHealth` in `audit`; Maven: bind dependency:analyze-only with failOnWarning."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

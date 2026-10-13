@@ -1,0 +1,6 @@
+id: quality/coverage-threshold/hugo
+kind: expr
+when: "false"
+expr: "true"
+requirement: "A Hugo site has no tests to measure coverage of; scripts in the site are checked as their own stack."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

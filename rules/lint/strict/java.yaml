@@ -1,0 +1,27 @@
+id: lint/strict/java
+kind: expr
+title: Analyzer findings fail the build
+# The build files of the project, its parents and its convention plugins.
+when: >
+  (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+    + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+  .exists(f, file(f) && text(f).matches("(?m)maven-checkstyle-plugin|[\"']checkstyle[\"']|^\\s*checkstyle\\s*(\\{|$)|error_prone_core|net\\.ltgt\\.errorprone|spotbugs-maven-plugin|com\\.github\\.spotbugs|maven-pmd-plugin|[\"']pmd[\"']|^\\s*pmd\\s*(\\{|$)"))
+expr: >
+  [(["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+    + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*")).filter(f, file(f))]
+  .exists(b,
+    !b.exists(f, text(f).matches("(?i)<(failOnViolation|failsOnError|failOnError)>\\s*false\\s*<|ignoreFailures\\s*=\\s*true"))
+    && (!b.exists(f, text(f).matches("(?m)maven-checkstyle-plugin|[\"']checkstyle[\"']|^\\s*checkstyle\\s*(\\{|$)"))
+      || b.exists(f, text(f).matches("<violationSeverity>\\s*warning\\s*<|maxWarnings\\s*=\\s*0\\b"))
+      || (glob("**/checkstyle*.xml") + ["../", "../../", "../../../"].map(d, d + "config/checkstyle/checkstyle.xml").filter(f, file(f)))
+        .exists(f, text(f).matches("name=\"severity\"\\s+value=\"error\""))))
+message: "an analyzer in the build lets findings pass"
+requirement: "No analyzer in the build is set to let findings pass (`failOnViolation`, `failsOnError` or `failOnError` false, `ignoreFailures = true`), and Checkstyle, when used, fails on warnings too: its configuration sets severity error, `violationSeverity` is warning, or Gradle's `maxWarnings` is 0."
+rationale: An analyzer whose findings only print is skipped by everyone; Checkstyle's defaults report most checks as warnings that do not fail the build.
+fix:
+  human: "Remove the settings that ignore failures and set Checkstyle's severity to error; `fleetlint fix --apply` writes config/checkstyle/checkstyle.xml with severity error when it is missing (Gradle's default location; Maven needs configLocation pointing at it)."
+  agent: "Remove failOnViolation/failOnError false and ignoreFailures true from the build, make Checkstyle fail on warnings (severity error in its configuration), and fix what then fails."
+  actions:
+    - template: java/checkstyle.xml
+      to: config/checkstyle/checkstyle.xml
+refs: ["https://fleetlint.org/stacks/#java"]

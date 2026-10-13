@@ -1,0 +1,13 @@
+id: quality/coverage-threshold/php
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: coverage-check
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bcoverage-check\s+\S+\s+\d') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bcoverage-check\s+\S+\s+\d') && !l.matches(params.skip))))
+requirement: "PHPUnit has no coverage minimum of its own: phpunit-coverage-check (`coverage-check clover.xml 80`) runs after the tests, or a stack-neutral floor applies (diff-cover `--fail-under` on the Cobertura report)."
+fix:
+  human: "Run `vendor/bin/coverage-check build/clover.xml 80` after PHPUnit in the `cover` target."
+refs: ["https://fleetlint.org/stacks/#php"]

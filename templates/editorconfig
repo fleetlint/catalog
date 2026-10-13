@@ -8,13 +8,13 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
-[*.{go,kt,kts,java,py,rs,dart,swift}]
+[*.{kt,kts,java,py,rs,swift,cs,php}]
 indent_size = 4
 
 [*.go]
 indent_style = tab
 
-[Makefile]
+[{Makefile,*.mk}]
 indent_style = tab
 
 [*.md]

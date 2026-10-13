@@ -4,14 +4,15 @@ kind: expr
 severity: error
 scope: root
 foreach: >
-  codegrep("test", r'\b(fdescribe|fit|describe\.only|it\.only|test\.only)\(').filter(m, m.path.matches(r'\.(js|jsx|ts|tsx|mjs|cjs)$'))
+  codegrep("test", r'\b(fdescribe|fit|describe\.only|it\.only|test\.only|context\.only|suite\.only)\(').filter(m, m.path.matches(r'\.(js|jsx|ts|tsx|mjs|cjs)$'))
   + codegrep("test", r'\bsolo:\s*true').filter(m, m.path.endsWith(".dart"))
+  + codegrep("test", r'^\s*f(it|describe|context|specify|example|scenario|feature)[\s(]|\bfocus:\s*true|,\s*:focus\b').filter(m, m.path.endsWith(".rb"))
 expr: >
   false
 message: "a focused test is committed"
-requirement: "No test is marked to run alone: `fdescribe`, `fit` and `.only` in JavaScript and TypeScript tests, `solo: true` in Dart tests. Code outside test files is not read, so a function that happens to be called `fit` is not a finding."
+requirement: "No test is marked to run alone: `fdescribe`, `fit` and `.only` in JavaScript and TypeScript tests, `solo: true` in Dart tests, `fit`, `fdescribe`, `fcontext` and `focus: true` in RSpec. Code outside test files is not read, so a function that happens to be called `fit` is not a finding."
 rationale: "A focused test silently disables every other test in the suite while CI stays green."
 fix:
   human: "Remove the focus marker."
   agent: "Remove the focus marker and run the whole suite."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#tests"]

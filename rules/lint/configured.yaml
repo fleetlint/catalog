@@ -1,0 +1,12 @@
+id: lint/configured
+title: A linter is configured
+kind: capability
+severity: warning
+tiers: [1, 2]
+message: "no linter is configured"
+requirement: "Every stack has a linter beyond the compiler, configured in the repository. A configuration in a parent directory counts for the projects below it when the tool reads it from there."
+rationale: Without a committed configuration every developer's editor runs different checks and the build runs none.
+fix:
+  human: "Configure the stack's linter as described in the stack profile (https://fleetlint.org/stacks/)."
+  agent: "Configure the stack's linter from the stack profile and run it from the lint target; fix what it reports instead of disabling checks."
+refs: ["https://fleetlint.org/baseline/#static-analysis"]

@@ -3,13 +3,21 @@ title: Containers do not run as root
 kind: expr
 severity: warning
 scope: root
-when: tracked().exists(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$"))
-foreach: tracked().filter(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$") && !p.endsWith(".dockerignore"))
+when: >
+  tracked().exists(p, !p.startsWith(".devcontainer/")
+    && p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$"))
+foreach: >
+  tracked().filter(p, !p.startsWith(".devcontainer/")
+    && p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$")
+    && !p.endsWith(".dockerignore") && !p.endsWith(".containerignore"))
 expr: >
-  lines(item).exists(l, l.matches("(?i)^\\s*USER\\s+\\S+") && !l.matches("(?i)^\\s*USER\\s+(root|0)(:\\S+)?\\s*$"))
-  || lines(item).exists(l, l.matches("(?i)^\\s*FROM\\s+\\S*(:nonroot|-nonroot|cgr\\.dev/)"))
-message: "the image runs as root: no USER instruction selects another user"
-requirement: "Every Dockerfile sets a non-root `USER`, or builds on a base image that is non-root by default (`:nonroot` tags)."
+  [lines(item).filter(l, l.matches("(?i)^\\s*(FROM|USER)\\s"))].exists(ins, ins.size() > 0
+    && [ins[ins.size() - 1]].exists(last,
+      (last.matches("(?i)^\\s*USER\\s+\\S+") && !last.matches("(?i)^\\s*USER\\s+(root|0)(:\\S+)?\\s*$"))
+      || (last.matches("(?i)^\\s*FROM\\s+(--\\S+\\s+)*\\S*(:nonroot|-nonroot|cgr\\.dev/)")
+          && !last.matches("(?i)^\\s*FROM\\s+(--\\S+\\s+)*\\S*-dev(\\s|@|$)"))))
+message: "the final stage runs as root: no USER instruction selects another user"
+requirement: "The final stage of every Dockerfile or Containerfile (including `*.Dockerfile`) ends with a non-root `USER`, or builds on a base image that is non-root by default (`:nonroot` tags, Chainguard images other than `-dev`) without switching back to root. Files under `.devcontainer/` are exempt."
 rationale: A process that is root in the container is one kernel or runtime bug away from root on the host, and can rewrite everything in its own image.
 fix:
   human: "Create a user in the final stage and add `USER <name>` before the entrypoint."

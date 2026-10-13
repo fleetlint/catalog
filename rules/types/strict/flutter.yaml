@@ -1,0 +1,29 @@
+id: types/strict/flutter
+kind: expr
+title: The Dart analyzer runs in all three strict modes
+# The nearest analysis_options.yaml, or a local file it includes; very_good_analysis sets all three modes.
+when: >
+  ["", "../", "../../", "../../../"].exists(d, file(d + "analysis_options.yaml"))
+params:
+  required: [strict-casts, strict-inference, strict-raw-types]
+foreach: params.required
+expr: >
+  [["", "../", "../../", "../../../"].filter(d, file(d + "analysis_options.yaml"))]
+  .exists(l, [l[0]].exists(d, [yaml(d + "analysis_options.yaml")].exists(a, a != null && (
+    (has(a.analyzer) && a.analyzer != null && "language" in a.analyzer && a.analyzer.language != null
+      && item in a.analyzer.language)
+      ? a.analyzer.language[item] == true
+      : has(a.include) && (type(a.include) == list ? a.include : dyn([a.include])).exists(i,
+          i.startsWith("package:very_good_analysis/")
+          || (!i.startsWith("package:") && file(d + i) && [yaml(d + i)].exists(b, b != null && has(b.analyzer) && b.analyzer != null
+            && "language" in b.analyzer && b.analyzer.language != null && item in b.analyzer.language
+            && b.analyzer.language[item] == true)))))))
+message: "analyzer strict mode is not enabled"
+requirement: "`analyzer.language` in the nearest analysis_options.yaml sets every mode in `params.required` to true, directly, through a local file it includes, or by including very_good_analysis."
+rationale: Each mode closes a different hole through which `dynamic` enters the program unnoticed.
+fix:
+  human: "Set the missing modes to true under analyzer.language."
+  agent: "Set each reported mode to true under analyzer.language and list the analyzer errors that appear instead of adding ignores."
+  actions:
+    - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

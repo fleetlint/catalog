@@ -1,0 +1,12 @@
+id: cpp
+title: C/C++
+refs: ["https://fleetlint.org/stacks/#cc"]
+detect:
+  - {file: CMakeLists.txt}
+  - {file: meson.build}
+  - {file: conanfile.txt}
+  - {file: conanfile.py}
+  - {file: vcpkg.json}
+# No dev container feature installs a compiler; the image brings one.
+devcontainer: {image: "mcr.microsoft.com/devcontainers/cpp:1"}
+run_image: "mcr.microsoft.com/devcontainers/cpp:1"

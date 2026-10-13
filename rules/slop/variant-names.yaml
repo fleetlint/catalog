@@ -4,13 +4,13 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("code", r'\b(func|fun|def|fn|function|class|struct|interface|type|void|const|final|let|var|val)\s+\w+?(V[2-9]|_v[2-9]|Improved|Enhanced|Old|New|Fixed|Temp|Simple|Robust|Better)\b')
+  codegrep("code", r'\b(?:func(?:\s*\([^)]*\))?|fun|def|fn|function|class|struct|interface|type|void|const|final|let|var|val)\s+(\w+?)(?:V[2-9]|_v[2-9]|Improved|Enhanced|Old|New|Fixed|Better)\b')
 expr: >
-  false
-message: "declaration name carries a variant suffix"
-requirement: "No declaration is named as a variant of another (`parseV2`, `handlerNew`, `ClientImproved`, `syncOld`)."
+  codegrep("code", r'\b(func(\s*\([^)]*\))?|fun|def|fn|function|class|struct|interface|type|void|const|final|let|var|val)\s+' + item.match + r'\b').size() == 0
+message: "declaration is a variant of another declaration"
+requirement: "No declaration is a variant of another one that is still declared (`parseV2` next to `parse`, `handlerNew` next to `handler`, `ClientImproved` next to `Client`). A suffixed name without a declared base (`isNew`, `PolicyV2` alone) is not a finding."
 rationale: "It means two implementations exist and callers must know which one is right."
 fix:
   human: "Change the original and update its callers; delete the other."
   agent: "Report the pair; merge into the original name only when the callers and tests make the intended behaviour clear."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]

@@ -32,7 +32,7 @@ cover: ## tests with coverage; fail if changed lines < COVER_MIN
 
 audit: ## vulnerabilities + licenses + secrets + unused deps
 	gitleaks git --no-banner .
-	@echo "TODO: osv-scanner / license check / unused deps"
+	@echo "TODO: dependency vulnerability scan, license allowlist check, unused-dependency check (tools per stack: https://fleetlint.org/stacks/)"
 
 bench: ## benchmarks vs stored baseline (not part of check)
 	@echo "TODO: benchmarks"

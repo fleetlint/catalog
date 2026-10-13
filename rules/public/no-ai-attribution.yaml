@@ -8,16 +8,19 @@ params:
   commits: 200
 foreach: commits(params.commits)
 expr: >
-  !(item.email.endsWith("@anthropic.com")
-    || item.author.matches("(?i)\\b(claude|copilot|chatgpt|openai|gemini|cursor|codex|devin|aider)\\b")
-    || item.trailers.matches("(?i)co-authored-by:.*(claude|copilot|chatgpt|openai|gemini|cursor|codex|devin|aider|noreply@anthropic|noreply@github\\.com>\\s*$)")
-    || item.body.matches("(?i)(generated|written) (with|by) \\[?(claude|copilot|chatgpt|cursor|codex|aider)"))
+  !(item.email.matches(r'(?i)^([^@\s]+@anthropic\.com|noreply@aider\.chat|cursoragent@cursor\.com|(\d+\+)?copilot@users\.noreply\.github\.com|(\d+\+)?(claude|copilot|copilot-swe-agent|devin-ai-integration|cursor|chatgpt-codex-connector|google-labs-jules|gemini-code-assist)\[bot\]@users\.noreply\.github\.com)$')
+    || (item.body + "\n" + item.trailers).matches(r'(?im)^co-authored-by:[^<\n]*<([^@\s>]+@anthropic\.com|noreply@aider\.chat|cursoragent@cursor\.com|(\d+\+)?copilot@users\.noreply\.github\.com|(\d+\+)?(claude|copilot|copilot-swe-agent|devin-ai-integration|cursor|chatgpt-codex-connector|google-labs-jules|gemini-code-assist)\[bot\]@users\.noreply\.github\.com)>\s*$')
+    || item.body.matches(r'(?im)^\s*(\x{1F916}\s*generated with\b|generated (with|by) \[?(claude code|claude|github copilot|copilot|chatgpt|cursor|codex|aider|gemini|devin)\b)'))
 message: "commit carries AI attribution"
 requirement: >
-  No commit in the recent history (`params.commits`, default 200) names an AI tool as author or co-author
-  or carries a "generated with" footer. The owner's policy is that public repositories show human authorship only.
-rationale: Attribution trailers are added by default by agent tooling; preventing them is a settings matter, removing them is a history rewrite.
+  No commit in the recent history (`params.commits`, default 200) has an AI tool's address as author
+  (`@anthropic.com`, the Copilot, Devin, Cursor, Codex, Jules and Claude bot accounts, `noreply@aider.chat`),
+  a `Co-authored-by` trailer with such an address, or a "Generated with ..." footer. Names are not read:
+  a person called Devin or Claude with their own address is not a finding.
+rationale: >
+  For projects that do not want AI attribution in their history. Agent tooling adds the trailers and footers
+  by default, so preventing them is a settings matter, while removing them later is a history rewrite.
 fix:
   human: "Turn off commit attribution in the agent's settings; rewrite only unpushed history."
-  agent: "Stop adding Co-Authored-By trailers. Report the offending commits; rewriting pushed history needs the user's explicit decision."
-refs: ["https://fleetlint.org/baseline/#public-repositories"]
+  agent: "Stop adding Co-Authored-By trailers and generated-with footers. Report the offending commits; rewriting pushed history needs the user's explicit decision."
+refs: ["https://fleetlint.org/baseline/#public-repositories", "https://fleetlint.org/slop/#commits-and-history"]

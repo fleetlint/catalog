@@ -27,7 +27,7 @@ cover:
 # vulnerabilities + licenses + secrets + unused deps
 audit:
     %RUN%gitleaks git --no-banner .
-    %RUN%echo "TODO: osv-scanner / license check / unused deps"
+    %RUN%echo "TODO: dependency vulnerability scan, license allowlist check, unused-dependency check (tools per stack: https://fleetlint.org/stacks/)"
 
 # production build
 build:

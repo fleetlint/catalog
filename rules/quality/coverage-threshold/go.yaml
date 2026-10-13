@@ -1,0 +1,14 @@
+id: quality/coverage-threshold/go
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: go-test-coverage
+    expr: >
+      [".testcoverage.yml", ".testcoverage.yaml"].exists(f, file(f) && text(f).matches(r'(?m)^\s*(total|file|package):\s*\d'))
+      || workflows().exists(w, steps(w).exists(s, s.uses.startsWith("vladopajic/go-test-coverage")
+           && ("threshold-total" in s.with || "threshold-file" in s.with || "threshold-package" in s.with || "config" in s.with)))
+requirement: "go-test-coverage runs with a threshold (`.testcoverage.yml` with `threshold.total`/`file`/`package`, or the action with a threshold input), or a stack-neutral floor applies (the `cover` recipe compares with a minimum, diff-cover `--fail-under`, codecov `target`)."
+fix:
+  human: "Add go-test-coverage with `threshold: {total: 80}` in .testcoverage.yml, or compare the `go tool cover -func` total with COVER_MIN in the `cover` recipe."
+refs: ["https://fleetlint.org/stacks/#go"]

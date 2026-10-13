@@ -1,5 +1,5 @@
-// Package catalog holds the fleetlint presets and the templates their fixes
-// write, as data. The fleetlint binary embeds one version of this module;
+// Package catalog holds the fleetlint presets, rules, stacks and the
+// templates their fixes write, as data. The fleetlint binary embeds one version of this module;
 // repositories can also reference a preset file from this repository at a
 // tag or commit.
 package catalog
@@ -18,6 +18,12 @@ var Presets embed.FS
 //
 //go:embed all:rules
 var Rules embed.FS
+
+// Stacks contains stacks/<id>.yaml: how a stack is detected and what its
+// dev environment needs. Rules implement their capabilities per stack id.
+//
+//go:embed stacks/*.yaml
+var Stacks embed.FS
 
 // Templates contains templates/: the files `fleetlint fix` creates, plus the
 // fragments it assembles the hook configuration and the check workflow from.

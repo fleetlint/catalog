@@ -1,0 +1,11 @@
+id: release/reproducible-build/any
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: source-date-epoch
+    expr: >
+      tagged_workflows().exists(w, text(w).contains("SOURCE_DATE_EPOCH"))
+      || taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.contains("SOURCE_DATE_EPOCH") && !l.matches(params.skip)))
+      || (taskrunner.kind == "make" && scan(taskrunner.file, r'^\s*(export\s+)?SOURCE_DATE_EPOCH\s*[:?]?=').size() > 0)
+requirement: "`SOURCE_DATE_EPOCH` is set for the release build, in a tag-triggered CI file or the task runner, so timestamps in the artifacts come from the commit."

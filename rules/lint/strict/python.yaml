@@ -1,0 +1,28 @@
+id: lint/strict/python
+kind: expr
+title: ruff selects the baseline rule families
+# ruff uses the nearest .ruff.toml, ruff.toml or pyproject.toml with [tool.ruff].
+when: >
+  ["", "../", "../../", "../../../"].exists(d, file(d + "ruff.toml") || file(d + ".ruff.toml")
+    || (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool) && has(p.tool.ruff))))
+params:
+  required: [E, F, I, B, UP, SIM, BLE, S, C90, T20]
+foreach: params.required
+expr: >
+  [["", "../", "../../", "../../../"].map(d, [d + ".ruff.toml", d + "ruff.toml", d + "pyproject.toml"]).flatten()
+    .filter(f, file(f) && [toml(f)].exists(t, t != null && (!f.endsWith("pyproject.toml") || (has(t.tool) && has(t.tool.ruff)))))]
+  .exists(l, [l[0].endsWith("pyproject.toml") ? toml(l[0]).tool.ruff : toml(l[0])]
+    .exists(r, [has(r.lint) && r.lint != null ? r.lint : dyn({})].exists(lt,
+      (("select" in lt ? lt.select : ("select" in r ? r.select : ["E4", "E7", "E9", "F"]))
+        + ("extend-select" in lt ? lt["extend-select"] : []) + ("extend-select" in r ? r["extend-select"] : []))
+      .exists(s, s == item || s == "ALL")
+      && !(("ignore" in lt && item in lt.ignore) || ("ignore" in r && item in r.ignore)))))
+message: "ruff rule family is not selected"
+requirement: "The nearest ruff configuration (`[tool.ruff.lint]` in pyproject.toml, or ruff.toml) selects every family in `params.required` (pycodestyle, pyflakes, isort, bugbear, pyupgrade, simplify, blind-except, bandit, complexity, print) through `select`, `extend-select` or `ALL`, and does not ignore it."
+rationale: ruff's default selection is a small subset; blind excepts, security findings and leftover prints are only reported when their families are selected.
+fix:
+  human: "Add the missing families to `select` (or `extend-select`) under [tool.ruff.lint]."
+  agent: "Add each reported family to [tool.ruff.lint] select; ratchet the violations that appear with `ruff check --add-noqa` instead of fixing them in the same change."
+  actions:
+    - append: {file: pyproject.toml, template: python/ruff-lint.toml, unless: '(?m)^\[tool\.ruff\.lint\]|^select\s*='}
+refs: ["https://fleetlint.org/stacks/#python"]

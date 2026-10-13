@@ -2,8 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-recommended
-  version: 0.1.0
-  engine: 2
+  engine: 3
   description: >
     The default for repositories you rely on: the task-runner contract,
     hook content, lint configuration per stack, changelog and CI basics.
@@ -11,8 +10,10 @@ metadata:
 
 
 # Every rule of these families (rules/<family>/) is recommended; a rule added to a
-# family joins the preset. The slop family is an add-on (fleetlint:slop) except for
-# the four below, which are never acceptable in a commit.
+# family joins the preset. public/ is listed rule by rule: its agent-file and
+# AI-attribution rules belong to fleetlint:slop. The slop family is an add-on except
+# for the three below and slop/conflict-markers (from fleetlint:minimal), which are
+# never acceptable in a commit.
 rules:
   - use: changelog/*
   - use: ci/*
@@ -20,13 +21,19 @@ rules:
   - use: deps/*
   - use: docs/*
   - use: hooks/*
+  - use: format/*
   - use: lint/*
-  - use: public/*
+  - use: types/*
+  - use: public/license
+  - use: public/manifest-license
+  - use: public/security-policy
+  - use: public/contributing
+  - use: public/code-of-conduct
+  - use: public/issue-templates
   - use: quality/*
   - use: release/*
   - use: repo/*
   - use: taskrunner/*
   - use: slop/focused-tests
-  - use: slop/conflict-markers
   - use: slop/scratch-scripts
   - use: slop/report-documents

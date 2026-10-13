@@ -1,0 +1,21 @@
+id: lint/configured/php
+kind: outcome
+satisfiers:
+  - name: phpstan
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        ["phpstan.neon", "phpstan.neon.dist", "phpstan.dist.neon"].exists(n, file(d + n)))
+  - name: psalm
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + "psalm.xml") || file(d + "psalm.xml.dist"))
+message: "no static analyzer configuration (phpstan.neon.dist or psalm.xml)"
+requirement: "PHPStan (`phpstan.neon.dist`) or Psalm (`psalm.xml`) is configured in the project or a parent directory. Another analyzer is added with `accept:`."
+rationale: PHP's type system is enforced at runtime only; the analyzer is the compile step the language lacks.
+fix:
+  human: "Add phpstan.neon.dist and the packages in require-dev (`fleetlint fix --apply` does both)."
+  agent: "Add phpstan.neon.dist from the template, require phpstan/phpstan and phpstan/phpstan-strict-rules in require-dev, and fix what it reports or generate a baseline."
+  actions:
+    - template: php/phpstan.neon.dist
+      to: phpstan.neon.dist
+    - merge: {file: composer.json, template: php/require-dev-lint.json}
+refs: ["https://fleetlint.org/stacks/#php"]

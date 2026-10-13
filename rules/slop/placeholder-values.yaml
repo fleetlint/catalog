@@ -4,13 +4,13 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("nontest", r'(?i)lorem ipsum|your[-_ ]?(api[-_ ]?key|token|secret|password)|\bchange[-_]?me\b|\breplace[-_]?me\b|example\.(com|org)\b')
+  codegrep("nontest", r'(?i)lorem ipsum|\byour[-_]?(api[-_]?key|token|secret|password)\b|\bchange[-_]?me\b|\breplace[-_]?me\b|[\x22\x27\x60](https?://)?([\w.+-]+@)?([\w-]+\.)*example\.(com|org|net)(:\d+)?(/[^\x22\x27\x60\s]*)?[\x22\x27\x60]')
 expr: >
   false
 message: "placeholder value outside tests"
-requirement: "Non-test code contains no `lorem ipsum`, `your-api-key`, `changeme` or `example.com` values."
+requirement: "Non-test code contains no `lorem ipsum`, `your-api-key`/`your_password`-style values, `changeme`, or string literals that are only an `example.com` address. Prose that mentions example.com, such as help text, is not a finding."
 rationale: "A placeholder that ships is a broken feature or a default credential."
 fix:
   human: "Read the value from configuration and fail at startup when it is missing."
   agent: "Replace with a configuration lookup validated at startup; ask where the real value comes from if that is unclear."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]

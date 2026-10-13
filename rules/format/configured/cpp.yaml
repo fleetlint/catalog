@@ -1,0 +1,22 @@
+id: format/configured/cpp
+kind: outcome
+satisfiers:
+  # clang-format uses the nearest .clang-format above each file.
+  - name: clang-format
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".clang-format") || file(d + "_clang-format"))
+  - name: clang-format-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("clang-format")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("clang-format"))
+      || workflows().exists(w, text(w).matches("clang-format"))
+message: "no .clang-format and no clang-format run"
+requirement: "A `.clang-format` is committed in the project or a parent directory, or clang-format runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Add .clang-format (`fleetlint fix --apply` writes it) and the clang-format hook."
+  agent: "Add .clang-format from the template and the clang-format pre-commit hook; reformat in a separate commit."
+  actions:
+    - template: cpp/clang-format
+      to: .clang-format
+refs: ["https://fleetlint.org/stacks/#cc"]

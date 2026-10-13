@@ -7,18 +7,21 @@ scope: root
 when: release.exists && tagged_workflows().size() > 0
 satisfiers:
   - name: goreleaser-signs
-    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
     expr: >
-      has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").signs)
-      || has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").binary_signs)
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map
+        && ("signs" in yaml(f) || "binary_signs" in yaml(f) || "docker_signs" in yaml(f)))
   - name: cosign-in-workflow
-    expr: >
-      tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer"))
-        && steps(w).exists(s, s.run.matches("cosign (sign|sign-blob|attest)")))
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bcosign (sign|sign-blob|attest)\\b")))
   - name: sigstore-python
     expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/gh-action-sigstore-python")))
   - name: npm-provenance
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("npm publish.*--provenance")))
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bnpm publish\\b")
+        && (s.run.matches("npm publish[^\\n]*--provenance") || text(w).matches("NPM_CONFIG_PROVENANCE:\\s*[\"']?true|id-token:\\s*write"))))
+  - name: pypi-attestations
+    expr: >
+      tagged_workflows().exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+        s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
   - name: gpg
     expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
 partials:
@@ -28,9 +31,10 @@ partials:
     message: "cosign is installed in a workflow but no tag-triggered release signs its artifacts"
 message: "release artifacts are not signed"
 requirement: >
-  Every release signs its artifacts: cosign keyless (OIDC) on GitHub, key-based cosign on Gitea,
-  GoReleaser `signs:`, sigstore-python for wheels, or npm provenance. Signatures are published with the release.
-  A container image is signed by digest with `cosign sign`.
+  Every release signs its artifacts: cosign keyless (OIDC) on GitHub and GitLab, key-based cosign on
+  Gitea, GoReleaser `signs:`, sigstore-python or PyPI attestations for wheels, npm provenance, or a
+  detached gpg signature. Signatures are published with the release. A container image is signed by
+  digest with `cosign sign`.
 rationale: Checksums prove integrity; only a signature proves who built it.
 fix:
   human: "Add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."

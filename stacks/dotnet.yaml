@@ -1,0 +1,13 @@
+id: dotnet
+title: .NET
+refs: ["https://fleetlint.org/stacks/#net"]
+detect:
+  - {file: global.json}
+  - {file: Directory.Build.props}
+  - {glob: "*.sln"}
+  - {glob: "*.slnx"}
+  - {glob: "*.csproj"}
+  - {glob: "*.fsproj"}
+devcontainer: {feature: "ghcr.io/devcontainers/features/dotnet:1"}
+run_image: "mcr.microsoft.com/devcontainers/dotnet:9.0"
+lockfile_maintenance: true

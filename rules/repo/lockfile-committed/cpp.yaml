@@ -1,0 +1,11 @@
+id: repo/lockfile-committed/cpp
+kind: expr
+expr: >
+  ((!file("conanfile.txt") && !file("conanfile.py")) || "conan.lock" in tracked())
+  && (!file("vcpkg.json") || text("vcpkg.json").contains("\"builtin-baseline\"")
+      || (file("vcpkg-configuration.json") && text("vcpkg-configuration.json").contains("\"baseline\"")))
+message: "the C/C++ package manager's versions are not locked"
+requirement: "With Conan, conan.lock is tracked; with vcpkg, vcpkg.json sets a `builtin-baseline` (or vcpkg-configuration.json a registry `baseline`), which fixes every port version. A build without a package manager needs neither."
+fix:
+  human: "Conan: `conan lock create .` and commit conan.lock; vcpkg: `vcpkg x-update-baseline --add-initial-baseline`."
+refs: ["https://fleetlint.org/stacks/#cc"]

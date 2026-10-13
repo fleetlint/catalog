@@ -1,0 +1,12 @@
+id: lint/strict
+title: The linter's required checks are on
+kind: capability
+severity: warning
+tiers: [1, 2]
+message: "a required lint check is not enabled"
+requirement: "The linter configuration enables the checks the stack profile requires; each missing one is reported."
+rationale: A linter with its defaults reports style; the checks that find swallowed errors, crashes and oversized functions are mostly off until they are switched on.
+fix:
+  human: "Enable the reported checks in the linter configuration (see https://fleetlint.org/stacks/)."
+  agent: "Enable each reported check in the linter configuration and fix or ratchet the findings it produces instead of suppressing them."
+refs: ["https://fleetlint.org/baseline/#static-analysis"]

@@ -13,4 +13,4 @@ rationale: "It raises coverage and tests nothing."
 fix:
   human: "Assert the behaviour, or delete the test."
   agent: "Replace with an assertion on the observable outcome; delete the test if there is none."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#tests"]

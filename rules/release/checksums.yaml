@@ -7,20 +7,27 @@ scope: root
 when: release.exists && tagged_workflows().size() > 0
 satisfiers:
   - name: goreleaser
-    when: file(".goreleaser.yaml") || file(".goreleaser.yml")
     expr: >
-      !(has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum)
-        && has(yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum.disable)
-        && yaml(file(".goreleaser.yaml") ? ".goreleaser.yaml" : ".goreleaser.yml").checksum.disable == true)
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && !(type(yaml(f)) == map && "checksum" in yaml(f)
+        && type(yaml(f).checksum) == map && "disable" in yaml(f).checksum && yaml(f).checksum.disable == true))
   - name: workflow-command
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("sha256sum|shasum -a 256|sha512sum|b2sum")))
-  - name: python-publish
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("pypa/gh-action-pypi-publish")))
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\b(sha256sum|shasum -a 256|sha512sum|b2sum)\\b")))
+  - name: registry-publish
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("pypa/gh-action-pypi-publish")
+        || s.run.matches("\\b(npm publish|pnpm publish|yarn npm publish|twine upload|uv publish|cargo publish|gem push)\\b")))
   - name: container-image
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("docker/build-push-action")))
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("docker/build-push-action")
+        || s.run.matches("\\b(docker|podman|buildah) push\\b|\\bdocker buildx build\\b[^\\n]*--push|/kaniko/executor\\b|\\bko (build|publish)\\b|\\bcrane push\\b")))
 message: "the release publishes no checksums file"
-requirement: A checksums.txt (sha256) covering every artifact is uploaded with the release, and is what gets signed. A container image pushed to a registry is addressed by its digest and needs no separate file.
+requirement: >
+  A checksums file (sha256) covering every artifact is uploaded with the release, and is what gets
+  signed. A container image pushed to a registry is addressed by its digest, and a package published
+  to npm, PyPI, crates.io or RubyGems gets its digest recorded by the registry; neither needs a
+  separate file.
 rationale: Checksums let a downloader verify integrity even without signature tooling.
 fix:
   human: "Generate checksums.txt with sha256sum in the release job and upload it."
   agent: "Add `sha256sum dist/* > dist/checksums.txt` before the upload step and include dist/checksums.txt in the release assets."
+refs: ["https://fleetlint.org/baseline/#releases"]

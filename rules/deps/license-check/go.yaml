@@ -1,0 +1,13 @@
+id: deps/license-check/go
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: go-licenses
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bgo-licenses\s+check\b') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bgo-licenses\s+check\b') && !l.matches(params.skip))))
+requirement: "A task-runner recipe or a CI step runs `go-licenses check` (with `--allowed_licenses` or `--disallowed_types`), or a stack-neutral license checker."
+fix:
+  human: "Run `go-licenses check ./... --allowed_licenses=…` in the `audit` target."
+refs: ["https://fleetlint.org/stacks/#go"]

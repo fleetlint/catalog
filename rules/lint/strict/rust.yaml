@@ -1,0 +1,27 @@
+id: lint/strict/rust
+kind: expr
+title: clippy reports unwraps, panics and debug macros
+when: >
+  [toml("Cargo.toml")].exists(c, c != null && (has(c.lints) || (has(c.workspace) && has(c.workspace.lints))))
+params:
+  required: [unwrap_used, expect_used, panic, todo, dbg_macro]
+foreach: params.required
+# A lint is on at warn, deny or forbid, written as a string or as { level = ... }; `[lints] workspace = true` reads the workspace root.
+expr: >
+  [toml("Cargo.toml")].exists(c,
+    ([has(c.lints) && has(c.lints.clippy) ? c.lints.clippy : dyn({})]
+      + [has(c.workspace) && has(c.workspace.lints) && has(c.workspace.lints.clippy) ? c.workspace.lints.clippy : dyn({})]
+      + (has(c.lints) && has(c.lints.workspace) && c.lints.workspace == true
+        ? ["../", "../../", "../../../"].filter(d, file(d + "Cargo.toml")).map(d, toml(d + "Cargo.toml"))
+            .filter(w, w != null && has(w.workspace) && has(w.workspace.lints) && has(w.workspace.lints.clippy))
+            .map(w, w.workspace.lints.clippy)
+        : []))
+    .exists(t, item in t
+      && (type(t[item]) == string ? t[item] : ("level" in t[item] ? t[item].level : "")) in ["warn", "deny", "forbid"]))
+message: "clippy lint is not enabled"
+requirement: "The `[lints.clippy]` table (or `[workspace.lints.clippy]`, also when inherited with `[lints] workspace = true`) sets every lint in `params.required` to warn, deny or forbid."
+rationale: These lints are off by default, and they are the ones that find the crashes a Rust program can still have.
+fix:
+  human: "Add the missing lints to [lints.clippy] with level deny."
+  agent: "Add each reported lint to [lints.clippy] as \"deny\"; where an unwrap is a proven invariant, replace it with expect and an INVARIANT comment instead of allowing the lint."
+refs: ["https://fleetlint.org/stacks/#rust"]

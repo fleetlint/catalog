@@ -1,0 +1,18 @@
+id: format/configured/rust
+kind: outcome
+satisfiers:
+  - name: cargo-fmt-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("cargo fmt|cargo-fmt|\\brustfmt\\b")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("cargo fmt|cargo-fmt|\\brustfmt\\b"))
+      || workflows().exists(w, text(w).matches("cargo fmt|cargo-fmt|\\brustfmt\\b"))
+  - name: rustfmt-config
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, ["rustfmt.toml", ".rustfmt.toml"].exists(n, file(d + n)))
+message: "no rustfmt run or configuration (cargo fmt, rustfmt.toml)"
+requirement: "`cargo fmt` runs in a hook, the task runner or CI, or a `rustfmt.toml` is committed in the crate or a parent directory. Another formatter is added with `accept:`."
+fix:
+  human: "Add `cargo fmt --all --check` to the lint target and a cargo fmt hook, with a committed rustfmt.toml."
+  agent: "Add `cargo fmt --all --check` to the lint target and a cargo-fmt pre-commit hook; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#rust"]

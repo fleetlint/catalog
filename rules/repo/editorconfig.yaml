@@ -9,7 +9,8 @@ requirement: An .editorconfig declares charset, line endings, final newline and 
 rationale: It stops formatting churn between editors before any formatter runs.
 fix:
   human: "Add .editorconfig with `root = true`; `fleetlint fix --apply` writes the template."
-  agent: "Create .editorconfig: utf-8, lf, insert_final_newline, trim_trailing_whitespace, 2-space default with 4 for Go/Kotlin/Python/Rust/Dart."
+  agent: "Create .editorconfig: utf-8, lf, insert_final_newline, trim_trailing_whitespace, 2-space default, 4 spaces for Kotlin/Java/Python/Rust/Swift/C#/PHP, tabs for Go and Makefiles."
   actions:
     - template: editorconfig
       to: .editorconfig
+refs: ["https://fleetlint.org/baseline/#hygiene"]

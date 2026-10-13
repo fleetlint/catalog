@@ -3,17 +3,21 @@ title: Package install scripts are disabled
 kind: expr
 severity: info
 stacks: [node]
+# The package manager reads its settings from the workspace root.
+scope: root
 tiers: [1, 2]
 expr: >
-  scan(".npmrc", "^\\s*ignore-scripts\\s*=\\s*true").size() > 0
-  || scan(".yarnrc.yml", "^\\s*enableScripts:\\s*false").size() > 0
-  || text("pnpm-workspace.yaml").contains("onlyBuiltDependencies")
+  scan(".npmrc", r'^\s*ignore-scripts\s*=\s*true').size() > 0
+  || scan(".yarnrc.yml", r'^\s*enableScripts:\s*false').size() > 0
+  || text("pnpm-workspace.yaml").matches(r'onlyBuiltDependencies|allowBuilds')
   || text("package.json").contains("onlyBuiltDependencies")
   || text("package.json").contains("trustedDependencies")
+  || text("package.json").matches(r'"packageManager"\s*:\s*"(pnpm@([1-9]\d+)\.|bun@)')
+  || tracked().exists(f, f in ["bun.lock", "bun.lockb"])
 message: "dependencies may run install scripts"
-requirement: "Install scripts of dependencies do not run by default: `ignore-scripts=true` in .npmrc, `enableScripts: false` in .yarnrc.yml, or an explicit allowlist (`onlyBuiltDependencies` for pnpm, `trustedDependencies` for bun)."
+requirement: "Install scripts of dependencies do not run by default: `ignore-scripts=true` in .npmrc, `enableScripts: false` in .yarnrc.yml, an explicit allowlist (`onlyBuiltDependencies` for pnpm, `trustedDependencies` for bun), or a package manager that blocks them by default (pnpm 10 or later named in `packageManager`, bun)."
 rationale: Install scripts are the usual way a compromised package executes code on developer machines and in CI.
 fix:
   human: "Add `ignore-scripts=true` to .npmrc and allow the few packages that need a build step explicitly."
   agent: "Add ignore-scripts=true to .npmrc (or the package manager's equivalent), run a clean install and the tests, and list the packages that need their build script allowed."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs: ["https://fleetlint.org/baseline/#dependencies", "https://fleetlint.org/stacks/#nodejs--typescript"]

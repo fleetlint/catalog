@@ -1,0 +1,11 @@
+id: java
+title: Java
+refs: ["https://fleetlint.org/stacks/#java"]
+detect:
+  - {file: pom.xml}
+  # Gradle without the Kotlin plugin builds Java.
+  - {glob: build.gradle, lacks: "kotlin", unless_stack: flutter}
+  - {glob: build.gradle.kts, lacks: "kotlin", unless_stack: flutter}
+devcontainer: {feature: "ghcr.io/devcontainers/features/java:1", options: {installGradle: true}}
+run_image: "mcr.microsoft.com/devcontainers/java:21"
+lockfile_maintenance: true

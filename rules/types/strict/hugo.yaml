@@ -1,0 +1,6 @@
+id: types/strict/hugo
+kind: expr
+when: "false"
+expr: "true"
+requirement: "A Hugo site has no type checker; templates are checked by the build with --panicOnWarning (lint/configured)."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

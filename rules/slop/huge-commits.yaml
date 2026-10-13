@@ -10,11 +10,11 @@ params:
 foreach: >
   commits(params.commits)
 expr: >
-  item.lines <= params.max_lines
+  item.lines <= params.max_lines || item.root
 message: "commit changes more lines than the limit"
-requirement: "No commit in the recent history (`params.commits`, default 200) changes more than `params.max_lines` lines (default 1500)."
+requirement: "No commit in the recent history (`params.commits`, default 200) changes more than `params.max_lines` lines (default 1500). The root commit, usually an initial import, is exempt."
 rationale: "A commit that large was not reviewed line by line, and cannot be reverted without taking unrelated changes with it."
 fix:
   human: "Split work into commits of one concern each."
   agent: "Commit one concern at a time. Do not rewrite pushed history without the user's decision."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#commits-and-history"]

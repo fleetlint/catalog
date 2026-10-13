@@ -1,0 +1,35 @@
+id: lint/configured/cpp
+kind: outcome
+satisfiers:
+  # clang-tidy reads the nearest .clang-tidy above each source file; it must also run somewhere.
+  - name: clang-tidy
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".clang-tidy"))
+      && (["", "../", "../../", "../../../"].exists(d,
+            [d + "CMakeLists.txt", d + "CMakePresets.json", d + "meson.build", d + ".pre-commit-config.yaml", d + "lefthook.yml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+            .exists(f, file(f) && text(f).matches("clang-tidy|CMAKE_CXX_CLANG_TIDY")))
+        || (taskrunner.file != "" && text(taskrunner.file).matches("clang-tidy"))
+        || workflows().exists(w, text(w).matches("clang-tidy")))
+  - name: cppcheck
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        [d + "CMakeLists.txt", d + ".pre-commit-config.yaml", d + "lefthook.yml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("cppcheck|CMAKE_CXX_CPPCHECK")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("cppcheck"))
+      || workflows().exists(w, text(w).matches("cppcheck"))
+partials:
+  - name: clang-tidy-not-run
+    severity: warning
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".clang-tidy"))
+    message: ".clang-tidy is committed but no build file, hook, task or workflow runs clang-tidy"
+message: "no static analyzer (clang-tidy with a .clang-tidy, or cppcheck) runs"
+requirement: "A static analyzer runs on the code: clang-tidy with a committed `.clang-tidy`, run by the build (`CMAKE_CXX_CLANG_TIDY`), a hook, the task runner or CI; or cppcheck run the same way. Another analyzer is added with `accept:`."
+rationale: Without a committed configuration every developer's editor runs different checks and the build runs none.
+fix:
+  human: "Add .clang-tidy (`fleetlint fix --apply` writes it) and run clang-tidy over compile_commands.json in the lint target, or set CMAKE_CXX_CLANG_TIDY."
+  agent: "Add .clang-tidy from the template and a lint target that runs clang-tidy (run-clang-tidy -p build) over compile_commands.json; fix findings rather than disabling checks."
+  actions:
+    - template: cpp/clang-tidy
+      to: .clang-tidy
+refs: ["https://fleetlint.org/stacks/#cc"]

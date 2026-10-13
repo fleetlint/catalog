@@ -5,9 +5,8 @@ includes:
 
 parameters:
   level: max
+  # Every listed path must exist; add tests (and other source roots) here.
   paths:
     - src
-    - tests
-  checkMissingIterableValueType: true
   treatPhpDocTypesAsCertain: false
   reportUnmatchedIgnoredErrors: true

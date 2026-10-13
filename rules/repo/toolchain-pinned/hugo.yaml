@@ -1,0 +1,14 @@
+id: repo/toolchain-pinned/hugo
+kind: expr
+expr: >
+  scan(".tool-versions", r'^\s*(hugo|hugo-extended|gohugo)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(hugo|hugo-extended|gohugo)"?\s*=\s*[^#\n]*\d').size() > 0)
+  || (file("netlify.toml") && text("netlify.toml").matches(r'HUGO_VERSION\s*=\s*"v?\d'))
+  || (file("vercel.json") && text("vercel.json").matches(r'"HUGO_VERSION"\s*:\s*"v?\d'))
+  || workflows().exists(w, text(w).matches(r'HUGO_VERSION\s*[:=]\s*["\x27]?v?\d|hugo-version:\s*["\x27]?v?\d|gohugoio/hugo(:|@)v?\d'))
+message: "no Hugo version is pinned"
+requirement: "The Hugo version is pinned: `.tool-versions`/mise naming hugo with a version, `HUGO_VERSION` in netlify.toml or vercel.json, or a CI file setting `HUGO_VERSION`, `hugo-version` or a versioned gohugoio/hugo image."
+fix:
+  human: "Pin Hugo in mise.toml (`hugo-extended = \"0.x.y\"`) or set HUGO_VERSION in CI."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

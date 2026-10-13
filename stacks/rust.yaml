@@ -1,0 +1,8 @@
+id: rust
+title: Rust
+refs: ["https://fleetlint.org/stacks/#rust"]
+detect:
+  - {file: Cargo.toml}
+devcontainer: {feature: "ghcr.io/devcontainers/features/rust:1"}
+run_image: "mcr.microsoft.com/devcontainers/rust:1"
+lockfile_maintenance: true

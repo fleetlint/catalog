@@ -1,0 +1,6 @@
+id: types/strict/rust
+kind: expr
+when: "false"
+expr: "true"
+requirement: "The compiler checks the types of every build; there is no separate type checker to make strict. Warnings the compiler can raise are covered by lint/strict."
+refs: ["https://fleetlint.org/stacks/#rust"]

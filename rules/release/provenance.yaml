@@ -11,17 +11,33 @@ satisfiers:
   - name: slsa-generator
     expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
   - name: cosign-attest
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.contains("cosign attest")))
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b")))
   - name: npm-provenance
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("npm publish.*--provenance")))
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bnpm publish\\b")
+        && (s.run.matches("npm publish[^\\n]*--provenance") || text(w).matches("NPM_CONFIG_PROVENANCE:\\s*[\"']?true|id-token:\\s*write"))))
+  - name: pypi-attestations
+    expr: >
+      tagged_workflows().exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+        s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
   - name: container-provenance
     expr: >
       tagged_workflows().exists(w, steps(w).exists(s,
-        s.uses.startsWith("docker/build-push-action")
-        && (("provenance" in s.with && string(s.with.provenance) != "false") || "attests" in s.with)))
+        s.uses.startsWith("docker/build-push-action") && !s.uses.matches("@v[1-3](\\.|$)")
+        && !("provenance" in s.with && (s.with.provenance == false || s.with.provenance == "false"))))
+  - name: gitlab-artifact-metadata
+    expr: >
+      tagged_workflows().exists(w, ci_kind(w) == "gitlab"
+        && text(w).matches("RUNNER_GENERATE_ARTIFACTS_METADATA:\\s*[\"']?true"))
 message: "no build provenance attestation in the release pipeline"
-requirement: The release pipeline produces a SLSA provenance attestation (actions/attest-build-provenance, the SLSA generator, cosign attest or npm provenance).
+requirement: >
+  The release pipeline produces a provenance attestation: actions/attest-build-provenance, the SLSA
+  generator, `cosign attest`, npm provenance (`--provenance`, or trusted publishing with
+  `id-token: write`), PyPI attestations from pypa/gh-action-pypi-publish with trusted publishing,
+  docker/build-push-action v4 or newer (provenance is on unless `provenance: false`), or GitLab's
+  artifact provenance (`RUNNER_GENERATE_ARTIFACTS_METADATA: "true"`).
 rationale: Provenance ties the artifact to the exact source and workflow that built it, which a signature alone does not.
 fix:
-  human: "Add actions/attest-build-provenance (GitHub) or `cosign attest --predicate` (Gitea) to the release workflow."
-  agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release artifacts; grant `id-token: write` and `attestations: write` to that job only."
+  human: "Add actions/attest-build-provenance (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest --predicate` (Gitea) to the release pipeline."
+  agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release artifacts; grant `id-token: write` and `attestations: write` to that job only. On GitLab set the variable RUNNER_GENERATE_ARTIFACTS_METADATA to \"true\" on the release job."
+refs: ["https://fleetlint.org/baseline/#releases"]

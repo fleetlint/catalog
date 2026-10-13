@@ -1,0 +1,15 @@
+id: format/configured/flutter
+kind: outcome
+satisfiers:
+  - name: dart-format-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("dart format|flutter format")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("dart format|flutter format"))
+      || workflows().exists(w, text(w).matches("dart format|flutter format"))
+message: "dart format runs in no hook, task or workflow"
+requirement: "`dart format` runs in a hook, the task runner or CI (with `--set-exit-if-changed` where it checks). Another formatter is added with `accept:`."
+fix:
+  human: "Add `dart format --set-exit-if-changed .` to the lint target and a dart format hook."
+  agent: "Add `dart format --set-exit-if-changed .` to the lint target and the dart-format pre-commit hook; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

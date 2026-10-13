@@ -1,0 +1,5 @@
+
+# Type checking (see https://fleetlint.org/stacks/#python). Appended by fleetlint fix; adjust freely.
+[tool.mypy]
+strict = true
+warn_unreachable = true

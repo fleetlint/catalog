@@ -1,0 +1,15 @@
+id: deps/locked-install/java
+kind: expr
+# Maven has no lockfile to enforce.
+when: file("build.gradle") || file("build.gradle.kts")
+params:
+  noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+expr: >
+  !(taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'--(write|update)-locks\b|--write-verification-metadata\b'))
+message: "a Gradle build rewrites its lock state"
+requirement: "Gradle checks resolved versions against gradle.lockfile (and artifacts against verification metadata) on every build; this holds unless a recipe or CI step outside an update target passes `--write-locks`, `--update-locks` or `--write-verification-metadata`, which is what is checked."
+fix:
+  human: "Move lock updates to an `update-locks` target that is not part of CI."
+refs: ["https://fleetlint.org/stacks/#java"]

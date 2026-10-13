@@ -1,0 +1,10 @@
+id: python
+title: Python
+refs: ["https://fleetlint.org/stacks/#python"]
+detect:
+  - {file: pyproject.toml}
+  - {file: setup.py}
+  - {file: requirements.txt}
+devcontainer: {feature: "ghcr.io/devcontainers/features/python:1"}
+run_image: "mcr.microsoft.com/devcontainers/python:3"
+lockfile_maintenance: true

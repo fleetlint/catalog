@@ -3,7 +3,7 @@ title: Container builds have a .dockerignore
 kind: expr
 severity: warning
 scope: root
-when: tracked().exists(p, p.matches("(^|/)(Dockerfile|Containerfile)[^/]*$"))
+when: tracked().exists(p, p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$"))
 expr: file(".dockerignore") || file(".containerignore") || exists("*.dockerignore")
 message: "a Dockerfile is tracked but there is no .dockerignore"
 requirement: "A repository with a Dockerfile has a `.dockerignore` that keeps `.git`, secrets and build output out of the build context."

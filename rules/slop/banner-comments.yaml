@@ -13,4 +13,4 @@ rationale: "A file that needs dividers needs splitting."
 fix:
   human: "Delete the banner; split the file if the sections are separate concerns."
   agent: "Delete banner comments; do not restructure the file in the same change."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]

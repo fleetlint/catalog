@@ -1,0 +1,23 @@
+id: format/configured/java
+kind: outcome
+satisfiers:
+  - name: spotless
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten() + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+        .exists(f, file(f) && text(f).matches("spotless"))
+  - name: google-java-format
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten() + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+        .exists(f, file(f) && text(f).matches("google-java-format|googleJavaFormat|palantir-java-format|palantirJavaFormat|com\\.spotify\\.fmt|fmt-maven-plugin"))
+  - name: formatter-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("google-java-format|palantir-java-format|spotless(Check|Apply|:check|:apply)")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("google-java-format|palantir-java-format|spotless(Check|Apply|:check|:apply)"))
+      || workflows().exists(w, text(w).matches("google-java-format|palantir-java-format|spotless(Check|Apply|:check|:apply)"))
+message: "no Java formatter in the build (Spotless, google-java-format, Palantir)"
+requirement: "A formatter is wired into the build (this build, a parent build or a convention plugin): Spotless, google-java-format, Palantir Java Format or fmt-maven-plugin, or one runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Add Spotless with google-java-format (or Palantir) to the build and run spotless:check in the hooks."
+  agent: "Add the Spotless plugin with googleJavaFormat() to the build, `spotless:check` to the lint target and a hook; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#java"]

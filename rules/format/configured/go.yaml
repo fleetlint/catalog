@@ -1,0 +1,22 @@
+id: format/configured/go
+kind: outcome
+satisfiers:
+  # golangci-lint v2 runs the formatters its configuration enables (`golangci-lint fmt`).
+  - name: golangci-formatters
+    expr: >
+      [["", "../", "../../", "../../../"].map(d, [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"].map(n, d + n))
+        .flatten().filter(f, file(f))]
+      .exists(l, l.size() > 0 && [l[0].endsWith(".toml") ? toml(l[0]) : (l[0].endsWith(".json") ? json(l[0]) : yaml(l[0]))]
+        .exists(c, c != null && has(c.formatters) && c.formatters != null && "enable" in c.formatters && size(c.formatters.enable) > 0))
+  - name: gofmt-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("\\bgo(fmt|fumpt|imports)\\b|\\bgo fmt\\b|golangci-lint fmt")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("\\bgo(fmt|fumpt|imports)\\b|\\bgo fmt\\b|golangci-lint fmt"))
+      || workflows().exists(w, text(w).matches("\\bgo(fmt|fumpt|imports)\\b|\\bgo fmt\\b|golangci-lint fmt"))
+message: "no Go formatter is configured or run (golangci-lint formatters, gofmt, gofumpt)"
+requirement: "golangci-lint v2 enables `formatters:` in its configuration, or gofmt, gofumpt, goimports or `golangci-lint fmt` runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Enable formatters (gofumpt, goimports) in .golangci.yml and run `golangci-lint fmt` from the fmt target and a hook."
+  agent: "Add `formatters: enable: [gofumpt, goimports]` to .golangci.yml and a golangci-lint fmt hook; reformat the code base in a separate commit."
+refs: ["https://fleetlint.org/stacks/#go"]

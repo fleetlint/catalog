@@ -1,0 +1,18 @@
+id: quality/coverage-threshold/node
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: jest-or-vitest
+    expr: >
+      (file("package.json") && text("package.json").contains("\"coverageThreshold\""))
+      || glob("jest.config.*").exists(f, text(f).contains("coverageThreshold"))
+      || (glob("vitest.config.*") + glob("vite.config.*")).exists(f, text(f).matches(r'thresholds\s*:'))
+  - name: c8-or-nyc
+    expr: >
+      (glob(".c8rc*") + glob(".nycrc*")).exists(f, text(f).matches(r'check-coverage"?\s*[:=]\s*true'))
+      || grep("package.json", r'"check-coverage"\s*:\s*true|\b(c8|nyc)\b[^"]*--check-coverage').size() > 0
+requirement: "Jest `coverageThreshold`, Vitest `coverage.thresholds`, or c8/nyc with `check-coverage` is configured, or a stack-neutral floor applies."
+fix:
+  human: "Set `coverage.thresholds` in vitest.config (or `coverageThreshold` for Jest)."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

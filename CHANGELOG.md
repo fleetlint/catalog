@@ -5,22 +5,34 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+The first release of the catalog on its own. fleetlint 0.3 and older embedded the rules under the ids listed as renamed below.
+
 ### Added
 
-- `deps/update-automation` has a fix: `fleetlint fix` writes a renovate.json with only the settings the repository's stacks need (`gomodTidy` for a Go module, lockfile maintenance where a package manager keeps a lockfile, the hook-revision manager always), plus the presets for pinned actions, Makefile versions and workflow versions.
-- The presets `minimal`, `recommended` and `slop` (94 rules) and the fix templates, moved here from the fleetlint repository. fleetlint embeds this module.
+- The presets `minimal`, `recommended`, `slop`, `strict` and `oss`, the rule library (94 rules and 12 capabilities with 129 per-stack implementations), the stack definitions and the fix templates, moved here from the fleetlint repository. fleetlint embeds this module.
+- **Capabilities.** A requirement that every stack meets with its own tools is one capability with an implementation per stack at `rules/<family>/<name>/<stack>.yaml`; `any.yaml` is the stack-neutral implementation, and an implementation with `when: "false"` says the requirement does not apply to its stack. Capabilities: `lint/configured`, `lint/strict`, `types/strict`, `format/configured`, `repo/lockfile-committed`, `repo/toolchain-pinned`, `deps/vulnerability-scan`, `deps/license-check`, `deps/locked-install`, `deps/unused-check`, `quality/coverage-threshold`, `release/reproducible-build`. Selecting, overriding or excepting a capability reaches all its implementations.
+- **Stacks as data.** `stacks/<id>.yaml` for cpp, dotnet, flutter, go, hugo, java, kotlin, node, php, python, ruby and rust: detection markers, dev container feature or image, the image targets run in, Renovate lockfile maintenance. A Gradle build without the Kotlin plugin is `java`.
+- New rules: `ci/no-script-injection`, `ci/no-pipe-to-shell`, `ci/checkout-no-persist-credentials`, `ci/workflow-lint`, `ci/sast`, `hooks/revs-pinned`, `release/trusted-publishing`, `release/hosted-builder`, `deps/update-coverage`, `deps/update-cooldown`, `slop/forced-unwraps`; new capabilities `format/configured`, `types/strict`, `deps/locked-install`, `deps/unused-check`, `release/reproducible-build`.
+- GitLab CI: every rule that reads CI understands `.gitlab-ci.yml` (jobs, scripts, `timeout:`, `interruptible`, includes pinned to a commit, release pipelines on `$CI_COMMIT_TAG`); Forgejo Actions workflows are read too. lefthook is understood by `hooks/secret-scan`, `hooks/conventional-commits` and `hooks/pre-push-check`.
+- `deps/update-automation` has a fix: `fleetlint fix` writes a renovate.json with only the settings the repository's stacks need.
 - Templates for a justfile and a Taskfile next to the Makefile, and workflow fragments that install those runners.
 
 ### Changed
 
-- Presets state `engine: 1`, the engine level they were written for.
-- `repo/no-tracked-junk`, `repo/lockfile-committed` and `ci/actions-pinned` are expressions now instead of code in fleetlint; `ci/actions-pinned` uses `item.match` from `grep`. Only `quality/check-passes` remains `kind: go`.
-- Rules that depend on a tool are outcome rules that list the known alternatives and accept more through `accept:`: `ci/check-workflow`, `lint/go-config`, `deps/vulnerability-scan`, `deps/license-check`, `repo/dev-environment`, and `taskrunner/container` (which replaces `taskrunner/devcontainer`).
-- `taskrunner/targets` and `taskrunner/check-composition` read any task runner (make, just, task, package.json scripts) through `taskrunner.targets`, `taskrunner.deps` and `taskrunner.recipes`; they need a fleetlint that provides those.
-- `repo/no-tracked-env` and `public/no-agent-files` report one finding per offending file with its path, instead of one finding without a location.
+- **Renamed.** `lint/<stack>-config` is `lint/configured/<stack>`, `lint/hugo-strict-build` is `lint/configured/hugo`; `lint/go-linters-enabled`, `lint/python-rules-enabled`, `lint/rust-lints-denied` and `lint/kotlin-detekt-strict` are `lint/strict/<stack>`; `lint/node-strict-flags` and `lint/flutter-strict-modes` are `types/strict/<stack>`, and the tsconfig and mypy parts of `lint/node-config` and `lint/python-config` moved there; `quality/no-slop-markers` is `slop/marketing-words` (info, in `slop`).
+- **Presets.** `public/no-agent-files` and `public/no-ai-attribution` moved from `minimal` to `slop`. `minimal` adds `slop/conflict-markers`, `repo/no-large-files` and `public/license`. `recommended` adds `format/*` and `types/*` and lists its public rules. `strict` also forbids exceptions on `ci/no-script-injection`, `ci/no-pipe-to-shell`, `hooks/revs-pinned` and `release/trusted-publishing`. Presets state `engine: 3` and no version of their own: they take the release tag.
+- The lint, format and type capabilities apply at tiers 1 and 2; the lint rules before applied at every tier. Lint rules find a configuration in a parent directory, as the tools do, so workspace members inherit the root's.
+- `public/no-ai-attribution` matches AI tool and bot addresses and generator footers, never a person's name. `public/no-agent-files` also covers `GEMINI.md`, `.github/copilot-instructions.md`, `.cursorrules`, `.windsurfrules`, `.clinerules`, `.aider*` and `.cursor/`.
+- Scanners, coverage gates and checks count only where they are run: an `echo`, a comment or an install line no longer satisfies a rule, and the templates' TODO lines name no tool.
+- `hooks/secret-scan` needs a secret scanner (gitleaks, trufflehog, ggshield, detect-secrets, secretlint); `detect-private-key` alone is a partial. `ci/check-workflow` and `hooks/pre-push-check` no longer accept `check-fast`. `ci/actions-pinned` needs a digest for `docker://` and a commit for GitLab includes. `repo/toolchain-pinned` needs the tool named with a version (and a JDK pin for Java and Kotlin); `repo/lockfile-committed` no longer counts an unhashed requirements.txt.
+- `release/sbom` is a warning and does not apply when a release only publishes to a package registry or when git-cliff is the only release tool.
+- Workspace-wide rules run once at the root: `repo/no-tracked-env`, `repo/no-tracked-junk`, `repo/lockfile-committed`, `repo/toolchain-pinned`, `deps/vulnerability-scan`, `deps/install-scripts-disabled`, `quality/coverage-threshold`.
+- Slop heuristics report fewer false positives: `model.eval()`, `iter().skip()`, "Enter your password", mdBook's `SUMMARY.md`, pytest's `test_*.py`, `isNew`, versioned API files, Git's `Revert "..."` subjects and the initial commit no longer count; conflict markers are found in every file type.
+- Templates: ESLint flat config with `defineConfig`, PHPStan 2 and PHP CS Fixer rule sets, clang-tidy header filter, ruff without a hardcoded target version, current Dart analyzer options, `.editorconfig` with tabs for Go and two spaces for Dart, `ci` and `style` commit types, npm publishing through trusted publishing.
 
 ### Fixed
 
+- `ci/concurrency-cancel` no longer errors on `concurrency` without `cancel-in-progress`. `hooks/conventional-commits` no longer passes on `no-commit-to-branch`. `containers/non-root-user` reads the final stage only.
 - `slop/focused-tests` reads test files only, and looks for `fdescribe`, `fit` and `.only` in JavaScript and TypeScript and for `solo: true` in Dart; a Go function called `fit` was an error before.
 - `repo/no-tracked-env` accepts encrypted environment files (`.sops`, `.enc`, `.age`, `.gpg`, `.asc`).
 - The agent instructions of `ci/least-privilege` and `ci/concurrency-cancel` showed an escaped `\n`; they now give the YAML in flow form.

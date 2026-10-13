@@ -1,0 +1,14 @@
+id: deps/locked-install/go
+kind: expr
+params:
+  noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+expr: >
+  !(taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'-mod[= ]mod\b'))
+  && !workflows().exists(w, text(w).matches(r'GOFLAGS:[^\n]*-mod=mod'))
+message: "a Go build may rewrite go.mod (-mod=mod)"
+requirement: "Go verifies every download against go.sum and, since Go 1.16, refuses to change go.mod during a build (`-mod=readonly`); this holds unless a recipe or CI step passes `-mod=mod` (or sets it in GOFLAGS), which is what is checked."
+fix:
+  human: "Drop `-mod=mod`; run `go mod tidy` and commit go.mod and go.sum instead."
+refs: ["https://fleetlint.org/stacks/#go"]

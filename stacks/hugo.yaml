@@ -1,0 +1,14 @@
+id: hugo
+title: Hugo / static sites
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+detect:
+  - {file: hugo.toml}
+  - {file: hugo.yaml}
+  - {file: hugo.json}
+  - {file: config/_default/hugo.toml}
+  - {file: config/_default/hugo.yaml}
+  - {file: config/_default/config.toml}
+  # An older site: config.toml naming the baseURL next to a content directory.
+  - {file: config.toml, contains: baseURL, with: [content]}
+devcontainer: {feature: "ghcr.io/devcontainers/features/hugo:1"}
+run_image: "ghcr.io/gohugoio/hugo:v0.167.0"

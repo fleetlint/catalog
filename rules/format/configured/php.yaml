@@ -1,0 +1,22 @@
+id: format/configured/php
+kind: outcome
+satisfiers:
+  - name: formatter-config
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [".php-cs-fixer.dist.php", ".php-cs-fixer.php", "pint.json", "phpcs.xml", "phpcs.xml.dist", ".phpcs.xml", ".phpcs.xml.dist", "ecs.php"].exists(n, file(d + n)))
+  - name: formatter-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("php-cs-fixer|\\bpint\\b|phpcbf|vendor/bin/ecs")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("php-cs-fixer|\\bpint\\b|phpcbf|vendor/bin/ecs"))
+      || workflows().exists(w, text(w).matches("php-cs-fixer|\\bpint\\b|phpcbf|vendor/bin/ecs"))
+message: "no PHP formatter configuration (.php-cs-fixer.dist.php, pint.json, phpcs.xml)"
+requirement: "PHP CS Fixer, Pint, PHP_CodeSniffer or Easy Coding Standard is configured in the project or a parent directory, or runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Add .php-cs-fixer.dist.php and friendsofphp/php-cs-fixer in require-dev (`fleetlint fix --apply` does both)."
+  agent: "Add .php-cs-fixer.dist.php from the template, require friendsofphp/php-cs-fixer in require-dev, and run it with --dry-run in a hook; reformat in a separate commit."
+  actions:
+    - template: php/php-cs-fixer.dist.php
+      to: .php-cs-fixer.dist.php
+    - merge: {file: composer.json, template: php/require-dev-format.json}
+refs: ["https://fleetlint.org/stacks/#php"]

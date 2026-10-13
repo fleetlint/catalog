@@ -1,0 +1,12 @@
+id: quality/coverage-threshold/ruby
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: simplecov
+    expr: >
+      (glob(".simplecov") + glob("spec/*.rb") + glob("test/*.rb")).exists(f, text(f).matches(r'\bminimum_coverage\b'))
+requirement: "SimpleCov sets `minimum_coverage` (in .simplecov or the spec/test helper), or a stack-neutral floor applies."
+fix:
+  human: "Add `minimum_coverage 80` to the SimpleCov block in .simplecov."
+refs: ["https://fleetlint.org/stacks/#ruby"]

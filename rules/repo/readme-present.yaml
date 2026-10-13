@@ -4,10 +4,12 @@ kind: expr
 severity: warning
 scope: root
 expr: >
-  exists("README.md") && size(lines("README.md")) >= 10
-  && text("README.md").matches('(?i)(## |### )?(install|quick ?start|getting started|usage|setup)')
-message: "README.md is missing or has no install/quickstart section"
-requirement: README.md says what the project is and how to install, run and test it.
+  glob("*").exists(f, f.matches(r'^(?i)readme(\.(md|markdown|rst|adoc|asciidoc|txt|org))?$')
+    && size(lines(f)) >= 10
+    && (text(f).matches(r'(?im)^(#{1,3}|={1,3})\s+.*\b(install|quick ?start|getting started|usage|setup)')
+        || text(f).matches(r'(?im)^[^\n]*\b(install|quick ?start|getting started|usage|setup)[^\n]*\n[=\-~^]{3,}\s*$')))
+message: "no README, or the README has no install, quickstart or usage heading"
+requirement: "A README (README.md, README, README.rst, README.adoc, any case) of at least 10 lines has a heading for installation, quickstart, getting started, usage or setup."
 rationale: The first screen of the README must be enough to run the project.
 fix:
   human: "Write a README with purpose, requirements, quickstart and the task-runner targets."

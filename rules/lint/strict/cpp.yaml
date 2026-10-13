@@ -1,0 +1,17 @@
+id: lint/strict/cpp
+kind: expr
+title: clang-tidy findings fail the build
+# clang-tidy uses the nearest .clang-tidy above each source file.
+when: >
+  ["", "../", "../../", "../../../"].exists(d, file(d + ".clang-tidy"))
+expr: >
+  [["", "../", "../../", "../../../"].map(d, d + ".clang-tidy").filter(f, file(f))]
+  .exists(l, [yaml(l[0])].exists(y, y != null && "WarningsAsErrors" in y && y.WarningsAsErrors != null
+    && string(y.WarningsAsErrors).trim() != "" && !string(y.WarningsAsErrors).trim().matches("^-\\*$")))
+message: ".clang-tidy does not set WarningsAsErrors"
+requirement: "The nearest `.clang-tidy` sets `WarningsAsErrors` (for example `'*'`), so a finding fails the build instead of scrolling past."
+rationale: clang-tidy reports warnings and exits 0; without WarningsAsErrors its findings never stop a merge.
+fix:
+  human: "Set `WarningsAsErrors: '*'` in .clang-tidy."
+  agent: "Set WarningsAsErrors: '*' in .clang-tidy and fix the findings that now fail instead of narrowing the check list."
+refs: ["https://fleetlint.org/stacks/#cc"]

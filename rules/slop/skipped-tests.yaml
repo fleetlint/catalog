@@ -4,13 +4,13 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("test", r'\.skip\(|\bxit\(|\bxdescribe\(|@Ignore\b|@Disabled\b|t\.Skip\(|#\[ignore\]|@pytest\.mark\.skip|@unittest\.skip|\bskip:\s*(true|[\x22\x27])')
+  codegrep("test", r'\b(it|describe|test|context|suite)\.skip\(|\bx(it|describe|context)[\s(]|@Ignore\b|\[Ignore[\](]|@Disabled\b|\bSkip\s*=\s*\x22|#\[ignore\]|@pytest\.mark\.skip(\(|\s*$)|@unittest\.skip\(|\bskip:\s*(true|[\x22\x27])')
 expr: >
-  false
-message: "skipped test"
-requirement: "Tests are not skipped; a quarantined flaky test references an issue."
+  item.text.matches(r'#\d+|\b[A-Z][A-Z0-9]+-\d+\b|https?://\S+/(issues?|browse|pull|merge_requests)/\S*\d')
+message: "skipped test without an issue reference"
+requirement: "Tests are not skipped unconditionally (`it.skip(`, `xit`, `@Ignore`, `@Disabled`, `[Fact(Skip = ...)]`, `#[ignore]`, `@pytest.mark.skip`, `skip: true`) unless the same line references an issue: `#123`, `ABC-123` or an issue URL. Conditional skips (`t.Skip`, `skipif`) are not read."
 rationale: "A skipped test is coverage that the numbers still count and the suite no longer provides."
 fix:
-  human: "Fix or delete the test; if it must be quarantined, reference the issue."
-  agent: "Report each skipped test with its reason; do not un-skip tests that then fail without fixing the cause."
-refs: ["https://fleetlint.org/baseline/#slop"]
+  human: "Fix or delete the test; if it must be quarantined, reference the issue on the same line."
+  agent: "Report each skipped test with its reason; do not un-skip tests that then fail without fixing the cause, and do not invent issue numbers."
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#tests"]

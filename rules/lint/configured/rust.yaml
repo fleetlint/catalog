@@ -1,0 +1,30 @@
+id: lint/configured/rust
+kind: outcome
+satisfiers:
+  - name: lints-table
+    expr: >
+      [toml("Cargo.toml")].exists(c, c != null
+        && ((has(c.lints) && !(has(c.lints.workspace) && c.lints.workspace == true))
+          || (has(c.workspace) && has(c.workspace.lints))))
+  # `[lints] workspace = true` inherits the workspace root's [workspace.lints].
+  - name: workspace-lints
+    expr: >
+      [toml("Cargo.toml")].exists(c, c != null && has(c.lints) && has(c.lints.workspace) && c.lints.workspace == true)
+      && ["../", "../../", "../../../"].exists(d, file(d + "Cargo.toml")
+        && [toml(d + "Cargo.toml")].exists(w, w != null && has(w.workspace) && has(w.workspace.lints)))
+partials:
+  - name: workspace-not-inherited
+    severity: warning
+    expr: >
+      ["../", "../../", "../../../"].exists(d, file(d + "Cargo.toml")
+        && [toml(d + "Cargo.toml")].exists(w, w != null && has(w.workspace) && has(w.workspace.lints)))
+    message: "the workspace defines [workspace.lints] but this crate does not inherit them; add `[lints] workspace = true`"
+message: "Cargo.toml has no [lints] table"
+requirement: "Cargo.toml configures the compiler and clippy lints in a `[lints]` table, `[workspace.lints]`, or inherits the workspace's with `[lints] workspace = true`."
+rationale: Unwrap-driven crashes are the Rust equivalent of swallowed errors, and clippy only reports them when told to.
+fix:
+  human: "Add the [lints] table from the Rust stack profile (`fleetlint fix --apply` appends it); in a workspace member add `[lints] workspace = true`."
+  agent: "Add [lints.rust] and [lints.clippy] tables per the Rust profile to Cargo.toml, or `[lints] workspace = true` in a workspace member."
+  actions:
+    - append: {file: Cargo.toml, template: rust/cargo-lints.toml, unless: '(?m)^\[(workspace\.)?lints'}
+refs: ["https://fleetlint.org/stacks/#rust"]

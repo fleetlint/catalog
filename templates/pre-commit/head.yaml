@@ -40,7 +40,7 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
-        args: [--strict, feat, fix, refactor, perf, test, docs, build, chore, revert]
+        args: [--strict, feat, fix, refactor, perf, test, docs, build, ci, style, chore, revert]
 
   # Shell scripts (drop if the repo has none)
   - repo: https://github.com/shellcheck-py/shellcheck-py

@@ -1,0 +1,10 @@
+id: repo/lockfile-committed/dotnet
+kind: expr
+expr: >
+  tracked().exists(f, f == "packages.lock.json" || f.endsWith("/packages.lock.json"))
+  || !(glob("**/*.csproj") + glob("**/*.fsproj") + glob("**/Directory.Packages.props")).exists(f, text(f).contains("PackageReference") || text(f).contains("PackageVersion"))
+message: "no NuGet lock file (packages.lock.json) is tracked"
+requirement: "packages.lock.json is tracked (`RestorePackagesWithLockFile`) when a project references NuGet packages."
+fix:
+  human: "Set `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` in Directory.Build.props, run `dotnet restore` and commit the packages.lock.json files."
+refs: ["https://fleetlint.org/stacks/#net"]

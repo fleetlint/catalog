@@ -12,3 +12,4 @@ fix:
   agent: "Create .gitignore with the standard patterns for the detected stacks and OS/editor files."
   actions:
     - gitignore: [".DS_Store", "*.log", ".env", ".env.*", "!.env.example"]
+refs: ["https://fleetlint.org/baseline/#hygiene"]

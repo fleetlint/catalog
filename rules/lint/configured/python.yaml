@@ -1,0 +1,27 @@
+id: lint/configured/python
+kind: outcome
+satisfiers:
+  # ruff uses the nearest ruff.toml, .ruff.toml or pyproject.toml with [tool.ruff], up to the repository root.
+  - name: ruff
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + "ruff.toml") || file(d + ".ruff.toml")
+        || (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool) && has(p.tool.ruff))))
+  - name: pylint
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".pylintrc") || file(d + "pylintrc")
+        || (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool) && has(p.tool.pylint))))
+  - name: flake8
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".flake8")
+        || (file(d + "setup.cfg") && text(d + "setup.cfg").matches("(?m)^\\[flake8\\]"))
+        || (file(d + "tox.ini") && text(d + "tox.ini").matches("(?m)^\\[flake8\\]")))
+message: "no Python linter configuration (ruff, pylint or flake8)"
+requirement: "A Python linter is configured in the project or a parent directory: ruff (`[tool.ruff]` in pyproject.toml, or ruff.toml), pylint or flake8. Another linter is added with `accept:`."
+rationale: Untyped Python with default linting is where generated code hides most bugs.
+fix:
+  human: "Add [tool.ruff] to pyproject.toml; `fleetlint fix --apply` appends it and a `dev` dependency group with ruff and mypy (then `uv sync`)."
+  agent: "Add [tool.ruff] with the profile's rule selection to pyproject.toml; ratchet existing violations with `ruff check --add-noqa`."
+  actions:
+    - append: {file: pyproject.toml, template: python/ruff.toml, unless: '(?m)^\[tool\.ruff\]'}
+    - append: {file: pyproject.toml, template: python/dev-group.toml, unless: '(?m)^\[dependency-groups\]|ruff[>=~<]'}
+refs: ["https://fleetlint.org/stacks/#python"]

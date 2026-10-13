@@ -1,0 +1,14 @@
+id: deps/unused-check/go
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: go-mod-tidy-diff
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, !l.matches(params.skip)
+          && l.matches(r'\bgo mod tidy\b[^;&|]*-diff\b|\bgo mod tidy\b.*\bgit diff\b[^;&|]*--exit-code')))
+      || workflows().exists(w, steps(w).exists(s, s.run.matches(r'\bgo mod tidy\b[^;&|\n]*-diff\b|(?s)\bgo mod tidy\b.*\bgit diff\b[^;&|\n]*--exit-code')))
+requirement: "A recipe or CI step runs `go mod tidy -diff` (Go 1.23+), or `go mod tidy` followed by `git diff --exit-code`, which fails when go.mod requires a module nothing imports."
+fix:
+  human: "Run `go mod tidy -diff` in the `audit` target."
+refs: ["https://fleetlint.org/stacks/#go"]

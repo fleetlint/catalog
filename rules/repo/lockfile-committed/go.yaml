@@ -1,0 +1,8 @@
+id: repo/lockfile-committed/go
+kind: expr
+expr: '"go.sum" in tracked() || scan("go.mod", r''^\s*require\b'').size() == 0'
+message: "go.sum is not tracked"
+requirement: "go.sum is tracked when go.mod requires any module."
+fix:
+  human: "Run `go mod tidy` and commit go.sum."
+refs: ["https://fleetlint.org/stacks/#go"]

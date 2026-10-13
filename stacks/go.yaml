@@ -1,0 +1,7 @@
+id: go
+title: Go
+refs: ["https://fleetlint.org/stacks/#go"]
+detect:
+  - {file: go.mod}
+devcontainer: {feature: "ghcr.io/devcontainers/features/go:1"}
+run_image: "mcr.microsoft.com/devcontainers/go:1"

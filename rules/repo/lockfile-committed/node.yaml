@@ -1,0 +1,10 @@
+id: repo/lockfile-committed/node
+kind: expr
+expr: >
+  tracked().exists(f, f in ["package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb"])
+  || !(text("package.json").matches(r'"(dev|optional)?[dD]ependencies"\s*:\s*\{\s*"|"workspaces"\s*:') || file("pnpm-workspace.yaml"))
+message: "no Node lockfile is tracked"
+requirement: "package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock or bun.lock is tracked when package.json declares dependencies or workspaces."
+fix:
+  human: "Run the package manager's install and commit its lockfile."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

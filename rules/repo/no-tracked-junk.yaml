@@ -2,13 +2,17 @@ id: repo/no-tracked-junk
 title: No editor, OS or backup files are tracked
 kind: expr
 severity: error
+scope: root
 foreach: >
-  tracked().filter(p, p.matches(r'(^|/)(\.DS_Store|Thumbs\.db|desktop\.ini|nohup\.out)$|\.(bak|orig|rej|swp|swo|log|pyc)$|~$|(^|/)(__pycache__|node_modules|\.venv|venv)/|(^|/)\.idea/workspace\.xml$|(^|/)\.vscode/settings\.json$'))
+  tracked().filter(p, p.matches(r'(^|/)(\.DS_Store|Thumbs\.db|desktop\.ini|nohup\.out)$|\.(bak|orig|rej|swp|swo|log|pyc)$|~$|(^|/)(__pycache__|node_modules|\.venv|venv)/|(^|/)\.idea/workspace\.xml$')
+    && !(p.endsWith(".log") && p.matches(r'(^|/)(testdata|fixtures?|__fixtures__|test|tests|spec)/')))
 expr: "false"
 message: "a file that does not belong in version control is tracked"
 requirement: >
   Files such as .DS_Store, Thumbs.db, *.bak, *.orig, *.swp, *.log, nohup.out, Python bytecode,
-  dependency directories and personal IDE state are never committed.
+  dependency directories and personal IDE state (.idea/workspace.xml) are never committed. Log files
+  under testdata/, fixtures/ and test directories are test inputs and are not findings; a shared
+  .vscode/settings.json is project configuration and is not read.
 rationale: They are noise at best and leak local paths or data at worst.
 fix:
   human: "git rm --cached the listed files and add their patterns to .gitignore."

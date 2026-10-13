@@ -1,0 +1,14 @@
+id: repo/toolchain-pinned/kotlin
+kind: expr
+expr: >
+  scan(".java-version", r'^\s*\d').size() > 0 || scan(".sdkmanrc", r'^\s*java\s*=\s*\d').size() > 0
+  || (file("gradle/gradle-daemon-jvm.properties") && text("gradle/gradle-daemon-jvm.properties").matches(r'toolchainVersion\s*=\s*\d'))
+  || glob("**/build.gradle*").exists(f, text(f).matches(r'languageVersion(\.set\(|\s*=\s*)\s*JavaLanguageVersion\.of\(\s*\d|jvmToolchain\s*\(\s*\d'))
+  || scan(".tool-versions", r'^\s*(java)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(java)"?\s*=\s*[^#\n]*\d').size() > 0)
+message: "no JDK version is pinned"
+requirement: "The JDK is pinned: a Gradle toolchain (`jvmToolchain(n)`, `JavaLanguageVersion.of(n)`), `gradle-daemon-jvm.properties`, `.java-version`, `.sdkmanrc` with `java=`, or `.tool-versions`/mise naming java. The Gradle wrapper pins Gradle, not the JDK; the Kotlin version is pinned by the plugin version already."
+fix:
+  human: "Add `kotlin { jvmToolchain(21) }` to the build."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

@@ -1,0 +1,13 @@
+id: deps/unused-check
+title: Unused dependencies are detected
+kind: capability
+severity: info
+scope: root
+tiers: [1]
+message: "nothing checks for unused dependencies"
+requirement: "A task-runner recipe or a CI step runs the stack's unused-dependency check, so a dependency nothing imports is removed instead of carried (and audited, and updated) forever. Comments, `echo` lines and lines that only install the tool do not count."
+rationale: Every declared dependency is attack surface and update churn; one nothing uses is pure cost.
+fix:
+  human: "Add the stack's unused-dependency check to the `audit` target (see https://fleetlint.org/stacks/)."
+  agent: "Add the stack's unused-dependency checker to the audit target; remove the dependencies it reports in a separate change after confirming nothing loads them dynamically."
+refs: ["https://fleetlint.org/baseline/#dependencies"]

@@ -1,0 +1,26 @@
+id: lint/configured/dotnet
+kind: outcome
+# MSBuild imports the nearest Directory.Build.props above each project; .editorconfig files apply from every parent.
+satisfiers:
+  - name: net-analyzers
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, d + "Directory.Build.props") + glob("**/*.csproj") + glob("**/*.fsproj"))
+      .exists(f, file(f) && text(f).matches("<AnalysisLevel>\\s*[\\w.]+-(minimum|recommended|all|default)\\s*<|<AnalysisLevel>\\s*(latest|preview|\\d[\\d.]*)\\s*<|<AnalysisMode>\\s*(Minimum|Recommended|All|Default)\\s*<"))
+  - name: editorconfig-severity
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".editorconfig")
+        && text(d + ".editorconfig").matches("(?m)^\\s*dotnet_analyzer_diagnostic\\.(category-[\\w-]+\\.)?severity\\s*=\\s*(warning|error)\\b"))
+  - name: analyzer-package
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "Directory.Build.props", d + "Directory.Packages.props"]).flatten() + glob("**/*.csproj") + glob("**/*.fsproj"))
+      .exists(f, file(f) && text(f).matches("StyleCop\\.Analyzers|SonarAnalyzer\\.CSharp|Roslynator\\.Analyzers|Meziantou\\.Analyzer"))
+message: "no analyzer configuration (AnalysisLevel in Directory.Build.props, analyzer severities in .editorconfig, or an analyzer package)"
+requirement: "The .NET analyzers are configured for every project: `<AnalysisLevel>` or `<AnalysisMode>` in Directory.Build.props (or each project file), `dotnet_analyzer_diagnostic.severity` raised to warning or error in .editorconfig, or an analyzer package (StyleCop, Sonar, Roslynator, Meziantou). Another analyzer is added with `accept:`."
+rationale: Per-project settings drift; one file at the root makes every project in the solution compile under the same rules.
+fix:
+  human: "Add Directory.Build.props with Nullable, TreatWarningsAsErrors and AnalysisLevel (`fleetlint fix --apply` writes it)."
+  agent: "Add Directory.Build.props from the template at the repository root and fix the warnings that become errors instead of lowering the level."
+  actions:
+    - template: dotnet/Directory.Build.props
+      to: Directory.Build.props
+refs: ["https://fleetlint.org/stacks/#net"]

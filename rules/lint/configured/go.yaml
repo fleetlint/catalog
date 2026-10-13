@@ -1,0 +1,31 @@
+id: lint/configured/go
+kind: outcome
+satisfiers:
+  # golangci-lint reads the nearest configuration up to the repository root.
+  - name: golangci-lint-v2
+    expr: >
+      [["", "../", "../../", "../../../"].map(d, [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"].map(n, d + n))
+        .flatten().filter(f, file(f))]
+      .exists(l, l.size() > 0 && [l[0].endsWith(".toml") ? toml(l[0]) : (l[0].endsWith(".json") ? json(l[0]) : yaml(l[0]))]
+        .exists(c, c != null && has(c.version) && string(c.version) == "2"))
+  - name: staticcheck-and-revive
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + "staticcheck.conf"))
+      && ["", "../", "../../", "../../../"].exists(d, file(d + "revive.toml") || file(d + ".revive.toml"))
+partials:
+  - name: golangci-v1
+    severity: warning
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"].exists(n, file(d + n)))
+    message: "the golangci-lint configuration is in the v1 format, which golangci-lint v2 refuses; convert it with `golangci-lint migrate`"
+message: "no Go linter configuration (golangci-lint v2, or staticcheck with revive)"
+requirement: "A Go linter configuration is committed in the module or a parent directory: golangci-lint v2 (`version: \"2\"`), or staticcheck together with revive. Another linter setup is added with `accept:`."
+rationale: Default linting misses the swallowed errors and oversized functions the baseline bans.
+fix:
+  human: "Add .golangci.yml (version 2) from the Go stack profile; `fleetlint fix --apply` writes one."
+  agent: "Create .golangci.yml with version: \"2\" and the linters listed in the Go stack profile, with a new-from-rev ratchet; convert a v1 file with `golangci-lint migrate`."
+  actions:
+    - template: golangci.yml
+      to: .golangci.yml
+refs: ["https://fleetlint.org/stacks/#go"]

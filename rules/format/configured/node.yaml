@@ -1,0 +1,29 @@
+id: format/configured/node
+kind: outcome
+satisfiers:
+  # Prettier, Biome and dprint read their configuration from the package or a parent directory.
+  - name: prettier
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [".prettierrc", ".prettierrc.json", ".prettierrc.json5", ".prettierrc.yaml", ".prettierrc.yml", ".prettierrc.toml",
+          ".prettierrc.js", ".prettierrc.cjs", ".prettierrc.mjs", ".prettierrc.ts", "prettier.config.js", "prettier.config.cjs", "prettier.config.mjs", "prettier.config.ts"]
+        .exists(n, file(d + n)))
+      || (file("package.json") && [json("package.json")].exists(p, p != null && has(p.prettier)))
+  - name: biome
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, ["biome.json", "biome.jsonc"].exists(n, file(d + n) && [json(d + n)].exists(b, b != null
+        && !(has(b.formatter) && b.formatter != null && "enabled" in b.formatter && b.formatter.enabled == false))))
+  - name: dprint
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, ["dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc"].exists(n, file(d + n)))
+  - name: formatter-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("\\bprettier\\b|biome (format|check|ci)|dprint (fmt|check)")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("\\bprettier\\b|biome (format|check|ci)|dprint (fmt|check)"))
+      || workflows().exists(w, text(w).matches("\\bprettier\\b|biome (format|check|ci)|dprint (fmt|check)"))
+message: "no formatter is configured or run (Prettier, Biome or dprint)"
+requirement: "A formatter is configured in the package or a parent directory: Prettier (`.prettierrc*`, `prettier.config.*` or a `prettier` key in package.json), Biome with its formatter enabled, or dprint; or one of them runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Add a Prettier configuration (.prettierrc.json) and the prettier hook, or use Biome."
+  agent: "Add .prettierrc.json and prettier to devDependencies, run it from the fmt target and a hook; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

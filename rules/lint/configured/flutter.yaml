@@ -1,0 +1,19 @@
+id: lint/configured/flutter
+kind: outcome
+satisfiers:
+  # The Dart analyzer uses the nearest analysis_options.yaml above each file.
+  - name: analysis-options
+    expr: >
+      [["", "../", "../../", "../../../"].map(d, d + "analysis_options.yaml").filter(f, file(f))]
+      .exists(l, l.size() > 0 && [yaml(l[0])].exists(a, a != null
+        && (has(a.include) || (has(a.linter) && a.linter != null && has(a.linter.rules)))))
+message: "no analysis_options.yaml that includes a lint set or enables linter rules"
+requirement: "analysis_options.yaml (in the package or a parent directory) includes a lint set such as flutter_lints, lints or very_good_analysis, or enables linter rules itself."
+rationale: The Dart analyzer only reports what a lint set switches on; without one, `flutter analyze` checks little beyond compile errors.
+fix:
+  human: "Add analysis_options.yaml including package:flutter_lints (`fleetlint fix --apply` writes one with the strict modes on)."
+  agent: "Add analysis_options.yaml from the template (flutter_lints plus the strict modes and slop guards); run `flutter analyze --fatal-infos` and fix what it reports."
+  actions:
+    - template: flutter/analysis_options.yaml
+      to: analysis_options.yaml
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

@@ -1,0 +1,12 @@
+id: format/configured
+title: A formatter is configured
+kind: capability
+severity: warning
+tiers: [1, 2]
+message: "no formatter is configured or run"
+requirement: "Every stack has a formatter, configured in the repository or run by a hook, the task runner or CI, so formatting is never a review topic."
+rationale: Without one formatter every editor reformats differently and diffs fill with whitespace churn that hides the real change.
+fix:
+  human: "Add the stack's formatter to the hooks and the fmt target (see https://fleetlint.org/stacks/)."
+  agent: "Add the stack's formatter to the pre-commit hooks and the fmt target; reformat the code base in a separate commit."
+refs: ["https://fleetlint.org/baseline/#static-analysis"]

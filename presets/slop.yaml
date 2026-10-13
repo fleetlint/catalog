@@ -2,16 +2,16 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-slop
-  version: 0.1.0
-  engine: 2
+  engine: 3
   description: >
     Heuristics for the traces careless or generated code leaves behind:
     narration comments, placeholders, swallowed errors, suppressions, skipped
-    tests, vague commits. Add it next to another preset; the findings are a
-    review list, not a verdict.
+    tests, marketing filler, vague commits, and in public repositories agent
+    instruction files and AI attribution. Add it next to another preset; the
+    heuristic findings are a review list, not a verdict.
 
 
-# Heuristics; the four slop rules in fleetlint:recommended are not repeated here.
+# Heuristics; the slop rules in fleetlint:minimal and fleetlint:recommended are not repeated here.
 rules:
   - use: slop/narration-comments
   - use: slop/placeholder-comments
@@ -26,13 +26,17 @@ rules:
   - use: slop/variant-files
   - use: slop/swallowed-errors
   - use: slop/escape-hatches
+  - use: slop/forced-unwraps
   - use: slop/vague-errors
   - use: slop/placeholder-values
   - use: slop/insecure-patterns
   - use: slop/skipped-tests
   - use: slop/trivial-asserts
   - use: slop/emoji-headings
+  - use: slop/marketing-words
   - use: slop/dumping-ground-files
   - use: slop/vague-commit-messages
   - use: slop/non-conventional-commits
   - use: slop/huge-commits
+  - use: public/no-agent-files
+  - use: public/no-ai-attribution

@@ -1,0 +1,18 @@
+id: format/configured/ruby
+kind: outcome
+satisfiers:
+  - name: rubocop-or-standard
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [".rubocop.yml", ".rubocop.yaml", ".standard.yml"].exists(n, file(d + n)))
+  - name: formatter-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("\\brubocop\\b|\\bstandardrb\\b|\\brufo\\b|\\bstree\\b")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("\\brubocop\\b|\\bstandardrb\\b|\\brufo\\b|\\bstree\\b"))
+      || workflows().exists(w, text(w).matches("\\brubocop\\b|\\bstandardrb\\b|\\brufo\\b|\\bstree\\b"))
+message: "no Ruby formatter (RuboCop, Standard or rufo)"
+requirement: "RuboCop or Standard is configured in the project or a parent directory (their layout cops format the code), or rubocop, standardrb, rufo or syntax_tree runs in a hook, the task runner or CI. Another formatter is added with `accept:`."
+fix:
+  human: "Add .rubocop.yml and run `rubocop --autocorrect` in a hook."
+  agent: "Add .rubocop.yml and a rubocop hook with --autocorrect; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#ruby"]

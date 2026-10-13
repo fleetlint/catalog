@@ -1,0 +1,13 @@
+id: quality/coverage-threshold/cpp
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: gcovr
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bgcovr\b[^;&|]*--fail-under-(line|branch|function|decision)') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bgcovr\b[^;&|]*--fail-under-(line|branch|function|decision)') && !l.matches(params.skip))))
+requirement: "gcovr runs with `--fail-under-line` (or another `--fail-under-*`) in a recipe or a CI step, or a stack-neutral floor applies."
+fix:
+  human: "Run `gcovr --fail-under-line 80` in the `cover` target."
+refs: ["https://fleetlint.org/stacks/#cc"]

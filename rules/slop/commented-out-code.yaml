@@ -13,4 +13,4 @@ rationale: "Version control keeps old code; commented-out code is never updated 
 fix:
   human: "Delete it."
   agent: "Delete commented-out code."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]

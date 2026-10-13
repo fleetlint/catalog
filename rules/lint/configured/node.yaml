@@ -1,0 +1,33 @@
+id: lint/configured/node
+kind: outcome
+satisfiers:
+  # ESLint and Biome find their configuration in the working directory or above it.
+  - name: eslint
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        ["eslint.config.js", "eslint.config.mjs", "eslint.config.cjs", "eslint.config.ts", "eslint.config.mts", "eslint.config.cts"].exists(n, file(d + n)))
+  - name: biome
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + "biome.json") || file(d + "biome.jsonc"))
+  - name: oxlint
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".oxlintrc.json"))
+partials:
+  - name: legacy-eslintrc
+    severity: warning
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        [".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json", ".eslintrc.yml", ".eslintrc.yaml"].exists(n, file(d + n)))
+      || (file("package.json") && [json("package.json")].exists(p, p != null && has(p.eslintConfig)))
+    message: "only a legacy .eslintrc configuration, which ESLint 10 no longer reads; migrate it to eslint.config.mjs"
+message: "no linter configuration (eslint.config.*, biome.json or .oxlintrc.json)"
+requirement: "A linter is configured in the package or a parent directory: an ESLint flat config (`eslint.config.*`), Biome (`biome.json`) or oxlint (`.oxlintrc.json`). Another linter is added with `accept:`."
+rationale: Without a type-aware linter, floating promises and any-typed code go unnoticed.
+fix:
+  human: "Add an ESLint flat config; `fleetlint fix --apply` writes eslint.config.mjs and adds the eslint packages to devDependencies (then run the package manager's install)."
+  agent: "Add eslint.config.mjs with typescript-eslint strictTypeChecked and the plugins to devDependencies; install and fix what the linter reports."
+  actions:
+    - template: node/eslint.config.mjs
+      to: eslint.config.mjs
+    - merge: {file: package.json, template: node/devdeps-lint.json}
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

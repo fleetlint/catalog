@@ -1,0 +1,30 @@
+id: lint/strict/go
+kind: expr
+title: golangci-lint enables the baseline linters
+# The nearest golangci-lint configuration, in the v2 format (lint/configured/go reports the rest).
+when: >
+  [["", "../", "../../", "../../../"].map(d, [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"].map(n, d + n))
+    .flatten().filter(f, file(f))]
+  .exists(l, l.size() > 0 && [l[0].endsWith(".toml") ? toml(l[0]) : (l[0].endsWith(".json") ? json(l[0]) : yaml(l[0]))]
+    .exists(c, c != null && has(c.version) && string(c.version) == "2"))
+params:
+  required: [errcheck, govet, staticcheck, errorlint, gosec, gocognit, funlen]
+foreach: params.required
+expr: >
+  [["", "../", "../../", "../../../"].map(d, [".golangci.yml", ".golangci.yaml", ".golangci.toml", ".golangci.json"].map(n, d + n))
+    .flatten().filter(f, file(f))]
+  .exists(l, [l[0].endsWith(".toml") ? toml(l[0]) : (l[0].endsWith(".json") ? json(l[0]) : yaml(l[0]))]
+    .exists(c, (!has(c.linters) || c.linters == null)
+      ? item in ["errcheck", "govet", "ineffassign", "staticcheck", "unused"]
+      : !(has(c.linters.disable) && item in c.linters.disable)
+        && ((has(c.linters.enable) && item in c.linters.enable)
+          || (has(c.linters.default) && c.linters.default == "all")
+          || ((!has(c.linters.default) || c.linters.default == "standard")
+            && item in ["errcheck", "govet", "ineffassign", "staticcheck", "unused"]))))
+message: "required linter is not enabled"
+requirement: "The golangci-lint v2 configuration enables every linter in `params.required` (errcheck, govet, staticcheck, errorlint, gosec, gocognit, funlen), through `enable`, `default: all` or the standard set, and does not list it under `disable`."
+rationale: Swallowed errors, unsafe calls and oversized functions are exactly what these linters catch.
+fix:
+  human: "Add the missing linters to linters.enable in .golangci.yml and remove them from linters.disable."
+  agent: "Add each reported linter to the linters.enable list in .golangci.yml (and drop it from linters.disable); keep the rest of the file unchanged."
+refs: ["https://fleetlint.org/stacks/#go"]

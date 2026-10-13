@@ -1,0 +1,18 @@
+id: deps/license-check/rust
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: cargo-deny
+    when: file("deny.toml") && text("deny.toml").contains("[licenses]")
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bcargo[- ]deny\b') && !l.matches(params.skip)
+          && !l.matches(r'\bcheck(\s+(bans|advisories|sources))+\s*($|[;&|])')))
+      || workflows().exists(w, steps(w).exists(s,
+           (s.uses.startsWith("EmbarkStudios/cargo-deny-action") && !("command" in s.with && string(s.with.command).matches(r'^check(\s+(bans|advisories|sources))+\s*$')))
+           || s.run.split("\n").exists(l, l.matches(r'\bcargo[- ]deny\b') && !l.matches(params.skip)
+                && !l.matches(r'\bcheck(\s+(bans|advisories|sources))+\s*($|[;&|])'))))
+requirement: "deny.toml has a `[licenses]` allowlist and a task-runner recipe or a CI step runs `cargo deny check` including licenses (or cargo-deny-action), or a stack-neutral license checker runs."
+fix:
+  human: "Add a `[licenses]` allow list to deny.toml and run `cargo deny check licenses` in the `audit` target."
+refs: ["https://fleetlint.org/stacks/#rust"]

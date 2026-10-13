@@ -1,0 +1,13 @@
+id: repo/toolchain-pinned/php
+kind: expr
+expr: >
+  scan(".php-version", r'^\s*\d').size() > 0
+  || (file("composer.json") && text("composer.json").matches(r'"platform"\s*:\s*\{[^}]*"php"\s*:\s*"\d'))
+  || scan(".tool-versions", r'^\s*(php)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(php)"?\s*=\s*[^#\n]*\d').size() > 0)
+message: "no PHP version is pinned"
+requirement: "`.php-version` names a version, composer.json's `config.platform.php` fixes the PHP version dependencies are resolved for, or `.tool-versions`/mise names php with a version."
+fix:
+  human: "Write the PHP version to .php-version (setup-php reads it)."
+refs: ["https://fleetlint.org/stacks/#php"]

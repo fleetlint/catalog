@@ -1,14 +1,27 @@
 id: ci/job-timeouts
-title: Workflow jobs have timeouts
+title: CI jobs have timeouts
 kind: expr
 severity: info
 scope: root
 when: workflows().size() > 0
-foreach: workflows()
-expr: jobs(item).all(j, j.timeout_minutes > 0 || j.uses != "")
-message: "a job has no timeout-minutes"
-requirement: "Every job sets `timeout-minutes` (reusable-workflow jobs excepted) so a hang cannot burn the runner budget."
-rationale: The default job timeout is six hours.
+foreach: >
+  workflows().map(w, jobs(w).map(j, {
+    "path": w,
+    "name": j.name,
+    "ok": j.timeout_minutes > 0 || j.uses != ""
+      || (ci_kind(w) == "gitlab" && (
+        (type(yaml(w)[j.name]) == map && "trigger" in yaml(w)[j.name])
+        || workflows().exists(g, ci_kind(g) == "gitlab" && type(yaml(g)) == map && "default" in yaml(g)
+             && type(yaml(g)["default"]) == map && "timeout" in yaml(g)["default"])))
+  })).flatten()
+expr: item.ok
+message: "job has no timeout"
+requirement: >
+  Every Actions job sets `timeout-minutes` (reusable-workflow jobs excepted); every GitLab job sets
+  `timeout:` or inherits one from `default: timeout:` (trigger jobs excepted). The GitLab project
+  timeout lives outside the repository and does not count.
+rationale: The default job timeout is six hours on GitHub and one hour on GitLab, both far longer than a hung job deserves.
 fix:
-  human: "Add `timeout-minutes: 15` (or what the job needs) to each job."
-  agent: "Add timeout-minutes to each job in the flagged workflow, sized to roughly twice its typical duration."
+  human: "Add `timeout-minutes: 15` (GitLab: `timeout: 15m`, or once under `default:`) sized to what the job needs."
+  agent: "Add timeout-minutes to each Actions job in the flagged file (GitLab: `timeout:` per job or under `default:`), sized to roughly twice its typical duration."
+refs: ["https://fleetlint.org/baseline/#continuous-integration"]

@@ -1,0 +1,19 @@
+id: format/configured/python
+kind: outcome
+satisfiers:
+  - name: ruff-format-or-black-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("ruff format|ruff-format|\\bblack\\b")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("ruff format|ruff-format|\\bblack\\b"))
+      || workflows().exists(w, text(w).matches("ruff format|ruff-format|\\bblack\\b"))
+  - name: formatter-config
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool)
+        && ("black" in p.tool || ("ruff" in p.tool && p.tool.ruff != null && "format" in p.tool.ruff))))
+message: "no Python formatter is configured or run (ruff format or black)"
+requirement: "ruff format or black runs in a hook, the task runner or CI, or is configured (`[tool.ruff.format]` or `[tool.black]` in pyproject.toml). Another formatter is added with `accept:`."
+fix:
+  human: "Add `ruff format` to the fmt target and a ruff-format hook."
+  agent: "Add `uv run ruff format` to the fmt target and the ruff-format pre-commit hook; reformat the code base in a separate commit."
+refs: ["https://fleetlint.org/stacks/#python"]

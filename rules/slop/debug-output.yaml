@@ -4,13 +4,13 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("nontest", r'(^|[^.\w])print\(|\bconsole\.(log|debug|info)\(|(^|[^.\w])println!?\(|\bfmt\.Print|\bdebugPrint\(|\bdbg!\(')
+  codegrep("nontest", r'(^|[^.\w])print\(|\bconsole\.(log|debug|info)\(|(^|[^.\w])println!?\(|\bfmt\.Print|\bdebugPrint\(|\bdbg!\(|\bSystem\.(out|err)\.print|\bConsole\.Write(Line)?\(|\b(var_dump|print_r)\(|\bbinding\.pry\b|^\s*byebug\b|^\s*debugger;?\s*$')
 expr: >
   false
-message: "raw print call outside tests"
-requirement: "Non-test code writes through the logger or the program's output layer, not through raw print calls."
+message: "raw print or debugger call outside tests"
+requirement: "Non-test code writes through the logger or the program's output layer, not through raw print calls (`print(`, `console.log(`, `fmt.Print`, `System.out.print`, `Console.WriteLine(`, `var_dump(`), and carries no debugger statements (`debugger`, `binding.pry`, `byebug`)."
 rationale: "Raw prints cannot be levelled, redacted or switched off, and they leak into the output of anything that embeds the code."
 fix:
   human: "Use the logger; for a CLI, the output stream the command was given."
-  agent: "Replace with the project's logger or output writer; delete prints that are debugging leftovers."
-refs: ["https://fleetlint.org/baseline/#slop"]
+  agent: "Replace with the project's logger or output writer; delete prints and debugger statements that are debugging leftovers."
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]

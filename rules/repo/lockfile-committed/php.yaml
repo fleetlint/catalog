@@ -1,0 +1,8 @@
+id: repo/lockfile-committed/php
+kind: expr
+expr: '"composer.lock" in tracked() || !text("composer.json").contains("\"require")'
+message: "composer.lock is not tracked"
+requirement: "composer.lock is tracked when composer.json requires packages."
+fix:
+  human: "Run `composer update --lock` (or `composer install`) and commit composer.lock."
+refs: ["https://fleetlint.org/stacks/#php"]

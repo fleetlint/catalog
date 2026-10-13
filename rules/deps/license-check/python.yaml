@@ -1,0 +1,17 @@
+id: deps/license-check/python
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: pip-licenses
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bpip-licenses\b[^;&|]*--(allow-only|fail-on)') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bpip-licenses\b[^;&|]*--(allow-only|fail-on)') && !l.matches(params.skip))))
+  - name: liccheck
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bliccheck\b') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bliccheck\b') && !l.matches(params.skip))))
+requirement: "A task-runner recipe or a CI step runs `pip-licenses --allow-only=…` (or `--fail-on=…`) or liccheck, or a stack-neutral license checker. pip-licenses without an allow or fail list only prints."
+fix:
+  human: "Run `pip-licenses --allow-only=\"MIT;BSD License;Apache Software License\"` in the `audit` target."
+refs: ["https://fleetlint.org/stacks/#python"]

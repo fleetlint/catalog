@@ -1,0 +1,6 @@
+id: deps/license-check/hugo
+kind: expr
+when: "false"
+expr: "true"
+requirement: "A Hugo site has no dependency manager of its own: Hugo modules live in go.mod and npm tooling in package.json, and both are checked as their own stacks."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

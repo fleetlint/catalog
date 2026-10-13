@@ -1,15 +1,37 @@
 id: hooks/conventional-commits
 title: Commit messages are checked
-kind: expr
+kind: outcome
 severity: warning
 scope: root
-when: file(".pre-commit-config.yaml")
-expr: >
-  yaml(".pre-commit-config.yaml").repos.exists(r,
-    r.repo.contains("conventional") || (has(r.hooks) && r.hooks.exists(h, h.id.contains("commit"))))
+tiers: [1, 2]
+when: >
+  [".pre-commit-config.yaml", "lefthook.yml", "lefthook.yaml", "lefthook.toml", "lefthook.json", "lefthook.jsonc",
+   ".lefthook.yml", ".lefthook.yaml", ".lefthook.toml", ".lefthook.json", ".lefthook.jsonc"].exists(f, file(f))
+satisfiers:
+  - name: pre-commit
+    when: file(".pre-commit-config.yaml")
+    expr: >
+      type(yaml(".pre-commit-config.yaml")) == map && "repos" in yaml(".pre-commit-config.yaml")
+      && yaml(".pre-commit-config.yaml").repos.exists(r, type(r) == map && "hooks" in r && type(r.hooks) == list
+        && r.hooks.exists(h, type(h) == map && (
+          ("id" in h && h.id in ["conventional-pre-commit", "commitizen", "commitlint", "gitlint", "gitlint-ci", "cocogitto", "cog", "cog-verify"])
+          || ("stages" in h && type(h.stages) == list && "commit-msg" in h.stages))))
+  - name: lefthook
+    expr: >
+      ["lefthook.yml", "lefthook.yaml", "lefthook.toml", "lefthook.json", "lefthook.jsonc",
+       ".lefthook.yml", ".lefthook.yaml", ".lefthook.toml", ".lefthook.json", ".lefthook.jsonc"].filter(f, file(f)).exists(f,
+        [dyn(f.endsWith(".toml") ? toml(f) : (f.endsWith(".json") || f.endsWith(".jsonc")) ? json(f) : yaml(f))].exists(d,
+          type(d) == map && "commit-msg" in d && type(d["commit-msg"]) == map && [dyn(d["commit-msg"])].exists(h,
+            ("commands" in h && type(h.commands) == map && h.commands.size() > 0)
+            || ("jobs" in h && type(h.jobs) == list && h.jobs.size() > 0)
+            || ("scripts" in h && type(h.scripts) == map && h.scripts.size() > 0))))
 message: "no commit-msg hook enforcing conventional commits"
-requirement: A commit-msg hook rejects messages that are not conventional commits.
+requirement: >
+  A commit-msg hook checks every message: a pre-commit/prek hook at stage `commit-msg` or a known
+  message linter (conventional-pre-commit, commitizen, commitlint, gitlint, cocogitto), or a command in
+  lefthook's `commit-msg`. Which convention it enforces is not checked.
 rationale: The changelog and version bump are generated from commit types; one bad message breaks both.
 fix:
-  human: "Add the conventional-pre-commit hook with stages: [commit-msg]."
-  agent: "Add compilerla/conventional-pre-commit to .pre-commit-config.yaml with stages: [commit-msg] and the allowed types."
+  human: "Add the conventional-pre-commit hook with stages: [commit-msg] (lefthook: a commit-msg command running commitlint or cog verify)."
+  agent: "Add compilerla/conventional-pre-commit to .pre-commit-config.yaml with stages: [commit-msg] and the allowed types (feat, fix, refactor, perf, test, docs, build, ci, style, chore, revert)."
+refs: ["https://fleetlint.org/baseline/#git-hooks"]

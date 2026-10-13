@@ -1,0 +1,39 @@
+id: lint/configured/java
+kind: outcome
+# The build files of the project, its parents (Maven parent POM, Gradle root build) and its convention plugins.
+satisfiers:
+  - name: checkstyle
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("(?m)maven-checkstyle-plugin|[\"']checkstyle[\"']|^\\s*checkstyle\\s*(\\{|$)"))
+  - name: error-prone
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("error_prone_core|net\\.ltgt\\.errorprone|-Xplugin:ErrorProne"))
+  - name: spotbugs
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("spotbugs-maven-plugin|com\\.github\\.spotbugs"))
+  - name: pmd
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("(?m)maven-pmd-plugin|[\"']pmd[\"']|^\\s*pmd\\s*(\\{|$)"))
+partials:
+  - name: checkstyle-not-wired
+    severity: warning
+    expr: file("config/checkstyle/checkstyle.xml") || file("checkstyle.xml")
+    message: "a Checkstyle configuration is committed but no build file applies the Checkstyle plugin"
+message: "no static analyzer (Checkstyle, Error Prone, SpotBugs or PMD) in the build"
+requirement: "A static analyzer beyond the compiler is wired into the build (pom.xml, build.gradle(.kts), a parent build or a convention plugin): Checkstyle, Error Prone, SpotBugs or PMD. Another analyzer is added with `accept:`."
+rationale: javac accepts swallowed exceptions, star imports and 400-line methods; the analyzer is where they are refused.
+fix:
+  human: "Add the maven-checkstyle-plugin (or Gradle's checkstyle plugin) with configLocation config/checkstyle/checkstyle.xml; `fleetlint fix --apply` writes the configuration, the plugin is added by hand."
+  agent: "Add config/checkstyle/checkstyle.xml from the template and wire maven-checkstyle-plugin in pom.xml (or the checkstyle plugin in build.gradle.kts) with that configLocation and failOnViolation true; fix what it reports."
+  actions:
+    - template: java/checkstyle.xml
+      to: config/checkstyle/checkstyle.xml
+refs: ["https://fleetlint.org/stacks/#java"]

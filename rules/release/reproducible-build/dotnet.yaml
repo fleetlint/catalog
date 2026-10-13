@@ -1,0 +1,11 @@
+id: release/reproducible-build/dotnet
+kind: outcome
+satisfiers:
+  - name: ci-build
+    expr: >
+      (glob("**/*.csproj") + glob("**/*.fsproj") + glob("**/Directory.Build.props")).exists(f, text(f).matches(r'<ContinuousIntegrationBuild[^>]*>\s*true'))
+      || tagged_workflows().exists(w, text(w).matches(r'[-/]p:ContinuousIntegrationBuild=true'))
+requirement: "`ContinuousIntegrationBuild` is true for CI builds (in a project or Directory.Build.props, or `-p:ContinuousIntegrationBuild=true` in the release workflow), which maps source paths away; deterministic compilation is the SDK default. Or SOURCE_DATE_EPOCH is set for the release build."
+fix:
+  human: "Add `<ContinuousIntegrationBuild Condition=\"'$(CI)' == 'true'\">true</ContinuousIntegrationBuild>` to Directory.Build.props."
+refs: ["https://fleetlint.org/stacks/#net"]

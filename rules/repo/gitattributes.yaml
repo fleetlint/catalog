@@ -13,3 +13,4 @@ fix:
   actions:
     - template: gitattributes
       to: .gitattributes
+refs: ["https://fleetlint.org/baseline/#hygiene"]

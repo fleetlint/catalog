@@ -1,0 +1,8 @@
+id: flutter
+title: Flutter / Dart
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+detect:
+  - {file: pubspec.yaml}
+devcontainer: {image: "ghcr.io/cirruslabs/flutter:stable"}
+run_image: "ghcr.io/cirruslabs/flutter:stable"
+lockfile_maintenance: true

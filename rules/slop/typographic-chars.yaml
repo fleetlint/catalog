@@ -13,4 +13,4 @@ rationale: "They are invisible in review, break grep and are a trace of pasted p
 fix:
   human: "Replace with the ASCII equivalent."
   agent: "Replace with ASCII equivalents; keep characters that are user-facing text or test data."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]

@@ -1,0 +1,16 @@
+id: quality/coverage-threshold/rust
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: llvm-cov-or-tarpaulin
+    expr: >
+      taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bcargo[- ](llvm-cov|tarpaulin)\b[^;&|]*--fail-under') && !l.matches(params.skip)))
+      || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bcargo[- ](llvm-cov|tarpaulin)\b[^;&|]*--fail-under') && !l.matches(params.skip))))
+  - name: tarpaulin-config
+    expr: >
+      ["tarpaulin.toml", ".tarpaulin.toml"].exists(f, file(f) && scan(f, r'^\s*fail-under\s*=').size() > 0)
+requirement: "`cargo llvm-cov` with `--fail-under-lines` (or another `--fail-under-*`) or `cargo tarpaulin --fail-under` runs in a recipe or a CI step, or tarpaulin.toml sets `fail-under`; or a stack-neutral floor applies."
+fix:
+  human: "Run `cargo llvm-cov --fail-under-lines 80` in the `cover` target."
+refs: ["https://fleetlint.org/stacks/#rust"]

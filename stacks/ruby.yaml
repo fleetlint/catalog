@@ -1,0 +1,9 @@
+id: ruby
+title: Ruby
+refs: ["https://fleetlint.org/stacks/#ruby"]
+detect:
+  - {file: Gemfile}
+  - {glob: "*.gemspec"}
+devcontainer: {feature: "ghcr.io/devcontainers/features/ruby:1"}
+run_image: "mcr.microsoft.com/devcontainers/ruby:3"
+lockfile_maintenance: true

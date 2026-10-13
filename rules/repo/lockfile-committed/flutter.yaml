@@ -1,0 +1,8 @@
+id: repo/lockfile-committed/flutter
+kind: expr
+expr: '"pubspec.lock" in tracked() || scan("pubspec.yaml", r''^(dev_)?dependencies:'').size() == 0'
+message: "pubspec.lock is not tracked"
+requirement: "pubspec.lock is tracked when pubspec.yaml declares dependencies."
+fix:
+  human: "Run `flutter pub get` (or `dart pub get`) and commit pubspec.lock."
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

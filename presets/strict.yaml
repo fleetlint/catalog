@@ -2,8 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-strict
-  version: 0.1.0
-  engine: 2
+  engine: 3
   description: >
     Everything in recommended, held to a higher standard: every warning is an
     error, every informational rule a warning, and the security rules take no
@@ -18,6 +17,10 @@ overrides:
   ci/actions-pinned:            { exceptions: false }
   ci/least-privilege:           { exceptions: false }
   ci/no-pull-request-target:    { exceptions: false }
+  ci/no-script-injection:       { exceptions: false }
+  ci/no-pipe-to-shell:          { exceptions: false }
+  hooks/revs-pinned:            { exceptions: false }
+  release/trusted-publishing:   { exceptions: false }
   release/signing:              { exceptions: false }
   release/provenance:           { exceptions: false }
   release/checksums:            { exceptions: false }
@@ -26,5 +29,3 @@ overrides:
   repo/lockfile-committed:      { exceptions: false }
   repo/no-tracked-env:          { exceptions: false }
   public/license:               { exceptions: false }
-  public/no-agent-files:        { exceptions: false }
-  public/no-ai-attribution:     { exceptions: false }

@@ -17,7 +17,7 @@ Checks: >
   -cppcoreguidelines-avoid-magic-numbers,
   -readability-magic-numbers
 WarningsAsErrors: '*'
-HeaderFilterRegex: '^(src|include)/'
+HeaderFilterRegex: '.*/(src|include)/.*'
 CheckOptions:
   readability-function-cognitive-complexity.Threshold: 15
   readability-function-size.LineThreshold: 50

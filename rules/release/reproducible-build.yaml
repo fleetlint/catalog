@@ -1,0 +1,14 @@
+id: release/reproducible-build
+title: Release builds are reproducible
+kind: capability
+severity: info
+scope: root
+tiers: [1]
+when: release.exists
+message: "the release build is not set up to be reproducible"
+requirement: "The release build removes what differs between two builds of the same commit: local paths and timestamps. The stack's build settings do it, or `SOURCE_DATE_EPOCH` is set for the release build (in a tag-triggered CI file or the task runner)."
+rationale: When anyone can rebuild a release bit for bit from the tag, a tampered artifact or a compromised build machine shows up as a mismatch.
+fix:
+  human: "Set the stack's reproducibility options in the release build (see https://reproducible-builds.org/docs/) and export SOURCE_DATE_EPOCH from the commit time."
+  agent: "Add the stack's reproducibility settings to the release build and derive SOURCE_DATE_EPOCH from `git log -1 --format=%ct`; do not change what is built."
+refs: ["https://fleetlint.org/baseline/#releases", "https://reproducible-builds.org/docs/"]

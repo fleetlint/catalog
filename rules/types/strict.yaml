@@ -1,0 +1,12 @@
+id: types/strict
+title: The type checker runs in strict mode
+kind: capability
+severity: warning
+tiers: [1, 2]
+message: "the type checker is not in strict mode"
+requirement: "Where the stack has an optional or configurable type checker, it runs in its strictest mode, configured in the repository."
+rationale: A lenient type checker lets untyped and implicitly dynamic values through, which is where the bugs it exists to catch hide.
+fix:
+  human: "Switch the type checker to strict mode (see https://fleetlint.org/stacks/)."
+  agent: "Switch the type checker to strict mode and list the errors that appear instead of adding ignores."
+refs: ["https://fleetlint.org/baseline/#static-analysis"]

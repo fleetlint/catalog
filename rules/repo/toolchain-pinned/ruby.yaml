@@ -1,0 +1,13 @@
+id: repo/toolchain-pinned/ruby
+kind: expr
+expr: >
+  scan(".ruby-version", r'^\s*(ruby-)?\d').size() > 0
+  || scan("Gemfile", r'^\s*ruby\s+["\x27]\d').size() > 0
+  || scan(".tool-versions", r'^\s*(ruby)\s+\S*\d').size() > 0
+  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
+       scan(f, r'^\s*"?(ruby)"?\s*=\s*[^#\n]*\d').size() > 0)
+message: "no Ruby version is pinned"
+requirement: "`.ruby-version` names a version, the Gemfile declares `ruby \"x.y.z\"`, or `.tool-versions`/mise names ruby with a version."
+fix:
+  human: "Write the Ruby version to .ruby-version."
+refs: ["https://fleetlint.org/stacks/#ruby"]

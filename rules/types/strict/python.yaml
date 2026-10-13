@@ -1,0 +1,37 @@
+id: types/strict/python
+kind: outcome
+satisfiers:
+  # mypy and pyright read their configuration from the project or a parent directory.
+  - name: mypy-strict
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool) && has(p.tool.mypy)
+          && p.tool.mypy != null && "strict" in p.tool.mypy && p.tool.mypy.strict == true))
+        || [d + "mypy.ini", d + ".mypy.ini", d + "setup.cfg"].exists(f, file(f)
+          && text(f).matches("(?ms)^\\[mypy\\][^\\[]*^\\s*strict\\s*=\\s*(True|true|1)\\s*$")))
+  - name: pyright-strict
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool)
+          && ["pyright", "basedpyright"].exists(k, k in p.tool && p.tool[k] != null && "typeCheckingMode" in p.tool[k]
+            && p.tool[k].typeCheckingMode in ["strict", "recommended", "all"])))
+        || (file(d + "pyrightconfig.json") && [json(d + "pyrightconfig.json")].exists(c, c != null
+          && "typeCheckingMode" in c && c.typeCheckingMode in ["strict", "recommended", "all"])))
+partials:
+  - name: not-strict
+    severity: warning
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        [d + "mypy.ini", d + ".mypy.ini", d + "pyrightconfig.json"].exists(f, file(f))
+        || (file(d + "pyproject.toml") && [toml(d + "pyproject.toml")].exists(p, p != null && has(p.tool)
+          && ["mypy", "pyright", "basedpyright"].exists(k, k in p.tool))))
+    message: "a type checker is configured but not in strict mode (mypy `strict = true`, pyright `typeCheckingMode = \"strict\"`)"
+message: "no strict type checker configuration (mypy strict or pyright strict)"
+requirement: "mypy runs with `strict = true` ([tool.mypy] in pyproject.toml, mypy.ini or setup.cfg) or pyright/basedpyright with `typeCheckingMode` strict (basedpyright also recommended or all; [tool.pyright], [tool.basedpyright] or pyrightconfig.json), in the project or a parent directory. Another type checker is added with `accept:`."
+rationale: Untyped Python with default checking is where generated code hides most bugs; only strict mode refuses the implicit Any.
+fix:
+  human: "Add [tool.mypy] with strict = true to pyproject.toml (`fleetlint fix --apply` appends it)."
+  agent: "Add [tool.mypy] strict = true to pyproject.toml (or set typeCheckingMode strict for pyright) and list the errors that appear instead of adding ignores."
+  actions:
+    - append: {file: pyproject.toml, template: python/mypy.toml, unless: '(?m)^\[tool\.(mypy|pyright|basedpyright)\]'}
+refs: ["https://fleetlint.org/stacks/#python"]

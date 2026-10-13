@@ -4,7 +4,7 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  grep("**/*.md", r'^#{1,6}\s.*[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]')
+  grep("**/*.md", r'^#{1,6}\s.*[\x{1F1E6}-\x{1F1FF}\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}\x{2B50}]')
 expr: >
   item.path.endsWith("CHANGELOG.md")
 message: "emoji in a heading"
@@ -13,4 +13,4 @@ rationale: "They break anchors and search and mark the text as unedited generato
 fix:
   human: "Remove the emoji from the heading."
   agent: "Remove emoji from headings and update links to the changed anchors."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#documentation"]

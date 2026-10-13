@@ -1,0 +1,25 @@
+id: types/strict/php
+kind: outcome
+satisfiers:
+  - name: phpstan-max
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, ["phpstan.neon", "phpstan.neon.dist", "phpstan.dist.neon"]
+        .exists(n, file(d + n) && text(d + n).matches("(?m)^\\s*level:\\s*[\"']?(max|9|10)[\"']?\\s*(#.*)?$")))
+  - name: psalm-level-1
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, ["psalm.xml", "psalm.xml.dist"]
+        .exists(n, file(d + n) && text(d + n).matches("errorLevel=\"1\"")))
+partials:
+  - name: lower-level
+    severity: warning
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d,
+        ["phpstan.neon", "phpstan.neon.dist", "phpstan.dist.neon", "psalm.xml", "psalm.xml.dist"].exists(n, file(d + n)))
+    message: "the static analyzer runs below its strictest level (PHPStan `level: max`, Psalm `errorLevel=\"1\"`)"
+message: "no static analyzer at its strictest level (PHPStan level max, or Psalm errorLevel 1)"
+requirement: "PHPStan runs at `level: max` (or 9 or 10) or Psalm at `errorLevel=\"1\"`, configured in the project or a parent directory; a generated baseline is the ratchet for existing code. Another analyzer is added with `accept:`."
+rationale: PHPStan's lower levels skip mixed types and missing type information, which is exactly what the analyzer is there to refuse.
+fix:
+  human: "Set `level: max` in phpstan.neon.dist and ratchet existing errors with `vendor/bin/phpstan analyse --generate-baseline`."
+  agent: "Set level: max in phpstan.neon.dist, generate a baseline for existing errors, and fix new code to pass without it."
+refs: ["https://fleetlint.org/stacks/#php"]

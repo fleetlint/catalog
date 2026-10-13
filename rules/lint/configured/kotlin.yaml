@@ -1,0 +1,24 @@
+id: lint/configured/kotlin
+kind: outcome
+satisfiers:
+  # The detekt Gradle plugin (1.x io.gitlab.arturbosch.detekt, 2.x dev.detekt), in this build, a parent build or a convention plugin.
+  - name: detekt
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts", d + "settings.gradle.kts", d + "settings.gradle"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("io\\.gitlab\\.arturbosch\\.detekt|dev\\.detekt|libs\\.plugins\\.detekt|\\bdetekt\\s*\\{"))
+partials:
+  - name: config-only
+    severity: warning
+    expr: exists("**/detekt*.yml") || exists("**/detekt*.yaml")
+    message: "a detekt configuration is committed but no build file applies the detekt Gradle plugin"
+message: "detekt is not applied in the Gradle build"
+requirement: "The detekt Gradle plugin is applied in the build (this build, a parent build or a convention plugin), so `./gradlew check` runs it. Another analyzer is added with `accept:`."
+rationale: Kotlin's compiler accepts swallowed exceptions; detekt is where they are caught.
+fix:
+  human: "Apply the detekt Gradle plugin (`id(\"io.gitlab.arturbosch.detekt\") version \"1.23.8\"`) with buildUponDefaultConfig and config/detekt/detekt.yml; `fleetlint fix --apply` writes the configuration, the plugin is added by hand."
+  agent: "Apply the detekt Gradle plugin 1.23.x with buildUponDefaultConfig = true and config.setFrom(\"config/detekt/detekt.yml\"); write config/detekt/detekt.yml from the template; fix the findings instead of adding a baseline entry."
+  actions:
+    - template: kotlin/detekt.yml
+      to: config/detekt/detekt.yml
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

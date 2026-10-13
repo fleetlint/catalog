@@ -1,0 +1,8 @@
+id: php
+title: PHP
+refs: ["https://fleetlint.org/stacks/#php"]
+detect:
+  - {file: composer.json}
+devcontainer: {feature: "ghcr.io/devcontainers/features/php:1"}
+run_image: "mcr.microsoft.com/devcontainers/php:8"
+lockfile_maintenance: true

@@ -1,0 +1,22 @@
+id: format/configured/dotnet
+kind: outcome
+satisfiers:
+  - name: dotnet-format-run
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [d + ".pre-commit-config.yaml", d + "lefthook.yml", d + "lefthook.yaml", d + ".lefthook.yml", d + "Makefile", d + "justfile", d + "Taskfile.yml"]
+        .exists(f, file(f) && text(f).matches("dotnet format|dotnet-format|csharpier")))
+      || (taskrunner.file != "" && text(taskrunner.file).matches("dotnet format|dotnet-format|csharpier"))
+      || workflows().exists(w, text(w).matches("dotnet format|dotnet-format|csharpier"))
+  # .editorconfig files apply from every parent; code style rules for C# make dotnet format and the IDE agree.
+  - name: editorconfig-style
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, file(d + ".editorconfig") && text(d + ".editorconfig").matches("(?m)^\\s*(csharp_|dotnet_style_|fsharp_)"))
+  - name: csharpier-config
+    expr: >
+      ["", "../", "../../", "../../../"].exists(d, [".csharpierrc", ".csharpierrc.json", ".csharpierrc.yaml"].exists(n, file(d + n)))
+message: "no .NET formatter is run or configured (dotnet format, CSharpier, .editorconfig code style)"
+requirement: "`dotnet format` or CSharpier runs in a hook, the task runner or CI, or the code style is configured (C# style rules in .editorconfig, or a CSharpier configuration) in the project or a parent directory. Another formatter is added with `accept:`."
+fix:
+  human: "Add `dotnet format --verify-no-changes` to the lint target and a hook; keep the style rules in .editorconfig."
+  agent: "Add `dotnet format --verify-no-changes` to the lint target and the dotnet-format hook, with code style rules in .editorconfig; reformat in a separate commit."
+refs: ["https://fleetlint.org/stacks/#net"]

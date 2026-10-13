@@ -1,0 +1,16 @@
+id: quality/coverage-threshold/java
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: jacoco-maven
+    expr: >
+      file("pom.xml") && text("pom.xml").contains("jacoco-maven-plugin")
+      && text("pom.xml").matches(r'<goal>\s*check\s*</goal>') && text("pom.xml").matches(r'<minimum>\s*[0-9.]+')
+  - name: gradle-verification
+    expr: >
+      glob("**/build.gradle*").exists(f, text(f).matches(r'minBound\s*\(|violationRules|jacocoTestCoverageVerification[\s\S]*minimum'))
+requirement: "JaCoCo's `check` goal with a `<minimum>` in pom.xml, JaCoCo `violationRules` (jacocoTestCoverageVerification) or Kover `minBound` verification in a Gradle build, or a stack-neutral floor applies."
+fix:
+  human: "Add a Kover (or JaCoCo) verification rule with a minimum and run its verify task in `cover`."
+refs: ["https://fleetlint.org/stacks/#java"]

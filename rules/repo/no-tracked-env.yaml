@@ -2,6 +2,7 @@ id: repo/no-tracked-env
 title: No .env files are tracked
 kind: expr
 severity: error
+scope: root
 foreach: >
   tracked().filter(f, f.matches('(^|/)\\.env(\\.[^/]*)?$')
                    && !f.matches('\\.(example|sample|template|dist|sops|enc|age|gpg|asc)$'))
@@ -10,6 +11,10 @@ message: "a .env file is tracked; only .env.example-style templates belong in gi
 requirement: Environment files that may hold credentials are never committed; templates with placeholder values (`.env.example`, `.sample`, `.template`, `.dist`) and encrypted files (`.sops`, `.enc`, `.age`, `.gpg`, `.asc`) are fine.
 rationale: A tracked .env is the most common way credentials leak into history.
 fix:
-  human: "git rm --cached the .env file, add .env* to .gitignore, rotate any secret it contained."
-  agent: "Untrack the .env file, add `.env` and `.env.*` (but not `.env.example`) to .gitignore, and tell the user which secrets must be rotated."
+  human: >
+    git rm --cached the .env file, add .env* to .gitignore, rotate any secret it contained.
+    Frameworks such as Vite and Create React App commit `.env` and `.env.development` with non-secret
+    defaults by design; keep those only without secrets and record each one as an exception with the
+    reason in .fleetlint.yaml (`exceptions: [{rule: repo/no-tracked-env, match: "web/.env.development", reason: "..."}]`).
+  agent: "Untrack the .env file, add `.env` and `.env.*` (but not `.env.example`) to .gitignore, and tell the user which secrets must be rotated. If it is a framework's committed defaults file (Vite, Create React App) without secrets, ask whether to add a .fleetlint.yaml exception with the reason instead."
 refs: ["https://fleetlint.org/baseline/#security"]

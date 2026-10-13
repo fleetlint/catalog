@@ -1,0 +1,24 @@
+id: ci/workflow-lint
+title: Actions workflows are linted
+kind: outcome
+severity: info
+scope: root
+tiers: [1]
+when: workflows().exists(w, ci_kind(w) != "gitlab")
+satisfiers:
+  - name: hook-or-task-runner
+    expr: >
+      [".pre-commit-config.yaml", taskrunner.file, "lefthook.yml", "lefthook.yaml", ".lefthook.yml", ".lefthook.yaml", "lefthook.toml", "lefthook.json", "mise.toml", ".mise.toml"].exists(f,
+        text(f).matches("\\b(actionlint|zizmor)\\b"))
+  - name: workflow
+    expr: >
+      workflows().exists(w, steps(w).exists(s,
+        s.run.matches("\\b(actionlint|zizmor)\\b")
+        || s.uses.matches("^(rhysd/actionlint|raven-actions/actionlint|reviewdog/action-actionlint|devops-actions/actionlint|zizmorcore/zizmor-action)@")))
+message: "no actionlint or zizmor runs over the workflows"
+requirement: "Repositories with GitHub, Gitea or Forgejo workflows run actionlint or zizmor over them in a hook, the task runner or CI."
+rationale: Workflow mistakes (bad expressions, unquoted inputs, risky triggers) only surface when the workflow runs; the linters find them on every change.
+fix:
+  human: "Add the zizmor or actionlint pre-commit hook, or a lint step in the check workflow."
+  agent: "Add the zizmor pre-commit hook (zizmorcore/zizmor-pre-commit) or actionlint to .pre-commit-config.yaml and fix what it reports in .github/workflows."
+refs: ["https://fleetlint.org/baseline/#security"]

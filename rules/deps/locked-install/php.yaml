@@ -1,0 +1,16 @@
+id: deps/locked-install/php
+kind: expr
+params:
+  noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+expr: >
+  (taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\bcomposer\s+(install|i)\b|\bcomposer\s+validate\b'))
+  && !(taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\bcomposer\s+(update|u|upgrade)\b'))
+message: "Composer installs do not use composer.lock"
+requirement: "A recipe or CI step runs `composer install` (which installs exactly composer.lock) or `composer validate` (which checks the lock is current), and none runs `composer update` outside an update target."
+fix:
+  human: "Use `composer install` in CI and the check targets."
+refs: ["https://fleetlint.org/stacks/#php"]

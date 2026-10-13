@@ -4,13 +4,13 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("nontest", r'\b(sleep|Thread\.sleep|time\.Sleep|Future\.delayed|setTimeout|delay)\s*\(')
+  codegrep("nontest", r'(^|[^.\w:])u?sleep\(|\b(time|Thread)\.[sS]leep\(|\bthread::sleep\(|^\s*sleep\s+[0-9]')
 expr: >
   false
-message: "sleep or fixed delay outside tests"
-requirement: "Non-test code does not wait a fixed time for something to happen."
+message: "blocking sleep outside tests"
+requirement: "Non-test code does not block for a fixed time: `sleep(`, `time.sleep(`, `time.Sleep(`, `Thread.sleep(`, `thread::sleep(` or a shell `sleep N`. Asynchronous timers (`setTimeout`, `asyncio.sleep`, coroutine `delay`) are not read."
 rationale: "A delay that papers over an ordering problem fails on a slower machine and wastes time on a faster one."
 fix:
   human: "Wait for the event or condition itself; keep real backoff and rate limiting with a comment saying so."
   agent: "Report each delay; replace it with waiting on the actual condition where that is evident, and leave deliberate backoff alone."
-refs: ["https://fleetlint.org/baseline/#slop"]
+refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]

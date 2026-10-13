@@ -1,0 +1,8 @@
+id: node
+title: Node.js / TypeScript
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+detect:
+  - {file: package.json}
+devcontainer: {feature: "ghcr.io/devcontainers/features/node:1"}
+run_image: "mcr.microsoft.com/devcontainers/javascript-node:22"
+lockfile_maintenance: true
