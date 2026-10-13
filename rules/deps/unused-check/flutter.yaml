@@ -2,10 +2,15 @@ id: deps/unused-check/flutter
 kind: outcome
 params:
   skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 satisfiers:
   - name: dependency-validator
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bdependency_validator\b') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bdependency_validator\b') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bdependency_validator\b') && !l.matches(params.skip))))
 requirement: "A recipe or CI step runs dependency_validator (`dart run dependency_validator`)."
 fix:

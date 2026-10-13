@@ -14,6 +14,7 @@ The first release of the catalog on its own. fleetlint 0.3 and older embedded th
 - **Stacks as data.** `stacks/<id>.yaml` for cpp, dotnet, flutter, go, hugo, java, kotlin, node, php, python, ruby and rust: detection markers, dev container feature or image, the image targets run in, Renovate lockfile maintenance. A Gradle build without the Kotlin plugin is `java`.
 - New rules: `ci/no-script-injection`, `ci/no-pipe-to-shell`, `ci/checkout-no-persist-credentials`, `ci/workflow-lint`, `ci/sast`, `hooks/revs-pinned`, `release/trusted-publishing`, `release/hosted-builder`, `deps/update-coverage`, `deps/update-cooldown`, `slop/forced-unwraps`; new capabilities `format/configured`, `types/strict`, `deps/locked-install`, `deps/unused-check`, `release/reproducible-build`.
 - GitLab CI: every rule that reads CI understands `.gitlab-ci.yml` (jobs, scripts, `timeout:`, `interruptible`, includes pinned to a commit, release pipelines on `$CI_COMMIT_TAG`); Forgejo Actions workflows are read too. lefthook is understood by `hooks/secret-scan`, `hooks/conventional-commits` and `hooks/pre-push-check`.
+- `aliases.yaml` maps every renamed rule id to the ids that replace it; fleetlint reads an old id in a configuration as those, with a warning.
 - `deps/update-automation` has a fix: `fleetlint fix` writes a renovate.json with only the settings the repository's stacks need.
 - Templates for a justfile and a Taskfile next to the Makefile, and workflow fragments that install those runners.
 
@@ -26,7 +27,10 @@ The first release of the catalog on its own. fleetlint 0.3 and older embedded th
 - Scanners, coverage gates and checks count only where they are run: an `echo`, a comment or an install line no longer satisfies a rule, and the templates' TODO lines name no tool.
 - `hooks/secret-scan` needs a secret scanner (gitleaks, trufflehog, ggshield, detect-secrets, secretlint); `detect-private-key` alone is a partial. `ci/check-workflow` and `hooks/pre-push-check` no longer accept `check-fast`. `ci/actions-pinned` needs a digest for `docker://` and a commit for GitLab includes. `repo/toolchain-pinned` needs the tool named with a version (and a JDK pin for Java and Kotlin); `repo/lockfile-committed` no longer counts an unhashed requirements.txt.
 - `release/sbom` is a warning and does not apply when a release only publishes to a package registry or when git-cliff is the only release tool.
-- Workspace-wide rules run once at the root: `repo/no-tracked-env`, `repo/no-tracked-junk`, `repo/lockfile-committed`, `repo/toolchain-pinned`, `deps/vulnerability-scan`, `deps/install-scripts-disabled`, `quality/coverage-threshold`.
+- `repo/no-tracked-env` and `repo/no-tracked-junk` run once at the root. The per-stack capabilities run in every workspace member and nested project, and accept what the repository provides above it: a workspace's root lockfile, a pin in a parent directory, a scanner or coverage gate in the root's CI or task runner.
+- A Gradle build is `java` when it applies the Java plugins and neither Kotlin nor Android; every other Gradle build (Kotlin, Android, Kotlin Multiplatform) is `kotlin`.
+- `ci/least-privilege` checks GitHub Actions workflows only: Gitea and Forgejo do not take the token's scope from the workflow file.
+- `repo/readme-present` accepts a heading on running, developing or building the project too.
 - Slop heuristics report fewer false positives: `model.eval()`, `iter().skip()`, "Enter your password", mdBook's `SUMMARY.md`, pytest's `test_*.py`, `isNew`, versioned API files, Git's `Revert "..."` subjects and the initial commit no longer count; conflict markers are found in every file type.
 - Templates: ESLint flat config with `defineConfig`, PHPStan 2 and PHP CS Fixer rule sets, clang-tidy header filter, ruff without a hardcoded target version, current Dart analyzer options, `.editorconfig` with tabs for Go and two spaces for Dart, `ci` and `style` commit types, npm publishing through trusted publishing.
 

@@ -11,7 +11,7 @@ satisfiers:
   - name: c8-or-nyc
     expr: >
       (glob(".c8rc*") + glob(".nycrc*")).exists(f, text(f).matches(r'check-coverage"?\s*[:=]\s*true'))
-      || grep("package.json", r'"check-coverage"\s*:\s*true|\b(c8|nyc)\b[^"]*--check-coverage').size() > 0
+      || ["", "../", "../../", "../../../"].exists(d, file(d + "package.json") && scan(d + "package.json", r'(?i)"check-coverage"\s*:\s*true|\b(c8|nyc)\b[^"]*--check-coverage').size() > 0)
 requirement: "Jest `coverageThreshold`, Vitest `coverage.thresholds`, or c8/nyc with `check-coverage` is configured, or a stack-neutral floor applies."
 fix:
   human: "Set `coverage.thresholds` in vitest.config (or `coverageThreshold` for Jest)."

@@ -1,8 +1,10 @@
 id: repo/lockfile-committed/flutter
 kind: expr
-expr: '"pubspec.lock" in tracked() || scan("pubspec.yaml", r''^(dev_)?dependencies:'').size() == 0'
+expr: >
+  "pubspec.lock" in tracked() || scan("pubspec.yaml", r'^(dev_)?dependencies:').size() == 0
+  || (scan("pubspec.yaml", r'^resolution:\s*workspace').size() > 0 && ["../", "../../", "../../../"].exists(d, file(d + "pubspec.lock")))
 message: "pubspec.lock is not tracked"
-requirement: "pubspec.lock is tracked when pubspec.yaml declares dependencies."
+requirement: "pubspec.lock is tracked when pubspec.yaml declares dependencies; a pub workspace member (`resolution: workspace`) uses the pubspec.lock of the workspace root above it."
 fix:
   human: "Run `flutter pub get` (or `dart pub get`) and commit pubspec.lock."
 refs: ["https://fleetlint.org/stacks/#flutter--dart"]

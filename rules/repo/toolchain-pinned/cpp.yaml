@@ -1,9 +1,9 @@
 id: repo/toolchain-pinned/cpp
 kind: expr
 expr: >
-  scan(".tool-versions", r'^\s*(cmake|clang|llvm|gcc|conan|ninja|meson)\s+\S*\d').size() > 0
-  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
-       scan(f, r'^\s*"?(cmake|clang|llvm|gcc|conan|ninja|meson)"?\s*=\s*[^#\n]*\d').size() > 0)
+  ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(cmake|clang|llvm|gcc|conan|ninja|meson)\s+\S*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
+       file(d + n) && scan(d + n, r'^\s*"?(cmake|clang|llvm|gcc|conan|ninja|meson)"?\s*=\s*[^#\n]*\d').size() > 0))
   || (glob(".conan/profiles/*") + glob("conan/profiles/*") + glob("profiles/*")).exists(f, text(f).matches(r'(?m)^\s*compiler\.version\s*=\s*\d'))
   || [".devcontainer/devcontainer.json", ".devcontainer.json"].exists(f, file(f) && text(f).matches(r'"image"\s*:\s*"[^"]+@sha256:'))
 message: "no C/C++ toolchain version is pinned"

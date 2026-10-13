@@ -1,10 +1,13 @@
 id: kotlin
 title: Kotlin / JVM
 refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
-# A Flutter app's Android shell (android/app/build.gradle.kts) is not a Kotlin project.
+# Every other Gradle build: Kotlin, Android, Kotlin Multiplatform. A Flutter
+# app's Android shell (android/app/build.gradle.kts) is not one.
 detect:
-  - {glob: build.gradle.kts, contains: "kotlin", unless_stack: flutter}
-  - {glob: build.gradle, contains: "kotlin", unless_stack: flutter}
+  - {glob: build.gradle.kts, unless_stack: [flutter, java]}
+  - {glob: build.gradle, unless_stack: [flutter, java]}
+  - {file: settings.gradle.kts, unless_stack: [flutter, java]}
+  - {file: settings.gradle, unless_stack: [flutter, java]}
 devcontainer: {feature: "ghcr.io/devcontainers/features/java:1", options: {installGradle: true}}
 run_image: "mcr.microsoft.com/devcontainers/java:21"
 lockfile_maintenance: true

@@ -2,27 +2,36 @@ id: deps/license-check/any
 kind: outcome
 params:
   skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 satisfiers:
   - name: osv-scanner-licenses
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bosv-scanner\b[^;&|]*--licenses') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bosv-scanner\b[^;&|]*--licenses') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bosv-scanner\b[^;&|]*--licenses') && !l.matches(params.skip))))
   - name: trivy-license
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\btrivy\b[^;&|]*--scanners[ =][^;&|]*license|\btrivy\b[^;&|]*\blicense\b') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\btrivy\b[^;&|]*--scanners[ =][^;&|]*license|\btrivy\b[^;&|]*\blicense\b') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\btrivy\b[^;&|]*--scanners[ =][^;&|]*license|\btrivy\b[^;&|]*\blicense\b') && !l.matches(params.skip))))
   - name: scancode
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bscancode\b[^;&|]*--license') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bscancode\b[^;&|]*--license') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bscancode\b[^;&|]*--license') && !l.matches(params.skip))))
   - name: fossa
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bfossa\s+(analyze|test)\b') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bfossa\s+(analyze|test)\b') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.uses.startsWith("fossas/fossa-action")
            || s.run.split("\n").exists(l, l.matches(r'\bfossa\s+(analyze|test)\b') && !l.matches(params.skip))))
   - name: ort
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bort\s+evaluate\b') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bort\s+evaluate\b') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.uses.startsWith("oss-review-toolkit/ort-ci-github-action")
            || s.run.split("\n").exists(l, l.matches(r'\bort\s+evaluate\b') && !l.matches(params.skip))))
   - name: dependency-review-licenses

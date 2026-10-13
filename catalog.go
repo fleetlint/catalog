@@ -25,6 +25,11 @@ var Rules embed.FS
 //go:embed stacks/*.yaml
 var Stacks embed.FS
 
+// Aliases is aliases.yaml: renamed rule ids and the ids that replace them.
+//
+//go:embed aliases.yaml
+var Aliases []byte
+
 // Templates contains templates/: the files `fleetlint fix` creates, plus the
 // fragments it assembles the hook configuration and the check workflow from.
 //

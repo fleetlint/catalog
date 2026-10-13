@@ -4,8 +4,9 @@ kind: expr
 when: file("build.gradle") || file("build.gradle.kts")
 expr: >
   tracked().exists(f, f.matches(r'(^|/)((settings|buildscript)-)?gradle\.lockfile$') || f == "gradle/verification-metadata.xml")
+  || ["../", "../../", "../../../"].exists(d, file(d + "gradle/verification-metadata.xml"))
 message: "no Gradle lockfile or verification metadata is tracked"
-requirement: "A Gradle build tracks dependency lock state (gradle.lockfile from `dependencyLocking`) or dependency verification metadata (gradle/verification-metadata.xml). Maven has no native lockfile, so a Maven-only build is not checked."
+requirement: "A Gradle build tracks dependency lock state (gradle.lockfile from `dependencyLocking`) or dependency verification metadata (gradle/verification-metadata.xml, also at the root of a multi-project build). Maven has no native lockfile, so a Maven-only build is not checked."
 fix:
   human: "Enable `dependencyLocking { lockAllConfigurations() }` and run `./gradlew dependencies --write-locks`, or write verification metadata with `./gradlew --write-verification-metadata sha256 help`; commit the result."
 refs: ["https://fleetlint.org/stacks/#java"]

@@ -2,8 +2,13 @@ id: deps/locked-install/rust
 kind: expr
 params:
   noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 expr: >
   (taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + params.runners.filter(f, file(f)).map(f, lines(f)).flatten()
       + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
       .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\bcargo\s[^;&|]*--(locked|frozen)\b'))
 message: "no cargo invocation uses --locked"

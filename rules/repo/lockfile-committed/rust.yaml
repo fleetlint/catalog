@@ -1,8 +1,11 @@
 id: repo/lockfile-committed/rust
 kind: expr
-expr: '"Cargo.lock" in tracked() || !text("Cargo.toml").matches(r''\[((workspace\.)?(dev-|build-)?dependencies|workspace)\]'')'
+expr: >
+  "Cargo.lock" in tracked()
+  || ["../", "../../", "../../../"].exists(d, file(d + "Cargo.lock") && file(d + "Cargo.toml") && text(d + "Cargo.toml").matches(r'(?m)^\[workspace\]'))
+  || !text("Cargo.toml").matches(r'\[((workspace\.)?(dev-|build-)?dependencies|workspace)\]')
 message: "Cargo.lock is not tracked"
-requirement: "Cargo.lock is tracked when Cargo.toml declares dependencies or a workspace."
+requirement: "Cargo.lock is tracked when Cargo.toml declares dependencies or a workspace; a workspace member uses the Cargo.lock of the workspace root above it."
 fix:
   human: "Run `cargo generate-lockfile` and commit Cargo.lock."
 refs: ["https://fleetlint.org/stacks/#rust"]

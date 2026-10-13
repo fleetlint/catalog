@@ -5,7 +5,7 @@ params:
 satisfiers:
   - name: go-test-coverage
     expr: >
-      [".testcoverage.yml", ".testcoverage.yaml"].exists(f, file(f) && text(f).matches(r'(?m)^\s*(total|file|package):\s*\d'))
+      ["", "../", "../../", "../../../"].exists(d, [".testcoverage.yml", ".testcoverage.yaml"].exists(n, file(d + n) && text(d + n).matches(r'(?m)^\s*(total|file|package):\s*\d')))
       || workflows().exists(w, steps(w).exists(s, s.uses.startsWith("vladopajic/go-test-coverage")
            && ("threshold-total" in s.with || "threshold-file" in s.with || "threshold-package" in s.with || "config" in s.with)))
 requirement: "go-test-coverage runs with a threshold (`.testcoverage.yml` with `threshold.total`/`file`/`package`, or the action with a threshold input), or a stack-neutral floor applies (the `cover` recipe compares with a minimum, diff-cover `--fail-under`, codecov `target`)."

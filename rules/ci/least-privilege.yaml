@@ -4,8 +4,8 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1, 2]
-when: workflows().exists(w, ci_kind(w) in ["github", "gitea"])
-foreach: workflows().filter(w, ci_kind(w) in ["github", "gitea"])
+when: workflows().exists(w, ci_kind(w) == "github")
+foreach: workflows().filter(w, ci_kind(w) == "github")
 expr: >
   type(yaml(item)) == map
   && ("permissions" in yaml(item)
@@ -15,9 +15,10 @@ expr: >
   && jobs(item).all(j, j.permissions != "write-all")
 message: "workflow does not declare permissions, or grants write-all"
 requirement: >
-  Every GitHub and Gitea workflow sets top-level `permissions` (normally `contents: read`), or every
-  job sets its own, and escalates per job only; `write-all` is never used. GitLab CI has no
-  equivalent in the file, and Forgejo workflows are not checked.
+  Every GitHub Actions workflow sets top-level `permissions` (normally `contents: read`), or every
+  job sets its own, and escalates per job only; `write-all` is never used. Gitea and Forgejo
+  workflows are not checked: their token's scope is not set by the workflow file. GitLab CI has
+  no equivalent in the file.
 rationale: The default token has write access to the repo; a compromised action in a read-only workflow can do far less.
 fix:
   human: "Add `permissions: { contents: read }` at the top of each workflow and widen per job."

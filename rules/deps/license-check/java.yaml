@@ -2,16 +2,21 @@ id: deps/license-check/java
 kind: outcome
 params:
   skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 satisfiers:
   - name: check-license-task
     expr: >
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bcheckLicense\b|\blicense:add-third-party\b[^;&|]*-Dlicense\.(failOnBlacklist|failOnNotWhitelisted|failIfWarning)') && !l.matches(params.skip)))
+      || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bcheckLicense\b|\blicense:add-third-party\b[^;&|]*-Dlicense\.(failOnBlacklist|failOnNotWhitelisted|failIfWarning)') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bcheckLicense\b|\blicense:add-third-party\b[^;&|]*-Dlicense\.(failOnBlacklist|failOnNotWhitelisted|failIfWarning)') && !l.matches(params.skip))))
   - name: build-plugin
     expr: >
-      (file("pom.xml") && text("pom.xml").contains("license-maven-plugin")
-        && text("pom.xml").matches(r'<(failOnBlacklist|failOnNotWhitelisted|failIfWarning)>\s*true'))
-      || glob("**/build.gradle*").exists(f, text(f).contains("allowedLicensesFile")
+      ["", "../", "../../", "../../../"].map(d, d + "pom.xml").exists(p, file(p) && text(p).contains("license-maven-plugin")
+        && text(p).matches(r'<(failOnBlacklist|failOnNotWhitelisted|failIfWarning)>\s*true'))
+      || (glob("**/build.gradle*") + ["../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts"]).flatten().filter(f, file(f))).exists(f, text(f).contains("allowedLicensesFile")
         && text(f).matches(r'dependsOn\W[^\n]*checkLicense'))
 requirement: "pom.xml configures license-maven-plugin to fail on licenses outside its list (`failOnBlacklist`/`failOnNotWhitelisted`), or the Gradle dependency-license-report plugin has an `allowedLicensesFile` and its `checkLicense` task runs (from a recipe, a CI step or a task dependency); or a stack-neutral license checker runs."
 fix:

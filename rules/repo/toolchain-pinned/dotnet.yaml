@@ -1,10 +1,10 @@
 id: repo/toolchain-pinned/dotnet
 kind: expr
 expr: >
-  file("global.json") && text("global.json").matches(r'"version"\s*:\s*"\d')
-  || scan(".tool-versions", r'^\s*(dotnet|dotnet-core)\s+\S*\d').size() > 0
-  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
-       scan(f, r'^\s*"?(dotnet|dotnet-core)"?\s*=\s*[^#\n]*\d').size() > 0)
+  ["", "../", "../../", "../../../"].exists(d, file(d + "global.json") && text(d + "global.json").matches(r'"version"\s*:\s*"\d'))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(dotnet|dotnet-core)\s+\S*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
+       file(d + n) && scan(d + n, r'^\s*"?(dotnet|dotnet-core)"?\s*=\s*[^#\n]*\d').size() > 0))
 message: "global.json pins no .NET SDK"
 requirement: "global.json sets `sdk.version`, or `.tool-versions`/mise names dotnet with a version."
 fix:

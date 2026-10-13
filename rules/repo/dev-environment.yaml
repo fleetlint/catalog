@@ -21,7 +21,7 @@ satisfiers:
   - name: tools-target
     when: repo.container == "none" && "tools" in taskrunner.recipes
     expr: >
-      taskrunner.recipes["tools"].exists(l, l.matches("(@v?[0-9]|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
+      taskrunner.recipes["tools"].exists(l, l.matches("(@[\"']?(v?[0-9]|[0-9a-f]{7,40}\\b)|==[0-9]|@\\$[({][A-Z_]*VERSION)"))
       && !taskrunner.recipes["tools"].exists(l, l.contains("@latest"))
       && grep(taskrunner.file, "^[A-Za-z_]*VERSION\\s*[:?]*=").all(m,
            m.text.matches("=\\s*[\"']?(v?[0-9]+(\\.[0-9]+)*([-+.][0-9A-Za-z.]+)?|[0-9a-f]{7,64})[\"']?\\s*(#.*)?$"))

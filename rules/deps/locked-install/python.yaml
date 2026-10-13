@@ -2,14 +2,19 @@ id: deps/locked-install/python
 kind: expr
 params:
   noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 expr: >
   ((taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + params.runners.filter(f, file(f)).map(f, lines(f)).flatten()
       + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
       .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\buv\s+(sync|run|export)\b[^;&|]*--(locked|frozen)\b|\buv\s+lock\b[^;&|]*--(check|locked)\b|\buv\s+pip\s+sync\b|\bpoetry\s+(install|sync|check\s+--lock)\b|--require-hashes\b|\bpip-sync\b|\bpdm\s+(sync|install\b[^;&|]*--(frozen-lockfile|check))\b|\bpipenv\s+(sync|verify|install\b[^;&|]*--deploy)\b'))
    || workflows().exists(w, text(w).matches(r'\bUV_(LOCKED|FROZEN):\s*["\x27]?(1|true)')))
   && !(taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
       + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
-      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\buv\s+sync\b') && !l.matches(r'--(locked|frozen)\b') && !text(taskrunner.file).matches(r'UV_(LOCKED|FROZEN)')
+      .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\buv\s+sync\b') && !l.matches(r'--(locked|frozen)\b') && !(taskrunner.file != "" && text(taskrunner.file).matches(r'UV_(LOCKED|FROZEN)'))
        && !workflows().exists(w, text(w).matches(r'\bUV_(LOCKED|FROZEN):')))
 message: "Python installs do not enforce the lockfile"
 requirement: "A recipe or CI step installs or verifies with the lockfile enforced: `uv sync --locked` (or `--frozen`, or `UV_LOCKED` set in the workflow), `uv lock --check`, `uv pip sync`, `poetry install` / `poetry sync` (which refuse a stale poetry.lock), `pip install --require-hashes`, `pip-sync`, `pdm sync` or `pdm install --frozen-lockfile`, `pipenv sync` or `pipenv install --deploy`. No recipe or CI step runs a plain `uv sync` without those."

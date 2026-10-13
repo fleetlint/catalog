@@ -1,13 +1,14 @@
 id: repo/toolchain-pinned/node
 kind: expr
 expr: >
-  scan(".nvmrc", r'^\s*v?\d').size() > 0 || scan(".node-version", r'^\s*v?\d').size() > 0
-  || grep("package.json", r'"volta"\s*:').size() > 0
-  || scan(".tool-versions", r'^\s*(node|nodejs)\s+\S*\d').size() > 0
-  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
-       scan(f, r'^\s*"?(node|nodejs)"?\s*=\s*[^#\n]*\d').size() > 0)
+  ["", "../", "../../", "../../../"].exists(d, file(d + ".nvmrc") && scan(d + ".nvmrc", r'^\s*v?\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, file(d + ".node-version") && scan(d + ".node-version", r'^\s*v?\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "package.json") && text(d + "package.json").matches(r'"volta"\s*:'))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(node|nodejs)\s+\S*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
+       file(d + n) && scan(d + n, r'^\s*"?(node|nodejs)"?\s*=\s*[^#\n]*\d').size() > 0))
 message: "no Node.js version is pinned"
-requirement: "`.nvmrc` or `.node-version` names a version (not `lts/*` or `node`), package.json has a `volta` pin, or `.tool-versions`/mise names node with a version. `engines.node` is a range and `packageManager` pins the package manager, not Node; neither counts."
+requirement: "`.nvmrc` or `.node-version` names a version (not `lts/*` or `node`), a package.json here or in a parent directory has a `volta` pin, or `.tool-versions`/mise names node with a version. `engines.node` is a range and `packageManager` pins the package manager, not Node; neither counts."
 fix:
   human: "Write the Node version you use to .nvmrc (e.g. `node --version > .nvmrc`)."
 refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

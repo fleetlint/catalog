@@ -2,11 +2,9 @@ id: repo/toolchain-pinned
 title: Toolchain version is pinned
 kind: capability
 severity: warning
-# Version files live at the repository root.
-scope: root
 tiers: [1, 2]
 message: "the toolchain version for this stack is not pinned in the repository"
-requirement: "Each stack pins its compiler or runtime to a version in a file the tools read: the stack's version file, or `.tool-versions` / `mise.toml` naming the stack's tool with a version. A file that names another tool, or a moving alias like `lts` or `latest`, does not count."
+requirement: "Each stack pins its compiler or runtime to a version in a file the tools read, in the project's directory or a parent directory (for a workspace member, typically the repository root): the stack's version file, or `.tool-versions` / `mise.toml` naming the stack's tool with a version. A file that names another tool, or a moving alias like `lts` or `latest`, does not count."
 rationale: Without a pin, every machine and every CI run builds with whatever compiler or runtime happens to be installed, and failures cannot be reproduced.
 fix:
   human: "Add the stack's version file with the version you build with today."

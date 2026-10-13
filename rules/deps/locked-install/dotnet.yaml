@@ -4,11 +4,16 @@ kind: expr
 when: exists("**/packages.lock.json")
 params:
   noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'
+  # A member scope also counts its parent directories' task runners.
+  runners: ["../Makefile", "../justfile", "../Justfile", "../Taskfile.yml", "../Taskfile.yaml",
+    "../../Makefile", "../../justfile", "../../Justfile", "../../Taskfile.yml", "../../Taskfile.yaml",
+    "../../../Makefile", "../../../justfile", "../../../Justfile", "../../../Taskfile.yml", "../../../Taskfile.yaml"]
 expr: >
   (taskrunner.recipes.filter(t, !t.matches(r'(?i)update|upgrade|lock|bump|renovate')).map(t, taskrunner.recipes[t]).flatten()
+      + params.runners.filter(f, file(f)).map(f, lines(f)).flatten()
       + workflows().map(w, steps(w).map(s, s.run.split("\n")).flatten()).flatten())
       .filter(l, !l.matches(params.noise)).exists(l, l.matches(r'\bdotnet\s+(restore|build|test|publish)\b[^;&|]*--locked-mode\b'))
-  || (glob("**/*.csproj") + glob("**/*.fsproj") + glob("**/Directory.Build.props")).exists(f, text(f).matches(r'(?i)<RestoreLockedMode[^>]*>\s*true'))
+  || (glob("**/*.csproj") + glob("**/*.fsproj") + glob("**/Directory.Build.props") + ["../", "../../", "../../../"].map(d, d + "Directory.Build.props").filter(f, file(f))).exists(f, text(f).matches(r'(?i)<RestoreLockedMode[^>]*>\s*true'))
 message: "NuGet restores do not use locked mode"
 requirement: "Where packages.lock.json files exist, restore runs in locked mode: `--locked-mode` on `dotnet restore` in a recipe or CI step, or `RestoreLockedMode` set to true (typically conditioned on CI) in a project or Directory.Build.props."
 fix:

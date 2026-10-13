@@ -1,10 +1,10 @@
 id: repo/toolchain-pinned/rust
 kind: expr
 expr: >
-  file("rust-toolchain.toml") || file("rust-toolchain")
-  || scan(".tool-versions", r'^\s*(rust)\s+\S*\d').size() > 0
-  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
-       scan(f, r'^\s*"?(rust)"?\s*=\s*[^#\n]*\d').size() > 0)
+  ["", "../", "../../", "../../../"].exists(d, file(d + "rust-toolchain.toml") || file(d + "rust-toolchain"))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(rust)\s+\S*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
+       file(d + n) && scan(d + n, r'^\s*"?(rust)"?\s*=\s*[^#\n]*\d').size() > 0))
 message: "no Rust toolchain is pinned"
 requirement: "`rust-toolchain.toml` (or `rust-toolchain`) exists, or `.tool-versions`/mise names rust with a version. `rust-version` in Cargo.toml is the minimum supported version, not a pin."
 fix:

@@ -1,11 +1,11 @@
 id: repo/toolchain-pinned/flutter
 kind: expr
 expr: >
-  file(".fvmrc") || file(".fvm/fvm_config.json")
+  ["", "../", "../../", "../../../"].exists(d, file(d + ".fvmrc") || file(d + ".fvm/fvm_config.json"))
   || scan("pubspec.yaml", r'^\s+flutter:\s*["\x27]?\d+\.\d+\.\d+["\x27]?\s*$').size() > 0
-  || scan(".tool-versions", r'^\s*(flutter)\s+\S*\d').size() > 0
-  || ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(f,
-       scan(f, r'^\s*"?(flutter)"?\s*=\s*[^#\n]*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(flutter)\s+\S*\d').size() > 0)
+  || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
+       file(d + n) && scan(d + n, r'^\s*"?(flutter)"?\s*=\s*[^#\n]*\d').size() > 0))
 message: "no Flutter version is pinned"
 requirement: "`.fvmrc` (or `.fvm/fvm_config.json`) exists, pubspec.yaml's `environment.flutter` is an exact version, or `.tool-versions`/mise names flutter with a version."
 fix:

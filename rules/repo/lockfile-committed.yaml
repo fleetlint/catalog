@@ -2,11 +2,9 @@ id: repo/lockfile-committed
 title: Dependency lockfile is committed
 kind: capability
 severity: error
-# The root: a workspace keeps one lockfile there for all its members.
-scope: root
 tiers: [1, 2]
 message: "no lockfile is tracked for this stack"
-requirement: "Each stack's dependency manager has its lockfile tracked in git next to the root manifest; a manifest without dependencies needs none."
+requirement: "Each stack's dependency manager has its lockfile tracked in git next to the manifest, or, for a member of a workspace that keeps one lockfile for all members (npm, pnpm, yarn and bun workspaces, Cargo, uv and pub workspaces), at the workspace root; a manifest without dependencies needs none."
 rationale: Builds are reproducible only when dependency versions are pinned in git.
 fix:
   human: "Generate the lockfile with the package manager and commit it; remove it from .gitignore."

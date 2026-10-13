@@ -3,19 +3,16 @@ title: Package install scripts are disabled
 kind: expr
 severity: info
 stacks: [node]
-# The package manager reads its settings from the workspace root.
-scope: root
 tiers: [1, 2]
 expr: >
-  scan(".npmrc", r'^\s*ignore-scripts\s*=\s*true').size() > 0
-  || scan(".yarnrc.yml", r'^\s*enableScripts:\s*false').size() > 0
-  || text("pnpm-workspace.yaml").matches(r'onlyBuiltDependencies|allowBuilds')
-  || text("package.json").contains("onlyBuiltDependencies")
-  || text("package.json").contains("trustedDependencies")
-  || text("package.json").matches(r'"packageManager"\s*:\s*"(pnpm@([1-9]\d+)\.|bun@)')
-  || tracked().exists(f, f in ["bun.lock", "bun.lockb"])
+  ["", "../", "../../", "../../../"].exists(d,
+    (file(d + ".npmrc") && scan(d + ".npmrc", r'^\s*ignore-scripts\s*=\s*true').size() > 0)
+    || (file(d + ".yarnrc.yml") && scan(d + ".yarnrc.yml", r'^\s*enableScripts:\s*false').size() > 0)
+    || (file(d + "pnpm-workspace.yaml") && text(d + "pnpm-workspace.yaml").matches(r'onlyBuiltDependencies|allowBuilds'))
+    || (file(d + "package.json") && text(d + "package.json").matches(r'onlyBuiltDependencies|trustedDependencies|"packageManager"\s*:\s*"(pnpm@([1-9]\d+)\.|bun@)'))
+    || file(d + "bun.lock") || file(d + "bun.lockb"))
 message: "dependencies may run install scripts"
-requirement: "Install scripts of dependencies do not run by default: `ignore-scripts=true` in .npmrc, `enableScripts: false` in .yarnrc.yml, an explicit allowlist (`onlyBuiltDependencies` for pnpm, `trustedDependencies` for bun), or a package manager that blocks them by default (pnpm 10 or later named in `packageManager`, bun)."
+requirement: "Install scripts of dependencies do not run by default, set in the project or in a parent directory (for a workspace member, typically the workspace root): `ignore-scripts=true` in .npmrc, `enableScripts: false` in .yarnrc.yml, an explicit allowlist (`onlyBuiltDependencies` for pnpm, `trustedDependencies` for bun), or a package manager that blocks them by default (pnpm 10 or later named in `packageManager`, bun)."
 rationale: Install scripts are the usual way a compromised package executes code on developer machines and in CI.
 fix:
   human: "Add `ignore-scripts=true` to .npmrc and allow the few packages that need a build step explicitly."
