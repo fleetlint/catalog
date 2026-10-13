@@ -8,7 +8,7 @@ foreach: >
 expr: >
   false
 message: "comment narrates a change instead of explaining the code"
-requirement: "Comments say why the code is the way it is, not what was changed or asked for (\"Now uses…\", \"Fixed:\", \"As requested\")."
+requirement: "Comments say why the code is the way it is, not what was changed or asked for (\"Now uses...\", \"Fixed:\", \"As requested\")."
 rationale: "The history records what changed; a comment that repeats it is wrong after the next edit."
 fix:
   human: "Delete the comment, or rewrite it to state the constraint the code satisfies."

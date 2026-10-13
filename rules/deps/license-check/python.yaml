@@ -17,7 +17,7 @@ satisfiers:
       taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.matches(r'\bliccheck\b') && !l.matches(params.skip)))
       || params.runners.exists(f, file(f) && lines(f).exists(l, l.matches(r'\bliccheck\b') && !l.matches(params.skip)))
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bliccheck\b') && !l.matches(params.skip))))
-requirement: "A task-runner recipe or a CI step runs `pip-licenses --allow-only=…` (or `--fail-on=…`) or liccheck, or a stack-neutral license checker. pip-licenses without an allow or fail list only prints."
+requirement: "A task-runner recipe or a CI step runs `pip-licenses --allow-only=...` (or `--fail-on=...`) or liccheck, or a stack-neutral license checker. pip-licenses without an allow or fail list only prints."
 fix:
   human: "Run `pip-licenses --allow-only=\"MIT;BSD License;Apache Software License\"` in the `audit` target."
 refs: ["https://fleetlint.org/stacks/#python"]

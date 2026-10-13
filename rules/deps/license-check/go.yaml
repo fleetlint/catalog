@@ -14,5 +14,5 @@ satisfiers:
       || workflows().exists(w, steps(w).exists(s, s.run.split("\n").exists(l, l.matches(r'\bgo-licenses\s+check\b') && !l.matches(params.skip))))
 requirement: "A task-runner recipe or a CI step runs `go-licenses check` (with `--allowed_licenses` or `--disallowed_types`), or a stack-neutral license checker."
 fix:
-  human: "Run `go-licenses check ./... --allowed_licenses=…` in the `audit` target."
+  human: "Run `go-licenses check ./... --allowed_licenses=...` in the `audit` target."
 refs: ["https://fleetlint.org/stacks/#go"]

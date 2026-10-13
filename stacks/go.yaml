@@ -1,7 +1,9 @@
 id: go
 title: Go
 refs: ["https://fleetlint.org/stacks/#go"]
+# A Hugo site's go.mod only lists its modules: Go is present when Go code is.
 detect:
-  - {file: go.mod}
+  - {file: go.mod, unless_stack: hugo}
+  - {glob: "*.go", with: [go.mod]}
 devcontainer: {feature: "ghcr.io/devcontainers/features/go:1"}
 run_image: "mcr.microsoft.com/devcontainers/go:1"

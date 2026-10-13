@@ -7,6 +7,6 @@ message: "dependency installs do not enforce the lockfile"
 requirement: "A task-runner recipe or a CI step installs (or verifies) dependencies in the package manager's locked mode, which fails when the lockfile and the manifest disagree instead of resolving new versions, and no recipe or CI step installs in a mode that rewrites the lockfile. Recipes of targets named for updating (update, upgrade, lock, bump) are exempt; comments and `echo` lines do not count. For a workspace member the repository's CI counts, and a parent directory's Makefile, justfile or Taskfile counts for the locked install."
 rationale: An install that quietly re-resolves builds and tests something other than what the lockfile in git says, and the drift shows up only in production.
 fix:
-  human: "Use the locked install in CI and in the check targets (npm ci, uv sync --locked, cargo --locked, …)."
+  human: "Use the locked install in CI and in the check targets (npm ci, uv sync --locked, cargo --locked, ...)."
   agent: "Switch the CI and task-runner installs to the package manager's locked mode; if that fails, regenerate the lockfile in a separate commit rather than relaxing the install."
 refs: ["https://fleetlint.org/baseline/#dependencies"]

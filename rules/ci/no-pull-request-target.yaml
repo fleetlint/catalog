@@ -15,7 +15,7 @@ message: "pull_request_target workflow checks out the pull request head"
 requirement: >
   A `pull_request_target` workflow runs with repository secrets and never checks out or fetches the
   PR's code: no actions/checkout of the head ref, SHA, `refs/pull/<n>/merge` or the fork repository,
-  and no `gh pr checkout` or `git fetch … pull/…` in a run step.
+  and no `gh pr checkout` or `git fetch ... pull/...` in a run step.
 rationale: This is the canonical workflow injection, used in real supply-chain attacks.
 fix:
   human: "Use `pull_request` for anything that builds the PR; keep pull_request_target for labelling only."

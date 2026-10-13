@@ -17,7 +17,7 @@ expr: item.text.startsWith("#") || item.path.endsWith(".dockerignore") || item.p
 message: "a downloaded script is piped straight into a shell"
 requirement: >
   CI scripts (Actions run steps, GitLab scripts) and Dockerfile/Containerfile instructions never pipe a
-  download into a shell (`curl … | sh`, `wget -O- … | bash`, `sh -c "$(curl …)"`, `bash <(curl …)`).
+  download into a shell (`curl ... | sh`, `wget -O- ... | bash`, `sh -c "$(curl ...)"`, `bash <(curl ...)`).
   Tools come from a pinned action, a package manager or a downloaded file whose checksum is verified
   before it runs.
 rationale: Whatever the server returns at that moment runs with the job's secrets or ends up in the image, with nothing pinned and nothing verified.

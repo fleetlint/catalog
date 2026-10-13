@@ -38,4 +38,4 @@ satisfiers:
     expr: >
       workflows().exists(w, ci_kind(w) != "gitlab" && steps(w).exists(s, s.uses.startsWith("actions/dependency-review-action")
         && ("allow-licenses" in s.with || "deny-licenses" in s.with || "config-file" in s.with)))
-requirement: "A task-runner recipe or a CI step checks licenses with a stack-neutral tool: `osv-scanner --licenses=…`, trivy with the license scanner, ScanCode (`--license`), FOSSA, ORT `evaluate`, or GitHub dependency review configured with `allow-licenses`/`deny-licenses` (or a config file). Comments, `echo` lines and install-only lines do not count."
+requirement: "A task-runner recipe or a CI step checks licenses with a stack-neutral tool: `osv-scanner --licenses=...`, trivy with the license scanner, ScanCode (`--license`), FOSSA, ORT `evaluate`, or GitHub dependency review configured with `allow-licenses`/`deny-licenses` (or a config file). Comments, `echo` lines and install-only lines do not count."
