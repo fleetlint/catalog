@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/fleetlint/fleetlint/main/assets/fleetlint.svg" alt="fleetlint logo" width="96" align="right">
+
 # fleetlint catalog
 
 The rules [fleetlint](https://github.com/fleetlint/fleetlint) checks a repository against, and the files its fixes write, as data.
