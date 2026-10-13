@@ -4,9 +4,11 @@ kind: expr
 severity: error
 scope: root
 when: repo.public
-expr: exists("LICENSE*") || exists("LICENCE*") || exists("COPYING*") || exists("LICENSES/*")
+expr: >
+  glob("*").exists(f, f.matches(r'(?i)^(un)?licen[cs]e([.-][^/]*)?$|^copying([.-][^/]*)?$'))
+  || exists("LICENSES/*")
 message: "LICENSE file is missing"
-requirement: "A public repository has a license file: `LICENSE*`, `LICENCE*`, `COPYING*`, or a REUSE `LICENSES/` directory. The manifest's SPDX identifier is checked by `public/manifest-license`."
+requirement: "A public repository has a license file at its root: `LICENSE*`, `LICENCE*`, `UNLICENSE`, `COPYING*` (any case), or a REUSE `LICENSES/` directory. The manifest's SPDX identifier is checked by `public/manifest-license`."
 rationale: Without a license, nobody may legally use the code.
 fix:
   human: "Add LICENSE (MIT or Apache-2.0) with the current year and your name."

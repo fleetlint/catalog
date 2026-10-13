@@ -1,12 +1,14 @@
 id: repo/toolchain-pinned/rust
 kind: expr
 expr: >
-  ["", "../", "../../", "../../../"].exists(d, file(d + "rust-toolchain.toml") || file(d + "rust-toolchain"))
+  ["", "../", "../../", "../../../"].exists(d,
+    (file(d + "rust-toolchain.toml") && scan(d + "rust-toolchain.toml", r'^\s*channel\s*=\s*"((stable|beta|nightly)-)?\d').size() > 0)
+    || (file(d + "rust-toolchain") && scan(d + "rust-toolchain", r'^\s*((stable|beta|nightly)-)?\d').size() > 0))
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(rust)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(rust)"?\s*=\s*[^#\n]*\d').size() > 0))
 message: "no Rust toolchain is pinned"
-requirement: "`rust-toolchain.toml` (or `rust-toolchain`) exists, or `.tool-versions`/mise names rust with a version. `rust-version` in Cargo.toml is the minimum supported version, not a pin."
+requirement: "`rust-toolchain.toml` (or `rust-toolchain`) names a version or a dated channel (`1.86.0`, `nightly-2026-01-15`; `stable` moves and does not count), or `.tool-versions`/mise names rust with a version. `rust-version` in Cargo.toml is the minimum supported version, not a pin."
 fix:
   human: "Add rust-toolchain.toml with `[toolchain] channel = \"1.x.y\"`."
 refs: ["https://fleetlint.org/stacks/#rust"]

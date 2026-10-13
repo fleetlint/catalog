@@ -16,7 +16,10 @@
           pipx install "diff-cover==${DIFF_COVER_VERSION}"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
-      - name: fleetlint (the check target runs it; pin the version you use)
+      - name: fleetlint (the check target runs it)
+        env:
+          # renovate: datasource=go depName=github.com/fleetlint/fleetlint
+          FLEETLINT_VERSION: v0.4.0
         run: |
-          go install github.com/fleetlint/fleetlint/cmd/fleetlint@latest
+          go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_VERSION}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"

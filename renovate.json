@@ -10,7 +10,7 @@
   "pre-commit": {
     "enabled": true,
     "managerFilePatterns": [
-      "/^templates/pre-commit/head\\.yaml$/"
+      "/^templates/pre-commit/.+\\.ya?ml$/"
     ]
   },
   "postUpdateOptions": [
@@ -20,5 +20,17 @@
     "managerFilePatterns": [
       "/^templates/.+\\.ya?ml$/"
     ]
-  }
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Version variables with a `# renovate:` comment in the fix templates",
+      "managerFilePatterns": [
+        "/^templates/.+$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: versioning=(?<versioning>[^\\s]+?))?\\s+[A-Za-z0-9_]+?_VERSION\\s*(?::|\\??=)\\s*[\"']?(?<currentValue>[^\\s\"']+)"
+      ]
+    }
+  ]
 }

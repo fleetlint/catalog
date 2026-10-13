@@ -3,7 +3,7 @@ title: pull_request_target never runs untrusted code
 kind: expr
 severity: error
 scope: root
-when: repo.public && workflows().exists(w, ci_kind(w) != "gitlab" && "pull_request_target" in triggers(w))
+when: workflows().exists(w, ci_kind(w) != "gitlab" && "pull_request_target" in triggers(w))
 foreach: workflows().filter(w, ci_kind(w) != "gitlab" && "pull_request_target" in triggers(w))
 expr: >
   !steps(item).exists(s,

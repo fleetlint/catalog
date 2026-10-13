@@ -6,6 +6,7 @@ The rules [fleetlint](https://github.com/fleetlint/fleetlint) checks a repositor
 
 - `presets/`: what a repository extends as `fleetlint:<name>`: `minimal` (the floor for any repository), `recommended` (the default; includes `minimal`), `slop` (an add-on with heuristics for careless or generated code), `strict` and `oss` (`recommended` tightened, see their descriptions). A preset selects from the library with `- use: <id or glob>` or adjusts an included preset with `overrides:`; it defines no rules itself.
 - `rules/`: the rule library, one rule per file at `rules/<family>/<name>.yaml` (the path spells the id: `rules/repo/readme-present.yaml` is `repo/readme-present`). This is where a rule is read, changed or added. A capability states a requirement once and each stack implements it with its own tools at `rules/<family>/<name>/<stack>.yaml` (`rules/lint/configured/go.yaml` is `lint/configured/go`); `any.yaml` is the stack-neutral implementation. [The capability matrix](https://fleetlint.org/rules/capabilities/) shows which stack implements what.
+- `aliases.yaml`: rule ids that were renamed and the ids that replace them; fleetlint reads an old id in a configuration as those, with a warning.
 - `stacks/`: one file per stack (`stacks/go.yaml`): how fleetlint detects it and what its dev environment needs. A new stack is a definition here plus implementations of the capabilities it should meet.
 - `templates/`: what `fleetlint fix` creates (editor and git attributes, linter configuration, changelog, security policy, a Makefile, justfile and Taskfile with the task-runner contract) and the fragments it assembles the hook configuration, the check workflow and the release workflow from (`pre-commit/`, `check/`, `release/`: a shared head, one toolchain fragment per stack, a GoReleaser or `make dist` publisher).
 
@@ -43,7 +44,7 @@ make check    # format, vet, tests
 
 ## Layout
 
-`catalog.go` exposes `presets/`, `rules/`, `stacks/` and `templates/` as embedded file systems (`catalog.Presets`, `catalog.Rules`, `catalog.Stacks`, `catalog.Templates`); fleetlint imports this module for them. The presets carry no version of their own: they are versioned with this repository's tags.
+`catalog.go` exposes `presets/`, `rules/`, `stacks/` and `templates/` as embedded file systems (`catalog.Presets`, `catalog.Rules`, `catalog.Stacks`, `catalog.Templates`) and `aliases.yaml` as `catalog.Aliases`; fleetlint imports this module for them. The presets carry no version of their own: they are versioned with this repository's tags.
 
 ## License
 

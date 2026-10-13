@@ -1,7 +1,7 @@
 id: repo/toolchain-pinned/kotlin
 kind: expr
 expr: >
-  ["", "../", "../../", "../../../"].exists(d, file(d + ".java-version") && scan(d + ".java-version", r'^\s*\d').size() > 0)
+  ["", "../", "../../", "../../../"].exists(d, file(d + ".java-version") && scan(d + ".java-version", r'^\s*\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".sdkmanrc") && scan(d + ".sdkmanrc", r'^\s*java\s*=\s*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + "gradle/gradle-daemon-jvm.properties") && text(d + "gradle/gradle-daemon-jvm.properties").matches(r'toolchainVersion\s*=\s*\d'))
   || (glob("**/build.gradle*") + ["../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts"]).flatten().filter(f, file(f)))

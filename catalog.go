@@ -1,7 +1,7 @@
 // Package catalog holds the fleetlint presets, rules, stacks and the
-// templates their fixes write, as data. The fleetlint binary embeds one version of this module;
-// repositories can also reference a preset file from this repository at a
-// tag or commit.
+// templates their fixes write, as data. The fleetlint binary embeds one
+// version of this module; a repository runs another with
+// `catalog: {version: <tag or commit>}`.
 package catalog
 
 import "embed"

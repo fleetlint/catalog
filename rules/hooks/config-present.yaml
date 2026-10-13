@@ -11,7 +11,7 @@ message: "no hook configuration found (.pre-commit-config.yaml or lefthook)"
 requirement: "The repository declares git hooks that run on every commit: a `.pre-commit-config.yaml` (pre-commit or prek) or a lefthook configuration (`lefthook.yml`, `.lefthook.yml` and their YAML, TOML and JSON variants)."
 rationale: Hooks are the only gate that runs before code reaches the remote; everything else is after the fact.
 fix:
-  human: "Run `fleetlint fix --apply` to add .pre-commit-config.yaml for the stack, then `prek install`."
+  human: "Run `fleetlint fix --apply` to add .pre-commit-config.yaml for the stack, then `prek install` (the file uses prek's builtin hooks; pre-commit cannot run it)."
   agent: "Create .pre-commit-config.yaml from the shared template plus the stack block, run `prek update` and `prek install`."
   actions:
     - template: "{stack}/pre-commit-config.yaml"
