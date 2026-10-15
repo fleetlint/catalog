@@ -19,7 +19,7 @@
       - name: fleetlint (the check target runs it), pinned and checksum-verified
         env:
           # renovate: datasource=github-releases depName=fleetlint/fleetlint
-          FLEETLINT_VERSION: v0.4.1
+          FLEETLINT_VERSION: v0.5.1
         run: |
           set -euo pipefail
           v=${FLEETLINT_VERSION#v}
