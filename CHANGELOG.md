@@ -5,6 +5,14 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-15
+
+The rules are those of 0.2.0.
+
+### Fixed
+
+- The publish workflow installs the fleetlint that reads engine level 4, so the published artifact is loaded the way a repository pins it before the run passes; 0.2.0 was pushed and signed, but that last check ran the old fleetlint.
+
 ## [0.2.0] - 2026-10-15
 
 Engine level 4: needs fleetlint 0.5.0 or newer (`combine:` on capabilities, the stack-neutral implementation running where no stack is detected).
