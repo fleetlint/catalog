@@ -1,59 +1,20 @@
 id: release/signing
 title: Release artifacts are signed
-kind: outcome
+kind: capability
+# A release belongs to the repository: the stack that publishes it decides.
+combine: any
 severity: error
 tiers: [1]
 scope: root
 when: release.exists && tagged_workflows().size() > 0
-satisfiers:
-  - name: goreleaser-signs
-    expr: >
-      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map
-        && ("signs" in yaml(f) || "binary_signs" in yaml(f) || "docker_signs" in yaml(f)))
-  - name: cosign-in-workflow
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bcosign (sign|sign-blob|attest)\\b")))
-  - name: sigstore-python
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/gh-action-sigstore-python")))
-  - name: npm-provenance
-    expr: >
-      tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bnpm publish\\b")
-        && (s.run.matches("npm publish[^\\n]*--provenance") || text(w).matches("NPM_CONFIG_PROVENANCE:\\s*[\"']?true|id-token:\\s*write"))))
-  - name: pypi-attestations
-    expr: >
-      tagged_workflows().exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
-        s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
-  - name: gpg
-    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
-  # Android: the APK or AAB carries its own signature (APK Signature Scheme v2+, JAR signing for AABs),
-  # which the platform checks on install and on every update. The release verifies or applies it.
-  - name: android-apk-signing
-    expr: >
-      tagged_workflows().exists(w, steps(w).exists(s,
-        s.run.matches("\\bapksigner\\b[^\\n]*\\b(sign|verify)\\b|\\bjarsigner\\b")
-        || s.uses.matches("^(r0adkll|ilharp)/sign-android-release")))
-  # JVM libraries published to Maven Central: PGP signatures from Gradle's signing plugin
-  # (or the vanniktech publish plugin) or from Maven's gpg/sign plugin, on a publishing release.
-  - name: maven-central-pgp
-    expr: >
-      ((glob("**/*.gradle*") + glob("buildSrc/**/*.kt") + glob("build-logic/**/*.kt"))
-        .exists(f, text(f).matches("(?m)^\\s*signing\\s*$|\\bsigning\\s*\\{|id\\(\\s*[\"']signing[\"']\\s*\\)|`signing`|\\bsignAllPublications\\(\\)|plugin\\s*[:=]\\s*[\"']signing[\"']"))
-      && tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bpublish[A-Za-z]*\\b"))))
-      || glob("**/pom.xml").exists(f, text(f).matches("<artifactId>(maven-gpg-plugin|sign-maven-plugin)</artifactId>"))
-partials:
-  - name: cosign-outside-release
-    severity: warning
-    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
-    message: "cosign is installed in a workflow but no tag-triggered release signs its artifacts"
 message: "release artifacts are not signed"
 requirement: >
-  Every release signs its artifacts: cosign keyless (OIDC) on GitHub and GitLab, key-based cosign on
-  Gitea, GoReleaser `signs:`, sigstore-python or PyPI attestations for wheels, npm provenance, or a
-  detached gpg signature. Artifacts with a signature format of their own use it: an Android APK or
-  AAB signed with the app's release key (verified with apksigner or jarsigner in the release), and JVM libraries
-  signed with PGP for Maven Central (Gradle's `signing` plugin, Maven's gpg plugin). Signatures are
-  published with the release. A container image is signed by digest with `cosign sign`.
+  Every release signs its artifacts, with the signature its ecosystem already checks where there is
+  one (an Android app's APK signature, PGP for Maven Central, npm provenance, PyPI attestations,
+  NuGet package signing), otherwise with cosign or gpg. Signatures are published with the release.
+  A container image is signed by digest with `cosign sign`, whatever the stack.
 rationale: Checksums prove integrity; only a signature proves who built it.
 fix:
-  human: "Android app: sign the APK/AAB with the release key and verify it in the release workflow (`apksigner verify` for an APK, `jarsigner -verify` for an AAB); that is the signature Android checks, no cosign needed. JVM library: apply Gradle's `signing` plugin for the Maven Central publication. Anything else: add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."
-  agent: "Android app: keep the release key's APK signature and add `apksigner verify --print-certs` (APK) or `jarsigner -verify` (AAB) on the built artifact to the release workflow. JVM library: apply the signing plugin to the Maven publication. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
+  human: "Sign with the stack's own format (`fleetlint explain release/signing/<stack>`); without one, add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` for a container image (keyless on GitHub, with a key on Gitea)."
+  agent: "Use the stack's signing format when the stack has one. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
 refs: ["https://fleetlint.org/baseline/#releases"]

@@ -2,6 +2,7 @@ package catalog_test
 
 import (
 	"io/fs"
+	"path"
 	"strings"
 	"testing"
 
@@ -94,7 +95,8 @@ func TestLibraryRulesAreSelected(t *testing.T) {
 		if err := yaml.Unmarshal(b, &rule); err != nil || rule.ID != id {
 			t.Errorf("%s: id %q must spell the path (%v)", p, rule.ID, err)
 		}
-		if selected[id] {
+		// Selecting a capability selects its implementations (family/name/stack).
+		if selected[id] || (strings.Count(id, "/") == 2 && selected[path.Dir(id)]) {
 			return nil
 		}
 		for _, g := range globs {

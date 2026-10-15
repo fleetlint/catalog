@@ -1,6 +1,8 @@
 id: release/reproducible-build
 title: Release builds are reproducible
 kind: capability
+# A release belongs to the repository: the stack that publishes it decides.
+combine: any
 severity: info
 scope: root
 tiers: [1]

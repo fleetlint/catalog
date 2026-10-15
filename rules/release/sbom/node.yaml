@@ -1,0 +1,18 @@
+id: release/sbom/node
+kind: outcome
+satisfiers:
+  - name: npm-sbom
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bnpm sbom\\b")))
+  - name: cyclonedx-npm
+    expr: file("package.json") && text("package.json").contains("@cyclonedx/cyclonedx-npm")
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but no tag-triggered release workflow invokes it"
+requirement: "The release runs `npm sbom` or uses @cyclonedx/cyclonedx-npm; or a stack-neutral producer."
+fix:
+  human: "Run `npm sbom --sbom-format spdx > sbom.spdx.json` in the release workflow and upload the file."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

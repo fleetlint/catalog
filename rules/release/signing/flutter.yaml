@@ -1,0 +1,26 @@
+id: release/signing/flutter
+kind: outcome
+satisfiers:
+  - name: android-apk-signing
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.run.matches("\\bapksigner\\b[^\\n]*\\b(sign|verify)\\b|\\bjarsigner\\b")
+        || s.uses.matches("^(r0adkll|ilharp)/sign-android-release")))
+  # iOS and macOS: code signing during the export or by fastlane.
+  - name: apple-codesign
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.run.matches("\\bxcodebuild\\b[^\\n]*-exportArchive|\\bcodesign\\b[^\\n]*(--sign|-s\\b)|\\bfastlane\\b[^\\n]*\\b(gym|build_app|build_ios_app|match)\\b|\\bflutter build ipa\\b[^\\n]*--export-options-plist")))
+partials:
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but no tag-triggered release signs its artifacts"
+requirement: >
+  The Android build is signed with the release key and verified (apksigner, jarsigner) or signed in the
+  release workflow (a sign-android-release action), and an iOS or macOS build is code-signed on export
+  (xcodebuild -exportArchive, codesign, fastlane gym/match, `flutter build ipa --export-options-plist`);
+  or a stack-neutral signature: cosign, GoReleaser, gpg.
+fix:
+  human: "Sign the APK/AAB with the release key and verify it with apksigner (or jarsigner for an AAB) in the release workflow; export iOS builds with a signing identity (`flutter build ipa --export-options-plist`)."
+refs: ["https://fleetlint.org/stacks/#flutter--dart", "https://docs.flutter.dev/deployment/android#sign-the-app"]

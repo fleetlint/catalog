@@ -1,0 +1,22 @@
+id: release/provenance/any
+kind: outcome
+satisfiers:
+  - name: attest-action
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
+  - name: slsa-generator
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
+  - name: cosign-attest
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest(-blob)?\\b")))
+  - name: container-provenance
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.uses.startsWith("docker/build-push-action") && !s.uses.matches("@v[1-3](\\.|$)")
+        && !("provenance" in s.with && (s.with.provenance == false || s.with.provenance == "false"))))
+  - name: gitlab-artifact-metadata
+    expr: >
+      tagged_workflows().exists(w, ci_kind(w) == "gitlab"
+        && text(w).matches("RUNNER_GENERATE_ARTIFACTS_METADATA:\\s*[\"']?true"))
+requirement: >
+  The release pipeline attests provenance with actions/attest-build-provenance, the SLSA generator,
+  `cosign attest` or `cosign attest-blob`, docker/build-push-action v4 or newer (provenance is on unless
+  `provenance: false`), or GitLab's artifact provenance (`RUNNER_GENERATE_ARTIFACTS_METADATA: "true"`).

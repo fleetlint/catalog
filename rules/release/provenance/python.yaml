@@ -1,0 +1,11 @@
+id: release/provenance/python
+kind: outcome
+satisfiers:
+  - name: pypi-attestations
+    expr: >
+      tagged_workflows().exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+        s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
+requirement: "Distributions are uploaded by pypa/gh-action-pypi-publish with trusted publishing, which attaches PyPI attestations unless `attestations: false`; or a stack-neutral attestation."
+fix:
+  human: "Publish with pypa/gh-action-pypi-publish from a job with `id-token: write` (trusted publishing)."
+refs: ["https://fleetlint.org/stacks/#python", "https://docs.pypi.org/attestations/"]

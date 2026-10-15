@@ -1,0 +1,16 @@
+id: release/sbom/dotnet
+kind: outcome
+satisfiers:
+  - name: cyclonedx-dotnet
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bdotnet[ -]CycloneDX\\b")))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but no tag-triggered release workflow invokes it"
+requirement: "The release runs the CycloneDX .NET tool (`dotnet CycloneDX`); or a stack-neutral producer such as Microsoft's sbom-tool."
+fix:
+  human: "Install CycloneDX as a dotnet tool and run `dotnet CycloneDX <solution> -o sbom` in the release workflow."
+refs: ["https://fleetlint.org/stacks/#net"]

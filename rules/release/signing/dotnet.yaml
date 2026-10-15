@@ -1,0 +1,19 @@
+id: release/signing/dotnet
+kind: outcome
+satisfiers:
+  - name: nuget-sign
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget sign|nuget(\\.exe)? sign)\\b")))
+  - name: authenticode
+    expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsigntool(\\.exe)? sign\\b") || s.uses.startsWith("azure/trusted-signing-action")))
+partials:
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but no tag-triggered release signs its artifacts"
+requirement: >
+  NuGet packages are signed (`dotnet nuget sign`) or binaries carry an Authenticode signature
+  (signtool, Azure Trusted Signing) in the release workflow; or a stack-neutral signature: cosign,
+  GoReleaser, gpg.
+fix:
+  human: "Sign packages with `dotnet nuget sign` (or binaries with signtool / Azure Trusted Signing) before they are published."
+refs: ["https://fleetlint.org/stacks/#net", "https://learn.microsoft.com/nuget/create-packages/sign-a-package"]
