@@ -27,7 +27,7 @@ message: "detekt is not applied in the Gradle build"
 requirement: "The detekt 2 Gradle plugin (`dev.detekt`) is applied in the build (this build, a parent build or a convention plugin), so `./gradlew check` runs it. Another analyzer is added with `accept:`."
 rationale: Kotlin's compiler accepts swallowed exceptions; detekt is where they are caught.
 fix:
-  human: "Apply the detekt 2 Gradle plugin (`id(\"dev.detekt\") version \"2.0.0-alpha.6\"`) with buildUponDefaultConfig and config/detekt/detekt.yml, in a convention plugin when the build has several modules; `fleetlint fix --apply` writes the configuration, the plugin is added by hand. detekt 1.23 is built on Kotlin 2.0 and fails on JDK 25."
+  human: "Apply the detekt 2 Gradle plugin (`id(\"dev.detekt\")`, any 2.x release from the Gradle plugin portal) with buildUponDefaultConfig and config/detekt/detekt.yml, in a convention plugin when the build has several modules; `fleetlint fix --apply` writes the configuration, the plugin is added by hand. detekt 1.23 is built on Kotlin 2.0 and fails on JDK 25."
   agent: "Apply the detekt 2 Gradle plugin (id dev.detekt, the latest 2.x from the Gradle plugin portal) with buildUponDefaultConfig = true and config.setFrom(rootProject.file(\"config/detekt/detekt.yml\")); in a multi-module build apply it from the convention plugin every module uses. Write config/detekt/detekt.yml from the template; fix the findings instead of adding a baseline entry."
   actions:
     - template: kotlin/detekt.yml
