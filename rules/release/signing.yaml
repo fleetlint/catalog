@@ -24,6 +24,21 @@ satisfiers:
         s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
   - name: gpg
     expr: tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
+  # Android: the APK or AAB carries its own signature (APK Signature Scheme v2+, JAR signing for AABs),
+  # which the platform checks on install and on every update. The release verifies or applies it.
+  - name: android-apk-signing
+    expr: >
+      tagged_workflows().exists(w, steps(w).exists(s,
+        s.run.matches("\\bapksigner\\b[^\\n]*\\b(sign|verify)\\b|\\bjarsigner\\b")
+        || s.uses.matches("^(r0adkll|ilharp)/sign-android-release")))
+  # JVM libraries published to Maven Central: PGP signatures from Gradle's signing plugin
+  # (or the vanniktech publish plugin) or from Maven's gpg/sign plugin, on a publishing release.
+  - name: maven-central-pgp
+    expr: >
+      ((glob("**/*.gradle*") + glob("buildSrc/**/*.kt") + glob("build-logic/**/*.kt"))
+        .exists(f, text(f).matches("(?m)^\\s*signing\\s*$|\\bsigning\\s*\\{|id\\(\\s*[\"']signing[\"']\\s*\\)|`signing`|\\bsignAllPublications\\(\\)|plugin\\s*[:=]\\s*[\"']signing[\"']"))
+      && tagged_workflows().exists(w, steps(w).exists(s, s.run.matches("\\bpublish[A-Za-z]*\\b"))))
+      || glob("**/pom.xml").exists(f, text(f).matches("<artifactId>(maven-gpg-plugin|sign-maven-plugin)</artifactId>"))
 partials:
   - name: cosign-outside-release
     severity: warning
@@ -33,10 +48,12 @@ message: "release artifacts are not signed"
 requirement: >
   Every release signs its artifacts: cosign keyless (OIDC) on GitHub and GitLab, key-based cosign on
   Gitea, GoReleaser `signs:`, sigstore-python or PyPI attestations for wheels, npm provenance, or a
-  detached gpg signature. Signatures are published with the release. A container image is signed by
-  digest with `cosign sign`.
+  detached gpg signature. Artifacts with a signature format of their own use it: an Android APK or
+  AAB signed with the app's release key (verified with apksigner or jarsigner in the release), and JVM libraries
+  signed with PGP for Maven Central (Gradle's `signing` plugin, Maven's gpg plugin). Signatures are
+  published with the release. A container image is signed by digest with `cosign sign`.
 rationale: Checksums prove integrity; only a signature proves who built it.
 fix:
-  human: "Add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."
-  agent: "Add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
+  human: "Android app: sign the APK/AAB with the release key and verify it in the release workflow (`apksigner verify` for an APK, `jarsigner -verify` for an AAB); that is the signature Android checks, no cosign needed. JVM library: apply Gradle's `signing` plugin for the Maven Central publication. Anything else: add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` when it is a container image (keyless on GitHub, with a key on Gitea)."
+  agent: "Android app: keep the release key's APK signature and add `apksigner verify --print-certs` (APK) or `jarsigner -verify` (AAB) on the built artifact to the release workflow. JVM library: apply the signing plugin to the Maven publication. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
 refs: ["https://fleetlint.org/baseline/#releases"]

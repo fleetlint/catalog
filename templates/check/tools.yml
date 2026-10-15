@@ -16,10 +16,15 @@
           pipx install "diff-cover==${DIFF_COVER_VERSION}"
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
-      - name: fleetlint (the check target runs it)
+      - name: fleetlint (the check target runs it), pinned and checksum-verified
         env:
-          # renovate: datasource=go depName=github.com/fleetlint/fleetlint
-          FLEETLINT_VERSION: v0.4.0
+          # renovate: datasource=github-releases depName=fleetlint/fleetlint
+          FLEETLINT_VERSION: v0.4.1
         run: |
-          go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_VERSION}"
-          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+          set -euo pipefail
+          v=${FLEETLINT_VERSION#v}
+          base="https://github.com/fleetlint/fleetlint/releases/download/${FLEETLINT_VERSION}"
+          curl -sSfLO "${base}/fleetlint_${v}_linux_amd64.tar.gz"
+          curl -sSfL "${base}/checksums.txt" | grep " fleetlint_${v}_linux_amd64.tar.gz$" | sha256sum -c -
+          tar -xzf "fleetlint_${v}_linux_amd64.tar.gz" -C "$HOME/.local/bin" fleetlint
+          rm "fleetlint_${v}_linux_amd64.tar.gz"

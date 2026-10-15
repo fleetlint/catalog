@@ -1,23 +1,34 @@
 id: lint/configured/kotlin
 kind: outcome
 satisfiers:
-  # The detekt Gradle plugin (1.x io.gitlab.arturbosch.detekt, 2.x dev.detekt), in this build, a parent build or a convention plugin.
+  # The detekt 2 Gradle plugin (id dev.detekt), in this build, a parent build or a convention plugin.
+  # A version-catalog alias or a bare detekt {} block counts when the catalog maps detekt to dev.detekt.
   - name: detekt
     expr: >
       (["", "../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts", d + "settings.gradle.kts", d + "settings.gradle"]).flatten()
         + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
-      .exists(f, file(f) && text(f).matches("io\\.gitlab\\.arturbosch\\.detekt|dev\\.detekt|libs\\.plugins\\.detekt|\\bdetekt\\s*\\{"))
+      .exists(f, file(f) && (text(f).matches("[\"']dev\\.detekt[\"']")
+        || (text(f).matches("libs\\.plugins\\.detekt|\\bdetekt\\s*\\{")
+          && ["", "../", "../../", "../../../"].exists(d, file(d + "gradle/libs.versions.toml")
+            && text(d + "gradle/libs.versions.toml").matches("[\"']dev\\.detekt[\"']")))))
 partials:
+  - name: detekt-1
+    severity: warning
+    expr: >
+      (["", "../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts", d + "settings.gradle.kts", d + "settings.gradle", d + "gradle/libs.versions.toml"]).flatten()
+        + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))
+      .exists(f, file(f) && text(f).matches("io\\.gitlab\\.arturbosch\\.detekt"))
+    message: "detekt 1.x (io.gitlab.arturbosch.detekt) is applied; it is built on Kotlin 2.0 and fails on JDK 25, move to detekt 2 (dev.detekt)"
   - name: config-only
     severity: warning
     expr: exists("**/detekt*.yml") || exists("**/detekt*.yaml")
     message: "a detekt configuration is committed but no build file applies the detekt Gradle plugin"
 message: "detekt is not applied in the Gradle build"
-requirement: "The detekt Gradle plugin is applied in the build (this build, a parent build or a convention plugin), so `./gradlew check` runs it. Another analyzer is added with `accept:`."
+requirement: "The detekt 2 Gradle plugin (`dev.detekt`) is applied in the build (this build, a parent build or a convention plugin), so `./gradlew check` runs it. Another analyzer is added with `accept:`."
 rationale: Kotlin's compiler accepts swallowed exceptions; detekt is where they are caught.
 fix:
-  human: "Apply the detekt Gradle plugin (`id(\"io.gitlab.arturbosch.detekt\") version \"1.23.8\"`) with buildUponDefaultConfig and config/detekt/detekt.yml; `fleetlint fix --apply` writes the configuration, the plugin is added by hand."
-  agent: "Apply the detekt Gradle plugin 1.23.x with buildUponDefaultConfig = true and config.setFrom(\"config/detekt/detekt.yml\"); write config/detekt/detekt.yml from the template; fix the findings instead of adding a baseline entry."
+  human: "Apply the detekt 2 Gradle plugin (`id(\"dev.detekt\") version \"2.0.0-alpha.6\"`) with buildUponDefaultConfig and config/detekt/detekt.yml, in a convention plugin when the build has several modules; `fleetlint fix --apply` writes the configuration, the plugin is added by hand. detekt 1.23 is built on Kotlin 2.0 and fails on JDK 25."
+  agent: "Apply the detekt 2 Gradle plugin (id dev.detekt, the latest 2.x from the Gradle plugin portal) with buildUponDefaultConfig = true and config.setFrom(rootProject.file(\"config/detekt/detekt.yml\")); in a multi-module build apply it from the convention plugin every module uses. Write config/detekt/detekt.yml from the template; fix the findings instead of adding a baseline entry."
   actions:
     - template: kotlin/detekt.yml
       to: config/detekt/detekt.yml

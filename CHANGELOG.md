@@ -3,6 +3,20 @@
 All notable changes to this project are documented here.
 Format: Keep a Changelog. Versioning: Semantic Versioning.
 
+## [Unreleased]
+
+### Changed
+
+- `lint/configured/kotlin` requires detekt 2 (`dev.detekt`); a build that still applies detekt 1.x (`io.gitlab.arturbosch.detekt`, built on Kotlin 2.0, fails on JDK 25) gets a partial with that message. A version-catalog alias counts when `gradle/libs.versions.toml` maps it to `dev.detekt`. The fix names detekt 2 and a convention plugin for multi-module builds.
+- The `kotlin/detekt.yml` template uses detekt 2's configuration keys (`allowedLines`, `allowedComplexity`, `allowedFunctionsPerFile`/`PerClass`, `UnusedPrivateFunction`, no `build.maxIssues`), which detekt 2 refused in the old template, and excludes every test source set (`commonTest`, `androidHostTest`, ...) from MagicNumber and FunctionNaming and `@Composable` functions from FunctionNaming, MagicNumber and LongParameterList.
+- `release/signing` accepts the signature formats artifacts already have: an Android APK or AAB verified (or signed) with apksigner or jarsigner, or a sign-android-release action, in the release workflow; and PGP signing for Maven Central (Gradle's `signing` plugin or `signAllPublications()` with a publishing release, Maven's gpg/sign plugin). cosign is no longer the only way for those.
+
+### Fixed
+
+- The check and release workflow templates install fleetlint from its release archive with a checksum check instead of `go install`, which needed Go on non-Go stacks.
+- The Kotlin and Java workflow templates set `java-version: "25"` instead of reading a `.java-version` that `fleetlint fix` never writes.
+- The pre-commit template leaves the generated `gradlew` script to Gradle (no shellcheck or shfmt rewrites) and lets `.bat`/`.cmd` files keep the CRLF that the `.gitattributes` template asks for.
+
 ## [0.1.0] - 2026-10-13
 
 The first release of the catalog on its own. fleetlint 0.3 and older embedded the rules under the ids listed as renamed below.
