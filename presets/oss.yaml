@@ -2,7 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-oss
-  engine: 3
+  engine: 4
   description: >
     recommended with its public/* rules switched on whatever the detected
     visibility: for repositories that are, or are about to become, open source

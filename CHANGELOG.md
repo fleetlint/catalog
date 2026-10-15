@@ -5,7 +5,9 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
-Needs fleetlint with `combine:` on capabilities and the stack-neutral implementation running where no stack is detected.
+## [0.2.0] - 2026-10-15
+
+Engine level 4: needs fleetlint 0.5.0 or newer (`combine:` on capabilities, the stack-neutral implementation running where no stack is detected).
 
 ### Changed
 
