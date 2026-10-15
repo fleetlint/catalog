@@ -1,0 +1,14 @@
+id: quality/mutation-gate/python
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(mutmut|cosmic-ray)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(mutmut|cosmic-ray)\\b"))
+  - name: config-file
+    expr: file("mutmut_config.py") || text("pyproject.toml").contains("[tool.mutmut]")
+requirement: "mutmut (or cosmic-ray) runs on the core packages, from the task runner or a workflow."
+fix:
+  human: "Configure `[tool.mutmut]` in pyproject.toml for the core package and run `mutmut run` weekly."
+refs: ["https://fleetlint.org/stacks/#python"]

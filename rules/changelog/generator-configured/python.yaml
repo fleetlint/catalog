@@ -1,0 +1,16 @@
+id: changelog/generator-configured/python
+kind: outcome
+satisfiers:
+  - name: pyproject-tool
+    expr: >
+      file("pyproject.toml") && type(toml("pyproject.toml")) == map && "tool" in toml("pyproject.toml")
+      && type(toml("pyproject.toml").tool) == map
+      && ["git-cliff", "commitizen", "towncrier"].exists(t, t in toml("pyproject.toml").tool)
+  - name: towncrier
+    expr: file("towncrier.toml") || file("changelog.d/towncrier_template.md.jinja")
+requirement: "git-cliff, commitizen or towncrier configured in pyproject.toml (`[tool.git-cliff]`, `[tool.commitizen]`, `[tool.towncrier]`) or towncrier.toml; or a stack-neutral generator."
+fix:
+  human: "Add `[tool.towncrier]` or `[tool.git-cliff]` to pyproject.toml, or cliff.toml."
+  actions:
+    - template: cliff.toml
+refs: ["https://fleetlint.org/stacks/#python"]

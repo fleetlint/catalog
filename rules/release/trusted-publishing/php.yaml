@@ -1,0 +1,6 @@
+id: release/trusted-publishing/php
+kind: expr
+when: "false"
+expr: "true"
+requirement: "Packagist reads packages from the repository's tags; nothing is uploaded with a token."
+refs: ["https://fleetlint.org/stacks/#php"]

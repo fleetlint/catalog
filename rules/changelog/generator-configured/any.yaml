@@ -1,0 +1,20 @@
+id: changelog/generator-configured/any
+kind: outcome
+satisfiers:
+  - name: git-cliff
+    expr: file("cliff.toml") || file(".cliff.toml")
+  - name: goreleaser
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && !(type(yaml(f)) == map && "changelog" in yaml(f)
+        && type(yaml(f).changelog) == map && "disable" in yaml(f).changelog && yaml(f).changelog.disable == true))
+  - name: release-please
+    expr: file("release-please-config.json") || file(".release-please-manifest.json")
+  - name: cocogitto
+    expr: file("cog.toml")
+  - name: semantic-release
+    expr: >
+      [".releaserc", ".releaserc.json", ".releaserc.yaml", ".releaserc.yml", ".releaserc.js", ".releaserc.cjs", ".releaserc.mjs",
+       "release.config.js", "release.config.cjs", "release.config.mjs"].exists(f, file(f))
+  - name: commitizen
+    expr: file(".cz.toml") || file("cz.toml") || file(".cz.json") || file("cz.json")
+requirement: "git-cliff (`cliff.toml`, `.cliff.toml`), GoReleaser (its changelog is on unless `changelog.disable`), release-please, cocogitto, semantic-release (`.releaserc*`, `release.config.*`) or commitizen (`.cz.toml`, `cz.toml`, `.cz.json`) is configured."

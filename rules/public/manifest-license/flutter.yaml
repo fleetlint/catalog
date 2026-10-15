@@ -1,0 +1,6 @@
+id: public/manifest-license/flutter
+kind: expr
+when: "false"
+expr: "true"
+requirement: "pubspec.yaml has no license field; pub.dev reads the LICENSE file, which public/license checks."
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

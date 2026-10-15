@@ -1,0 +1,6 @@
+id: public/manifest-license/go
+kind: expr
+when: "false"
+expr: "true"
+requirement: "go.mod has no license field; pkg.go.dev reads the LICENSE file, which public/license checks."
+refs: ["https://fleetlint.org/stacks/#go"]

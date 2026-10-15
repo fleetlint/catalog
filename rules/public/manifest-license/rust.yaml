@@ -1,0 +1,13 @@
+id: public/manifest-license/rust
+kind: expr
+expr: >
+  !file("Cargo.toml")
+  || scan("Cargo.toml", r'^\s*publish\s*=\s*false').size() > 0
+  || scan("Cargo.toml", r'^\s*(license\s*=\s*"[A-Za-z0-9.+ ()/-]+"|license-file\s*=|license\.workspace\s*=\s*true|license\s*=\s*\{\s*workspace\s*=\s*true)').size() > 0
+message: "Cargo.toml does not declare a license"
+requirement: "Cargo.toml sets `package.license` (SPDX), `license-file` or the workspace's license, unless the crate has `publish = false`."
+fix:
+  human: "Add the SPDX identifier of the LICENSE file to Cargo.toml `package.license`; `fleetlint fix --apply` does it when the LICENSE text is one recognised license."
+  actions:
+    - set: {file: Cargo.toml, key: package.license, value: "{license}"}
+refs: ["https://fleetlint.org/stacks/#rust"]

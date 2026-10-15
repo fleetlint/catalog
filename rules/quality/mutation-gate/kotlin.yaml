@@ -1,0 +1,12 @@
+id: quality/mutation-gate/kotlin
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(pitest|pitestTask)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(pitest|pitestTask)\\b"))
+requirement: "Pitest runs on the core modules (the Gradle Pitest plugin or pitest-maven), from the task runner or a workflow. Pitest mutates JVM bytecode; Kotlin Multiplatform code is covered only through its JVM or Android host tests."
+fix:
+  human: "Add the info.solidsoft.pitest Gradle plugin with `mutationThreshold` for the core modules and run `./gradlew pitest` weekly."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

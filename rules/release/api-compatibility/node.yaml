@@ -1,0 +1,15 @@
+id: release/api-compatibility/node
+kind: outcome
+when: >
+  json("package.json") != null && !(has(json("package.json").private) && json("package.json").private == true) && (has(json("package.json").main) || has(json("package.json").exports) || has(json("package.json").types))
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\bapi-extractor\\b"))
+      || workflows().exists(w, text(w).matches("\\bapi-extractor\\b"))
+  - name: api-report-committed
+    expr: file("api-extractor.json")
+requirement: "A package.json that is not `private` and has `main`, `exports` or `types` runs API Extractor with a committed API report."
+fix:
+  human: "Add @microsoft/api-extractor with a committed report (`api-extractor run` fails on an unreviewed change)."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

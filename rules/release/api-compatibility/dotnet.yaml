@@ -1,0 +1,15 @@
+id: release/api-compatibility/dotnet
+kind: outcome
+when: >
+  glob("**/*.csproj").exists(f, text(f).matches(r'<(PackageId|IsPackable>true)'))
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\b(EnablePackageValidation|ApiCompat)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(EnablePackageValidation|ApiCompat)\\b"))
+  - name: package-validation
+    expr: (glob("**/*.csproj") + glob("**/Directory.Build.props")).exists(f, text(f).matches(r'<EnablePackageValidation>\s*true') && text(f).contains("PackageValidationBaselineVersion"))
+requirement: "A packable project enables package validation against the previous version (`EnablePackageValidation` with `PackageValidationBaselineVersion`) or runs ApiCompat."
+fix:
+  human: "Set `<EnablePackageValidation>true</EnablePackageValidation>` and `<PackageValidationBaselineVersion>` (the previous release) in the packable project."
+refs: ["https://fleetlint.org/stacks/#net"]

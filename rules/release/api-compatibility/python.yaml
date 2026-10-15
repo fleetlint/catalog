@@ -1,0 +1,13 @@
+id: release/api-compatibility/python
+kind: outcome
+when: >
+  toml("pyproject.toml") != null && has(toml("pyproject.toml").project) && !has(toml("pyproject.toml").project.scripts)
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\bgriffe check\\b"))
+      || workflows().exists(w, text(w).matches("\\bgriffe check\\b"))
+requirement: "A pyproject `[project]` without scripts runs `griffe check` against the previous tag."
+fix:
+  human: "Run `griffe check <package> --against $(git describe --tags --abbrev=0)` in the release workflow."
+refs: ["https://fleetlint.org/stacks/#python"]

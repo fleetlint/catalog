@@ -1,0 +1,14 @@
+id: quality/duplication-gate/python
+kind: outcome
+satisfiers:
+  - name: pylint
+    when: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", ".pre-commit-config.yaml", "tox.ini", "noxfile.py"].exists(f, text(f).matches("\\bpylint\\b"))
+      || workflows().exists(w, text(w).matches("\\bpylint\\b"))
+    expr: >
+      ![".pylintrc", "pylintrc", "setup.cfg", "pyproject.toml", "tox.ini", taskrunner.file, ".pre-commit-config.yaml"].exists(f,
+        text(f).matches("(?s)disable\\s*=\\s*(\\[[^\\]]*?|[^\\[=]*?)(duplicate-code|R0801)"))
+requirement: "pylint runs with `duplicate-code` (R0801) not disabled; or a stack-neutral detector."
+fix:
+  human: "Run pylint in the lint target without disabling `duplicate-code`, or add jscpd."
+refs: ["https://fleetlint.org/stacks/#python"]

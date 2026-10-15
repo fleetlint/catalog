@@ -1,0 +1,10 @@
+id: public/manifest-license/dotnet
+kind: expr
+expr: >
+  !glob("**/*.csproj").exists(f, text(f).matches(r'<(PackageId|IsPackable>\s*true)'))
+  || (glob("**/*.csproj") + glob("**/Directory.Build.props")).exists(f, text(f).matches(r'<PackageLicense(Expression|File)>'))
+message: "the NuGet package does not declare a license"
+requirement: "A packable project (or Directory.Build.props) sets `PackageLicenseExpression` (SPDX) or `PackageLicenseFile`; projects that pack nothing are not checked."
+fix:
+  human: "Add `<PackageLicenseExpression>SPDX-id</PackageLicenseExpression>` to Directory.Build.props or the packable project."
+refs: ["https://fleetlint.org/stacks/#net"]

@@ -1,0 +1,15 @@
+id: public/manifest-license/node
+kind: expr
+expr: >
+  !file("package.json")
+  || (has(json("package.json").private) && json("package.json").private == true)
+  || (has(json("package.json").license) && type(json("package.json").license) == string
+      && json("package.json").license.matches(r'^\(?[A-Za-z0-9][A-Za-z0-9.+-]*( (AND|OR|WITH) \(?[A-Za-z0-9][A-Za-z0-9.+-]*\)?)*\)?$')
+      && json("package.json").license != "UNLICENSED")
+message: "package.json does not declare an SPDX license"
+requirement: "package.json has an SPDX expression in `license` (not `UNLICENSED`), unless it is `\"private\": true`."
+fix:
+  human: "Add the SPDX identifier of the LICENSE file to package.json `license`; `fleetlint fix --apply` does it when the LICENSE text is one recognised license."
+  actions:
+    - set: {file: package.json, key: license, value: "{license}"}
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

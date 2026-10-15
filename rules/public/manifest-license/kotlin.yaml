@@ -1,0 +1,11 @@
+id: public/manifest-license/kotlin
+kind: expr
+expr: >
+  (!file("pom.xml") || text("pom.xml").contains("<licenses>"))
+  && (grep("**/build.gradle*", "maven-publish").size() == 0
+      || (glob("**/*.gradle*") + glob("buildSrc/**/*.kt") + glob("build-logic/**/*.kt")).exists(f, text(f).matches(r'\blicenses?\s*\{')))
+message: "the published POM does not declare a license"
+requirement: "A Maven project lists `<licenses>` in pom.xml; a Gradle build that publishes with maven-publish sets `pom { licenses { license { ... } } }` (in the build or a convention plugin). Builds that publish nothing are not checked."
+fix:
+  human: "Add `<licenses><license><name>SPDX-id</name><url>...</url></license></licenses>` to pom.xml, or `pom { licenses { license { name.set(\"SPDX-id\") } } }` to the Gradle publication."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

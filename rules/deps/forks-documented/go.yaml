@@ -1,0 +1,10 @@
+id: deps/forks-documented/go
+kind: expr
+when: grep("go.mod", r'=>\s*[a-z]').size() > 0
+foreach: grep("go.mod", r'=>\s*[a-z]').filter(l, !l.text.contains("//"))
+expr: >
+  exists("FORKS.md") || exists("docs/FORKS.md") || exists("docs/forks.md")
+  || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+  || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+requirement: "A go.mod `replace` pointing at another module (a local path such as `=> ../x` is a sibling module, not a fork) is documented in FORKS.md or a Forks section, or carries a `//` comment on the line."
+refs: ["https://fleetlint.org/stacks/#go"]

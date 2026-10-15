@@ -1,0 +1,14 @@
+id: quality/duplication-gate/go
+kind: outcome
+satisfiers:
+  - name: golangci-dupl
+    expr: >
+      [".golangci.yml", ".golangci.yaml"].exists(f, file(f) && yaml(f) != null && has(yaml(f).linters) && yaml(f).linters != null
+        && !(has(yaml(f).linters.disable) && yaml(f).linters.disable != null && "dupl" in yaml(f).linters.disable)
+        && ((has(yaml(f).linters.enable) && yaml(f).linters.enable != null && "dupl" in yaml(f).linters.enable)
+            || (has(yaml(f).linters.default) && yaml(f).linters.default == "all")
+            || ("enable-all" in yaml(f).linters && yaml(f).linters["enable-all"] == true)))
+requirement: "golangci-lint has `dupl` enabled (in `enable`, or `default: all`) and not in `disable`; or a stack-neutral detector."
+fix:
+  human: "Add `dupl` to `linters.enable` in .golangci.yml."
+refs: ["https://fleetlint.org/stacks/#go"]

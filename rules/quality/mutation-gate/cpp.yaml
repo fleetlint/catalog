@@ -1,0 +1,14 @@
+id: quality/mutation-gate/cpp
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(mull-runner|mull-ir-frontend|dextool)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(mull-runner|mull-ir-frontend|dextool)\\b"))
+  - name: config-file
+    expr: file("mull.yml")
+requirement: "Mull (or dextool mutate) runs on the core code, from the task runner or a workflow."
+fix:
+  human: "Build the tests with the Mull compiler plugin (`mull.yml`) and run `mull-runner` weekly."
+refs: ["https://fleetlint.org/stacks/#cc"]

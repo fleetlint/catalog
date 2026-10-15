@@ -1,0 +1,14 @@
+id: quality/mutation-gate/go
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(gremlins|go-mutesting)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(gremlins|go-mutesting)\\b"))
+  - name: config-file
+    expr: exists(".gremlins.y*ml")
+requirement: "gremlins (or go-mutesting) runs on the core packages, from the task runner or a workflow."
+fix:
+  human: "Add a `mutate` target running `gremlins unleash` on the core packages with a survivor threshold (`--threshold-efficacy`), and run it weekly."
+refs: ["https://fleetlint.org/stacks/#go"]

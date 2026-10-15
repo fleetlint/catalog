@@ -1,0 +1,12 @@
+id: quality/duplication-gate/kotlin
+kind: outcome
+satisfiers:
+  - name: pmd-cpd
+    expr: >
+      [taskrunner.file, "build.gradle", "build.gradle.kts", "pom.xml"].exists(f, text(f).matches("\\b(cpdCheck|pmd[- ]cpd|cpd-check)\\b"))
+      || glob("build-logic/**/*.kt").exists(f, text(f).matches("\\b(cpdCheck|de\\.aaschmid\\.cpd)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(cpdCheck|pmd[- ]cpd|cpd-check)\\b"))
+requirement: "PMD's copy-paste detector runs: maven-pmd-plugin's `cpd-check`, the Gradle CPD plugin's `cpdCheck`, or `pmd cpd` in the task runner or CI; or a stack-neutral detector."
+fix:
+  human: "Bind maven-pmd-plugin's cpd-check goal, or apply the de.aaschmid.cpd Gradle plugin so `./gradlew check` runs cpdCheck."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

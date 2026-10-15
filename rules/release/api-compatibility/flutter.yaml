@@ -1,0 +1,13 @@
+id: release/api-compatibility/flutter
+kind: outcome
+when: >
+  file("pubspec.yaml") && scan("pubspec.yaml", r'^publish_to:\s*\S*none').size() == 0 && exists("lib/*.dart")
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\bdart_apitool\\b"))
+      || workflows().exists(w, text(w).matches("\\bdart_apitool\\b"))
+requirement: "A Dart or Flutter package that is published (no `publish_to: none`) runs dart_apitool against the previous release."
+fix:
+  human: "Run `dart_apitool diff --old pub://<package>/<previous> --new .` in the release workflow."
+refs: ["https://fleetlint.org/stacks/#flutter--dart"]

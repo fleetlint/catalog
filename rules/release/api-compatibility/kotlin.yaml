@@ -1,0 +1,15 @@
+id: release/api-compatibility/kotlin
+kind: outcome
+when: >
+  grep("**/build.gradle*", "maven-publish").size() > 0
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\b(apiCheck|checkLegacyAbi|checkKotlinAbi|abiValidation|binary-compatibility-validator|japicmp)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(apiCheck|checkLegacyAbi|checkKotlinAbi|abiValidation|binary-compatibility-validator|japicmp)\\b"))
+  - name: api-dump-committed
+    expr: exists("api/*.api") || exists("**/api/*.api")
+requirement: "A Gradle build that publishes with maven-publish checks its ABI: the Kotlin Gradle plugin's `abiValidation` (or the binary-compatibility-validator plugin) with committed `.api` dumps, or japicmp."
+fix:
+  human: "Enable `abiValidation` in the Kotlin Gradle plugin (or apply binary-compatibility-validator), commit the `api/` dumps and let `./gradlew check` run the ABI check."
+refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]

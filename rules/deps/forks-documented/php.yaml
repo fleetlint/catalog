@@ -1,0 +1,10 @@
+id: deps/forks-documented/php
+kind: expr
+when: grep("composer.json", r'"type"\s*:\s*"(vcs|git|github)"').size() > 0
+foreach: grep("composer.json", r'"type"\s*:\s*"(vcs|git|github)"')
+expr: >
+  exists("FORKS.md") || exists("docs/FORKS.md") || exists("docs/forks.md")
+  || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+  || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+requirement: "A VCS repository in composer.json (a fork served instead of Packagist) is documented in FORKS.md or a Forks section (composer.json has no comments)."
+refs: ["https://fleetlint.org/stacks/#php"]

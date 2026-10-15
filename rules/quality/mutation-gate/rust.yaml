@@ -1,0 +1,14 @@
+id: quality/mutation-gate/rust
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\bcargo[- ]mutants\\b"))
+      || workflows().exists(w, text(w).matches("\\bcargo[- ]mutants\\b"))
+  - name: config-file
+    expr: file(".cargo/mutants.toml")
+requirement: "cargo-mutants runs on the core crates, from the task runner or a workflow."
+fix:
+  human: "Run `cargo mutants` on the core crates weekly (`.cargo/mutants.toml` for exclusions)."
+refs: ["https://fleetlint.org/stacks/#rust"]

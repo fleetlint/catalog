@@ -1,0 +1,12 @@
+id: quality/mutation-gate/java
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(pitest|pitestTask)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(pitest|pitestTask)\\b"))
+requirement: "Pitest runs on the core modules (pitest-maven or the Gradle Pitest plugin), from the task runner or a workflow."
+fix:
+  human: "Add pitest-maven or the info.solidsoft.pitest Gradle plugin with `mutationThreshold` for the core packages and run it weekly."
+refs: ["https://fleetlint.org/stacks/#java"]

@@ -1,0 +1,13 @@
+id: release/api-compatibility/rust
+kind: outcome
+when: >
+  file("src/lib.rs") || text("Cargo.toml").contains("[lib]")
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\bcargo[- ]semver-checks\\b"))
+      || workflows().exists(w, text(w).matches("\\bcargo[- ]semver-checks\\b"))
+requirement: "A crate with a library target runs cargo-semver-checks against the previous release."
+fix:
+  human: "Run `cargo semver-checks` (or obi1kenobi/cargo-semver-checks-action) before tagging."
+refs: ["https://fleetlint.org/stacks/#rust"]

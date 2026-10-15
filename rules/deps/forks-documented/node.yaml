@@ -1,0 +1,10 @@
+id: deps/forks-documented/node
+kind: expr
+when: grep("package.json", r'"(github:|git\+|git://|https://github\.com/[^"]+\.git)').size() > 0
+foreach: grep("package.json", r'"(github:|git\+|git://|https://github\.com/[^"]+\.git)')
+expr: >
+  exists("FORKS.md") || exists("docs/FORKS.md") || exists("docs/forks.md")
+  || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+  || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+requirement: "A git dependency in package.json is documented in FORKS.md or a Forks section (package.json has no comments)."
+refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]

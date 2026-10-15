@@ -1,0 +1,6 @@
+id: public/manifest-license/hugo
+kind: expr
+when: "false"
+expr: "true"
+requirement: "A Hugo site is not a package; the LICENSE file is checked by public/license."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

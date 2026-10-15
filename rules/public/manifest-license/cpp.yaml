@@ -1,0 +1,10 @@
+id: public/manifest-license/cpp
+kind: expr
+expr: >
+  (!file("vcpkg.json") || (json("vcpkg.json") != null && has(json("vcpkg.json").license)))
+  && (!file("conanfile.py") || text("conanfile.py").matches(r'(?m)^\s*license\s*='))
+message: "the package manifest does not declare a license"
+requirement: "vcpkg.json sets `license` and conanfile.py sets `license`, where they exist; plain CMake projects have no license field and are not checked."
+fix:
+  human: "Add `\"license\": \"<SPDX id>\"` to vcpkg.json or `license = \"<SPDX id>\"` to the conanfile."
+refs: ["https://fleetlint.org/stacks/#cc"]

@@ -1,0 +1,6 @@
+id: release/trusted-publishing/java
+kind: expr
+when: "false"
+expr: "true"
+requirement: "Maven Central has no trusted publishing (OIDC) yet; its publishing token stays a CI secret."
+refs: ["https://fleetlint.org/stacks/#java"]

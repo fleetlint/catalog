@@ -1,0 +1,12 @@
+id: deps/forks-documented/python
+kind: expr
+when: grep("pyproject.toml", r'@ ?git\+').size() > 0 || grep("requirements*.txt", r'git\+').size() > 0
+foreach: >
+  grep("pyproject.toml", r'@ ?git\+').filter(l, !l.text.matches(r'\s#'))
+  + grep("requirements*.txt", r'git\+').filter(l, !l.text.matches(r'\s#'))
+expr: >
+  exists("FORKS.md") || exists("docs/FORKS.md") || exists("docs/forks.md")
+  || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+  || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
+requirement: "A git requirement in pyproject.toml or requirements*.txt is documented in FORKS.md or a Forks section, or carries a ` #` comment on the line."
+refs: ["https://fleetlint.org/stacks/#python"]

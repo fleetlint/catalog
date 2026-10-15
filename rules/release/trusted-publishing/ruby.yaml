@@ -1,0 +1,20 @@
+id: release/trusted-publishing/ruby
+kind: expr
+when: >
+  tagged_workflows().filter(w, ci_kind(w) in ["github", "gitlab"] && steps(w).exists(s,
+    s.uses.startsWith("rubygems/release-gem")
+    || s.run.matches("\\b(gem push)\\b"))).size() > 0
+foreach: >
+  tagged_workflows().filter(w, ci_kind(w) in ["github", "gitlab"] && steps(w).exists(s,
+    s.uses.startsWith("rubygems/release-gem")
+    || s.run.matches("\\b(gem push)\\b")))
+expr: >
+  ci_kind(item) == "gitlab"
+    ? text(item).matches("(?m)^\\s*id_tokens:")
+    : text(item).matches("id-token:\\s*write")
+      && !grep(item, r'^\s*-?\s*(?:GEM_HOST_API_KEY)\s*:\s*["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+      && !grep(item, r'--token[\s=]+["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+requirement: "A tag-triggered GitHub or GitLab workflow that publishes to RubyGems (`gem push`, rubygems/release-gem) uses trusted publishing: `id-token: write` and no GEM_HOST_API_KEY or `--token` from secrets; on GitLab `id_tokens:`."
+fix:
+  human: "Register the workflow as a trusted publisher on rubygems.org, release with rubygems/release-gem from a job with `id-token: write`, and delete the API key secret."
+refs: ["https://fleetlint.org/stacks/#ruby"]

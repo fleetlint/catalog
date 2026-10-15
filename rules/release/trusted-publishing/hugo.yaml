@@ -1,0 +1,6 @@
+id: release/trusted-publishing/hugo
+kind: expr
+when: "false"
+expr: "true"
+requirement: "A Hugo site is deployed, not published to a package registry."
+refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]

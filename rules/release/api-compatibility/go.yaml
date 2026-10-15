@@ -1,0 +1,13 @@
+id: release/api-compatibility/go
+kind: outcome
+when: >
+  !exists("**/main.go")
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f, text(f).matches("\\b(gorelease|apidiff)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(gorelease|apidiff)\\b"))
+requirement: "A Go module without a `main` package runs gorelease or apidiff against the previous tag."
+fix:
+  human: "Run `gorelease -base=$(git describe --tags --abbrev=0)` in the release workflow."
+refs: ["https://fleetlint.org/stacks/#go"]

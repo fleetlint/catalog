@@ -1,0 +1,8 @@
+id: public/manifest-license/ruby
+kind: expr
+expr: glob("*.gemspec").all(f, text(f).matches(r'\.licenses?\s*='))
+message: "the gemspec does not declare a license"
+requirement: "Every gemspec sets `spec.license` (or `spec.licenses`) to an SPDX identifier."
+fix:
+  human: "Add `spec.license = \"<SPDX id>\"` to the gemspec."
+refs: ["https://fleetlint.org/stacks/#ruby"]

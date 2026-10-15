@@ -5,11 +5,26 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+Needs fleetlint with `combine:` on capabilities and the stack-neutral implementation running where no stack is detected.
+
 ### Changed
 
+- **More capabilities.** These rules state the requirement once and check it per stack at `rules/<family>/<name>/<stack>.yaml`; overrides, exceptions and policy on the old id reach every implementation:
+  - `release/signing`: cosign, GoReleaser and gpg for every stack (`any`); the APK/AAB signature and PGP for Maven Central (kotlin), PGP and jarsigner (java), APK signing and Apple code signing (flutter), npm provenance (node), PyPI attestations and sigstore-python (python), `nuget sign` and Authenticode (dotnet), release-gem attestations and signed gems (ruby). A Kotlin or Android release no longer needs cosign.
+  - `release/sbom`: syft, trivy, cdxgen, cyclonedx CLIs, sbom-tool, GoReleaser, BuildKit for every stack; the CycloneDX Gradle task and Maven plugin (kotlin, java; now only when the release runs them), `npm sbom` and cyclonedx-npm (node), cargo-cyclonedx (rust), CycloneDX .NET (dotnet), the CycloneDX Composer plugin (php).
+  - `release/provenance`: attest action, SLSA generator, `cosign attest`/`attest-blob`, BuildKit, GitLab metadata for every stack; npm provenance (node), PyPI attestations (python), release-gem attestations (ruby).
+  - `release/api-compatibility`: each stack decides when its project is a library and names its tool; new for java (japicmp, revapi), flutter (dart_apitool) and dotnet (package validation, ApiCompat), and kotlin also accepts the Kotlin Gradle plugin's `abiValidation`.
+  - `quality/mutation-gate`: one tool per stack, new for dotnet (Stryker.NET), php (Infection), ruby (mutant) and cpp (Mull); not applicable to Hugo.
+  - `quality/duplication-gate`: jscpd, Simian, duplo and Sonar for every stack; golangci `dupl` (go), pylint (python), PMD CPD (java, kotlin). Each stack's code needs a detector: a Go and Python repository that runs only pylint now fails for Go.
+  - `public/manifest-license`: one manifest per stack, new for java and kotlin (POM licenses), ruby (gemspec), php (composer.json), dotnet (`PackageLicenseExpression`) and cpp (vcpkg.json, conanfile); not applicable to go, flutter and hugo, whose manifests have no license field.
+  - `deps/forks-documented`: one manifest per stack, new for ruby (Gemfile `git:`/`github:`) and php (composer VCS repositories).
+  - `release/trusted-publishing`: one registry per stack (npm, PyPI, crates.io, RubyGems), each with its own publish commands and token variables; not applicable to go, php, java, kotlin, hugo and cpp.
+  - `ci/sast`: CodeQL, Semgrep, GitLab SAST and SonarQube for every stack; Brakeman (ruby) and Psalm taint analysis (php).
+  - `changelog/generator-configured`: the generators' own files for every stack; changesets and semantic-release in package.json (node), git-cliff, commitizen and towncrier in pyproject.toml (python), git-cliff Cargo metadata (rust).
+- `combine: any` on the release capabilities and `changelog/generator-configured`: a release and a changelog belong to the repository, so one stack's implementation passing is enough. The others keep `combine: all`.
+- The stack-neutral implementations of `deps/vulnerability-scan`, `deps/license-check` and `quality/coverage-threshold` do not apply without a detected stack (no dependency manifest, no code); the release ones do, so a repository that only releases a container image is checked.
 - `lint/configured/kotlin` requires detekt 2 (`dev.detekt`); a build that still applies detekt 1.x (`io.gitlab.arturbosch.detekt`, built on Kotlin 2.0, fails on JDK 25) gets a partial with that message. A version-catalog alias counts when `gradle/libs.versions.toml` maps it to `dev.detekt`. The fix names detekt 2 and a convention plugin for multi-module builds.
 - The `kotlin/detekt.yml` template uses detekt 2's configuration keys (`allowedLines`, `allowedComplexity`, `allowedFunctionsPerFile`/`PerClass`, `UnusedPrivateFunction`, no `build.maxIssues`), which detekt 2 refused in the old template, and excludes every test source set (`commonTest`, `androidHostTest`, ...) from MagicNumber and FunctionNaming and `@Composable` functions from FunctionNaming, MagicNumber and LongParameterList.
-- `release/signing` accepts the signature formats artifacts already have: an Android APK or AAB verified (or signed) with apksigner or jarsigner, or a sign-android-release action, in the release workflow; and PGP signing for Maven Central (Gradle's `signing` plugin or `signAllPublications()` with a publishing release, Maven's gpg/sign plugin). cosign is no longer the only way for those.
 
 ### Fixed
 

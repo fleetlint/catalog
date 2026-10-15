@@ -1,0 +1,14 @@
+id: quality/mutation-gate/ruby
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\bmutant\\b"))
+      || workflows().exists(w, text(w).matches("\\bmutant\\b"))
+  - name: config-file
+    expr: file(".mutant.yml") || file("config/mutant.yml")
+requirement: "mutant runs on the core code, from the task runner or a workflow."
+fix:
+  human: "Add mutant with a `.mutant.yml` for the core namespaces and run it weekly."
+refs: ["https://fleetlint.org/stacks/#ruby"]

@@ -1,0 +1,18 @@
+id: ci/sast/any
+kind: outcome
+satisfiers:
+  - name: codeql
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("github/codeql-action/")))
+  - name: semgrep
+    expr: >
+      workflows().exists(w, steps(w).exists(s, s.run.matches("\\b(semgrep|opengrep) (ci|scan)\\b") || s.uses.matches("^(semgrep|returntocorp)/")))
+      || [".pre-commit-config.yaml", taskrunner.file].exists(f, text(f).matches("\\b(semgrep|opengrep)\\b"))
+  - name: gitlab-sast
+    expr: >
+      workflows().exists(w, ci_kind(w) == "gitlab" && includes(w).exists(i,
+        (i.type == "template" && i.target.matches("(^|/)SAST(\\.latest)?\\.gitlab-ci\\.yml$"))
+        || (i.type == "component" && i.target.matches("/components/sast(/|$)"))))
+  - name: sonarqube
+    expr: >
+      workflows().exists(w, steps(w).exists(s, s.uses.matches("^SonarSource/sonar(qube|cloud)-(scan-)?(github-)?action") || s.run.matches("\\bsonar-scanner\\b")))
+requirement: "CodeQL (github/codeql-action), Semgrep or Opengrep, the GitLab SAST template or component, or SonarQube runs in CI or the task runner."

@@ -1,0 +1,11 @@
+id: quality/duplication-gate/any
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", ".pre-commit-config.yaml", "pyproject.toml"].exists(f,
+        text(f).matches("\\b(jscpd|simian|duplo)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(jscpd|simian|duplo)\\b"))
+  - name: config-file
+    expr: exists(".jscpd.json") || exists("sonar-project.properties")
+requirement: "jscpd, Simian or duplo runs in the task runner, the hooks or CI, or Sonar is configured (`sonar-project.properties`)."

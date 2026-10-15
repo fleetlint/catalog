@@ -1,0 +1,11 @@
+id: public/manifest-license/python
+kind: expr
+expr: >
+  !file("pyproject.toml")
+  || scan("pyproject.toml", r'Private :: Do Not Upload').size() > 0
+  || scan("pyproject.toml", r'^\s*license(-files)?\s*=|License ::').size() > 0
+message: "pyproject.toml does not declare a license"
+requirement: "pyproject.toml sets `project.license` (SPDX, PEP 639), `license-files` or a license classifier, unless it carries the `Private :: Do Not Upload` classifier."
+fix:
+  human: "Set `license = \"<SPDX id>\"` in pyproject.toml's `[project]` table."
+refs: ["https://fleetlint.org/stacks/#python"]

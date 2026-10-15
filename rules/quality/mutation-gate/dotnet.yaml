@@ -1,0 +1,14 @@
+id: quality/mutation-gate/dotnet
+kind: outcome
+satisfiers:
+  - name: task-runner-or-ci
+    expr: >
+      [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts", "pyproject.toml", "composer.json"].exists(f,
+        text(f).matches("\\b(dotnet[- ]stryker|stryker)\\b"))
+      || workflows().exists(w, text(w).matches("\\b(dotnet[- ]stryker|stryker)\\b"))
+  - name: config-file
+    expr: exists("stryker-config.json")
+requirement: "Stryker.NET runs on the core projects, from the task runner or a workflow."
+fix:
+  human: "Add Stryker.NET as a dotnet tool (`stryker-config.json` with a break threshold) and run `dotnet stryker` weekly."
+refs: ["https://fleetlint.org/stacks/#net"]
