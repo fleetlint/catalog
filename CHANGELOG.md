@@ -5,6 +5,8 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-20
+
 Engine level 5: needs fleetlint 0.6.0 or newer (artifacts as catalog data, capabilities keyed by artifact, `metadata.label`).
 
 ### Added
