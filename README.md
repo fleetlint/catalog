@@ -47,7 +47,7 @@ make check    # format, vet, tests
 
 ## Layout
 
-`catalog.go` exposes `presets/`, `rules/`, `stacks/` and `templates/` as embedded file systems (`catalog.Presets`, `catalog.Rules`, `catalog.Stacks`, `catalog.Templates`) and `aliases.yaml` as `catalog.Aliases`; fleetlint imports this module for them. The presets carry no version of their own: they are versioned with this repository's tags.
+`catalog.go` exposes `presets/`, `rules/`, `stacks/`, `artifacts/` and `templates/` as embedded file systems (`catalog.Presets`, `catalog.Rules`, `catalog.Stacks`, `catalog.Artifacts`, `catalog.Templates`) and `aliases.yaml` as `catalog.Aliases`; fleetlint imports this module for them. The presets carry no version of their own: they are versioned with this repository's tags.
 
 ## License
 

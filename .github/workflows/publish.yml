@@ -1,5 +1,5 @@
 # Publishes this catalog version as a signed OCI artifact on every tag: the
-# whole tree (presets/, rules/, stacks/, templates/, aliases.yaml), the same
+# whole tree (presets/, rules/, stacks/, artifacts/, templates/, aliases.yaml), the same
 # version the git tag holds. A repository pins it with
 #   catalog: {oci: ghcr.io/fleetlint/catalog:<tag>}
 # and fleetlint verifies the signature of this workflow on a version tag.
