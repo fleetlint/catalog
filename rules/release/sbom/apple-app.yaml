@@ -3,4 +3,4 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "App Store Connect has no SBOM upload; an SBOM for a macOS download goes next to it as a release file."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]
+refs: ["https://fleetlint.org/baseline/#releases"]

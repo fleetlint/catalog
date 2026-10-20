@@ -1,6 +1,6 @@
 id: npm
 title: npm package
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.npmjs.com/trusted-publishers"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.npmjs.com/trusted-publishers"]
 summary: "`npm|pnpm|yarn npm|bun publish`, `changeset publish`, `lerna publish`, JS-DevTools/npm-publish, changesets/action with `publish`; in a tag-triggered workflow"
 detect: >
   tagged_workflows().filter(w, steps(w).exists(s,

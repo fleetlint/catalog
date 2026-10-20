@@ -12,4 +12,4 @@ requirement: >
   with a certificate (`signing_key` and `cert_chain` in the gemspec).
 fix:
   human: "Release with rubygems/release-gem and trusted publishing (`id-token: write`)."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://guides.rubygems.org/trusted-publishing/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://guides.rubygems.org/trusted-publishing/"]

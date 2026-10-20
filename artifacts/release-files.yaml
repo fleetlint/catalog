@@ -1,6 +1,6 @@
 id: release-files
 title: Files on a forge release
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://fleetlint.org/baseline/#releases"]
+refs: ["https://fleetlint.org/baseline/#releases"]
 # Binaries, archives and other assets uploaded to a GitHub, Gitea, Forgejo or GitLab release by a
 # tag-triggered workflow: a release action, the forge CLI, the release API or GoReleaser. An upload
 # that names only app packages (.apk, .aab, .ipa, .dmg, .pkg) is the app (android-app, apple-app),

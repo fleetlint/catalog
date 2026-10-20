@@ -1,6 +1,6 @@
 id: android-app
 title: Android app (APK or AAB)
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.android.com/studio/publish"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://developer.android.com/studio/publish"]
 # An APK or AAB uploaded to Google Play (fastlane supply, gradle-play-publisher, upload-google-play)
 # or attached to a forge release by a repository that builds an Android application (an `.apk` on a
 # release can also be an Alpine package).

@@ -1,6 +1,6 @@
 id: image
 title: Container image
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://fleetlint.org/baseline/#releases"]
+refs: ["https://fleetlint.org/baseline/#releases"]
 # An image pushed to a registry from a workflow that runs on push, tag, release, schedule or by
 # hand (not from a pull request): a build-push action that pushes, docker/podman/buildah push,
 # ko, Jib, crane, or GoReleaser `dockers:`.

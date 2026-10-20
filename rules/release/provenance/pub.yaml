@@ -3,4 +3,4 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "pub.dev has no provenance attestations; a package is checked for automated publishing with OIDC (release/trusted-publishing/pub)."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]
+refs: ["https://fleetlint.org/baseline/#releases"]

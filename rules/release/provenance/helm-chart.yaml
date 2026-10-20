@@ -11,4 +11,4 @@ requirement: >
   attestation on the packaged file (`cosign attest-blob`).
 fix:
   human: "After `helm push`, run `cosign attest --yes --type slsaprovenance --predicate provenance.json <registry>/<chart>@<digest>`, or add actions/attest-build-provenance with the chart's digest."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://slsa.dev/spec/v1.0/provenance"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://slsa.dev/spec/v1.0/provenance"]

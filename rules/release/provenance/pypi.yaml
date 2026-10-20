@@ -8,4 +8,4 @@ satisfiers:
 requirement: "Distributions are uploaded by pypa/gh-action-pypi-publish with trusted publishing, which attaches PEP 740 attestations unless `attestations: false`."
 fix:
   human: "Publish with pypa/gh-action-pypi-publish from a job with `id-token: write` (trusted publishing)."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/attestations/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.pypi.org/attestations/"]

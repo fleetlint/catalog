@@ -8,4 +8,4 @@ satisfiers:
 requirement: "Gems are pushed by rubygems/release-gem with trusted publishing, which attaches Sigstore attestations."
 fix:
   human: "Release with rubygems/release-gem from a job with `id-token: write`."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://guides.rubygems.org/trusted-publishing/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://guides.rubygems.org/trusted-publishing/"]

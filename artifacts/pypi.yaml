@@ -1,6 +1,6 @@
 id: pypi
 title: PyPI distribution
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/trusted-publishers/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.pypi.org/trusted-publishers/"]
 summary: "pypa/gh-action-pypi-publish, `twine upload`, `uv|poetry|flit|hatch|pdm publish`; in a tag-triggered workflow"
 detect: >
   tagged_workflows().filter(w, steps(w).exists(s,

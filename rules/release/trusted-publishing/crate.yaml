@@ -13,4 +13,4 @@ expr: >
 requirement: "A GitHub or GitLab workflow that publishes to crates.io (`cargo publish`, katyo/publish-crates) uses trusted publishing (rust-lang/crates-io-auth-action with `id-token: write`) and no CARGO_REGISTRY_TOKEN or `--token` from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Register the workflow as a trusted publisher on crates.io, get the token from rust-lang/crates-io-auth-action in a job with `id-token: write`, and delete the CARGO_REGISTRY_TOKEN secret."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://crates.io/docs/trusted-publishing"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://crates.io/docs/trusted-publishing"]

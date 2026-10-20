@@ -1,6 +1,6 @@
 id: apple-app
 title: Apple app or binary (IPA, app, pkg, dmg)
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"]
 # A build exported for the App Store, TestFlight or notarized download: xcodebuild export, fastlane
 # deliver/pilot/gym, notarytool, altool, upload-testflight-build, `flutter build ipa`.
 summary: "`xcodebuild -exportArchive`, fastlane `deliver|pilot|gym|upload_to_testflight|upload_to_app_store`, `notarytool submit`, `xcrun altool --upload`, apple-actions/upload-testflight-build, `flutter build ipa`; in a tag-triggered workflow"

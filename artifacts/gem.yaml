@@ -1,6 +1,6 @@
 id: gem
 title: RubyGems gem
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://guides.rubygems.org/trusted-publishing/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://guides.rubygems.org/trusted-publishing/"]
 summary: "`gem push` or rubygems/release-gem; in a tag-triggered workflow"
 detect: >
   tagged_workflows().filter(w, steps(w).exists(s,

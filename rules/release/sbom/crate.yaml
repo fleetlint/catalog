@@ -3,4 +3,4 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "crates.io holds the dependency graph and cargo-auditable embeds it in binaries; binaries built from the crate are checked as release files."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]
+refs: ["https://fleetlint.org/baseline/#releases"]

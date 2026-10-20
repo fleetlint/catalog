@@ -17,4 +17,4 @@ requirement: >
   `cyclonedxBom` task, or syft over the APK) and publishes it next to the app.
 fix:
   human: "Apply the CycloneDX Gradle plugin (`org.cyclonedx.bom`) and run `./gradlew cyclonedxBom` in the release workflow; upload the BOM with the release."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/CycloneDX/cyclonedx-gradle-plugin"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://github.com/CycloneDX/cyclonedx-gradle-plugin"]

@@ -18,4 +18,4 @@ requirement: >
   workflow.
 fix:
   human: "Maven: add maven-gpg-plugin (or sign-maven-plugin) to the release profile; Gradle: apply the `signing` plugin to the Maven publication. The key comes from CI secrets."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://central.sonatype.org/publish/requirements/gpg/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://central.sonatype.org/publish/requirements/gpg/"]

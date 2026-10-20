@@ -32,4 +32,4 @@ requirement: >
 fix:
   human: "Add an SBOM step to the release workflow (syft, SPDX JSON, one per artifact) or a `sboms:` section to .goreleaser.yaml, and upload the files with the release."
   agent: "In the release workflow add a step running syft on each artifact producing SPDX JSON files, and include them in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/anchore/syft"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://github.com/anchore/syft"]

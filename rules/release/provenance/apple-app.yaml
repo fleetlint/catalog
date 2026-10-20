@@ -17,4 +17,4 @@ requirement: >
   provenance (`RUNNER_GENERATE_ARTIFACTS_METADATA: "true"`).
 fix:
   human: "Add actions/attest-build-provenance with `subject-path` covering the IPA, app, pkg or dmg (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release workflow."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://slsa.dev/spec/v1.0/provenance"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://slsa.dev/spec/v1.0/provenance"]

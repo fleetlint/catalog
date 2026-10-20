@@ -13,4 +13,4 @@ expr: >
 requirement: "A GitHub or GitLab workflow that pushes to nuget.org uses trusted publishing: `id-token: write`, the key from NuGet/login, and no NUGET_API_KEY or `--api-key` from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Register the workflow as a trusted publisher on nuget.org, take the key from `NuGet/login` in a job with `id-token: write`, and delete the NUGET_API_KEY secret."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://learn.microsoft.com/nuget/nuget-org/trusted-publishing"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://learn.microsoft.com/nuget/nuget-org/trusted-publishing"]

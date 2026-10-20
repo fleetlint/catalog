@@ -13,4 +13,4 @@ requirement: >
   `npm audit signatures` checks.
 fix:
   human: "Publish with `npm publish --provenance` from a job with `id-token: write`, or use trusted publishing."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.npmjs.com/generating-provenance-statements"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.npmjs.com/generating-provenance-statements"]

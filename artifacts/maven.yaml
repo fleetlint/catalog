@@ -1,6 +1,6 @@
 id: maven
 title: Maven artifact
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://central.sonatype.org/publish/requirements/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://central.sonatype.org/publish/requirements/"]
 # JARs, AARs and POMs deployed to Maven Central or another Maven repository: `mvn deploy`, Gradle
 # publish tasks (not publishToMavenLocal, not the Play Store's publishBundle/publishApk), JReleaser.
 summary: "`mvn ... deploy`, a Gradle `publish*` task (not `publishToMavenLocal`, not the Play Store tasks), `jreleaser deploy|full-release`; in a tag-triggered workflow"

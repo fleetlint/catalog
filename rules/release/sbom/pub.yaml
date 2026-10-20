@@ -3,4 +3,4 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "pub.dev resolves a package's dependencies from its pubspec; the registry holds the graph."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]
+refs: ["https://fleetlint.org/baseline/#releases"]

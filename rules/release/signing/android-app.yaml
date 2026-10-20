@@ -16,4 +16,4 @@ requirement: >
 fix:
   human: "Sign with the release key (a release signingConfig fed from CI secrets) and add `apksigner verify --print-certs <apk>` (or `jarsigner -verify <aab>`) to the release workflow; that is the signature Android checks, no cosign needed."
   agent: "Keep the release key's signature and add `apksigner verify --print-certs` (APK) or `jarsigner -verify` (AAB) on the built artifact to the release workflow. Do not add cosign for the app itself."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.android.com/studio/publish/app-signing"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://developer.android.com/studio/publish/app-signing"]

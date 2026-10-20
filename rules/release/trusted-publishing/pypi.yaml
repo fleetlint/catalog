@@ -14,4 +14,4 @@ expr: >
 requirement: "A GitHub or GitLab workflow that publishes to PyPI (pypa/gh-action-pypi-publish, twine, uv, poetry, flit, hatch, pdm) uses trusted publishing: `id-token: write`, no pypi-publish `password` and no TWINE_*/UV_PUBLISH_*/POETRY_PYPI_TOKEN_* or `--token` from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Register the workflow as a trusted publisher on pypi.org, publish with pypa/gh-action-pypi-publish (no password) from a job with `id-token: write`, and delete the token secret."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/trusted-publishers/"]
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.pypi.org/trusted-publishers/"]

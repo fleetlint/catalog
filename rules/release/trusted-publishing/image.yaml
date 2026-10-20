@@ -3,4 +3,4 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "Container registries have no trusted publishing; the forge's own registry takes the job token, and signing (release/signing/image) is what identifies the publisher."
-refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]
+refs: ["https://fleetlint.org/baseline/#releases"]
