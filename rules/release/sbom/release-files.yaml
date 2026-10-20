@@ -1,0 +1,35 @@
+id: release/sbom/release-files
+kind: outcome
+satisfiers:
+  - name: goreleaser
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map && "sboms" in yaml(f))
+  - name: workflow-action
+    expr: >
+      artifact_workflows("release-files").exists(w, steps(w).exists(s,
+        s.uses.startsWith("anchore/sbom-action") || s.uses.startsWith("CycloneDX/")))
+  - name: workflow-command
+    expr: >
+      artifact_workflows("release-files").exists(w, steps(w).exists(s,
+        s.run.matches("\\b(syft|cyclonedx-[a-z]+|trivy (sbom|fs)|cdxgen|sbom-tool generate|cargo (sbom|cyclonedx)|npm sbom)\\b")))
+  - name: make-target
+    when: taskrunner.kind == "make"
+    expr: >
+      ("sbom" in makefile("Makefile").targets || "dist" in makefile("Makefile").targets)
+      && artifact_workflows("release-files").exists(w, steps(w).exists(s, s.run.matches("make (sbom|dist)\\b")))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not invoke it"
+requirement: >
+  The workflow that uploads the release files produces an SPDX or CycloneDX SBOM per artifact and
+  uploads it next to them: GoReleaser `sboms:`, anchore/sbom-action or CycloneDX actions, syft,
+  cyclonedx-* CLIs, trivy, cdxgen, Microsoft's sbom-tool, cargo-sbom, or a Makefile `sbom` target
+  the release workflow calls.
+fix:
+  human: "Add an SBOM step to the release workflow (syft, SPDX JSON, one per artifact) or a `sboms:` section to .goreleaser.yaml, and upload the files with the release."
+  agent: "In the release workflow add a step running syft on each artifact producing SPDX JSON files, and include them in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/anchore/syft"]

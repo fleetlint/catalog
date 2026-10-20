@@ -1,0 +1,15 @@
+id: android-app
+title: Android app (APK or AAB)
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.android.com/studio/publish"]
+# An APK or AAB uploaded to Google Play (fastlane supply, gradle-play-publisher, upload-google-play)
+# or attached to a forge release by a repository that builds an Android application (an `.apk` on a
+# release can also be an Alpine package).
+summary: "r0adkll/upload-google-play, fastlane `supply` or `upload_to_play_store`, gradle-play-publisher tasks (`publishBundle`, `publishApk`), or an `.apk`/`.aab` uploaded to a forge release by a repository with the Android application plugin; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w,
+    steps(w).exists(s,
+      s.uses.startsWith("r0adkll/upload-google-play")
+      || s.run.matches("\\bfastlane\\b[^\\n]*\\b(supply|upload_to_play_store)\\b|\\bgradlew?\\b[^\\n]*\\bpublish(Release|Debug)?(Bundle|Apk)\\b"))
+    || ((steps(w).exists(s, s.run.matches("\\b(gh release (create|upload)|tea releases? (create|assets push))\\b[^\\n]*\\.(apk|aab)\\b"))
+         || (steps(w).exists(s, s.uses.matches("^(softprops/action-gh-release|ncipollo/release-action)@")) && text(w).matches("\\.(apk|aab)\\b")))
+        && (glob("**/*.gradle*").exists(f, text(f).contains("com.android.application")) || file("pubspec.yaml") && glob("android/**/*.gradle*").size() > 0)))

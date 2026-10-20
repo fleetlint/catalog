@@ -1,0 +1,9 @@
+id: npm
+title: npm package
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.npmjs.com/trusted-publishers"]
+summary: "`npm|pnpm|yarn npm|bun publish`, `changeset publish`, `lerna publish`, JS-DevTools/npm-publish, changesets/action with `publish`; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s,
+    s.uses.startsWith("JS-DevTools/npm-publish")
+    || (s.uses.startsWith("changesets/action") && "publish" in s.with)
+    || s.run.matches("\\b(npm publish|pnpm publish|yarn npm publish|bun publish|(npx )?changeset publish|lerna publish)\\b")))

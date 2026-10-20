@@ -1,0 +1,23 @@
+id: release/signing/release-files
+kind: outcome
+satisfiers:
+  - name: goreleaser-signs
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map
+        && ("signs" in yaml(f) || "binary_signs" in yaml(f)))
+  - name: cosign-in-release
+    expr: artifact_workflows("release-files").exists(w, steps(w).exists(s, s.run.matches("\\bcosign (sign|sign-blob|attest-blob)\\b")))
+  - name: gpg
+    expr: artifact_workflows("release-files").exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
+partials:
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but the workflow that publishes this artifact does not sign it"
+requirement: >
+  The workflow that uploads the release files signs them or their checksums file (`checksums.txt`,
+  `SHA256SUMS`): cosign keyless on GitHub and GitLab, key-based on Gitea, GoReleaser `signs:` or
+  `binary_signs:`, or a detached gpg signature, and publishes the signatures with the release.
+fix:
+  human: "Add sigstore/cosign-installer and `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` to the release workflow (or `signs:` in .goreleaser.yaml) and upload the bundle with the release."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.sigstore.dev/cosign/signing/signing_with_blobs/"]

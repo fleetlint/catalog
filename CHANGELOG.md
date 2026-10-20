@@ -5,6 +5,17 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+Engine level 5: needs fleetlint 0.6.0 or newer (artifacts as catalog data, capabilities keyed by artifact, `metadata.label`).
+
+### Added
+
+- **Artifacts are catalog data.** `artifacts/<id>.yaml` says what a release publishes and how it is detected: a CEL expression returning the workflows that publish it. Twelve kinds: `release-files`, `image`, `helm-chart`, `npm`, `pypi`, `crate`, `gem`, `maven`, `nuget`, `pub`, `android-app`, `apple-app`. A repository pins `facts: {artifacts: [...]}` when detection misses one.
+
+### Changed
+
+- **`release/signing`, `release/sbom`, `release/provenance` and `release/trusted-publishing` are checked per published artifact** (`by: artifact`), not per stack: a repository that publishes binaries and an npm package must sign both, and the report says which one is not. Each kind has its own implementation (`rules/release/<name>/<artifact>.yaml`); where a check means nothing for a kind (an SBOM for an npm package, a signature on a crate) the implementation says so and reports not applicable. `combine: any` is gone from these capabilities; the stack-keyed ids (`release/signing/node`, ...) are aliases of the new ones. Images pushed from a push- or schedule-triggered workflow count as published, not only from tag-triggered ones.
+- `metadata.layer` is `metadata.label` (the old key is still read).
+
 ## [0.2.1] - 2026-10-15
 
 The rules are those of 0.2.0.

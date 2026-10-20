@@ -1,0 +1,7 @@
+id: crate
+title: crates.io crate
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://crates.io/docs/trusted-publishing"]
+summary: "`cargo publish` or katyo/publish-crates; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s,
+    s.uses.startsWith("katyo/publish-crates") || s.run.matches("\\bcargo publish\\b")))

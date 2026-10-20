@@ -1,0 +1,29 @@
+id: release/signing/image
+kind: outcome
+satisfiers:
+  - name: cosign-by-digest
+    expr: >
+      artifact_workflows("image").exists(w, steps(w).exists(s,
+        s.run.matches("\\bcosign sign\\b[^\\n]*(@sha256:|@\\$\\{\\{|@\\$\\{?[A-Z_]*DIGEST|\\$\\{\\{\\s*steps\\.[^}]*\\.outputs\\.digest)")))
+  - name: goreleaser-docker-signs
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map && "docker_signs" in yaml(f))
+  - name: notation
+    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bnotation sign\\b")))
+partials:
+  - name: cosign-by-tag
+    severity: warning
+    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
+    message: "the image is signed by tag, not by digest: a tag can move after signing"
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but the workflow that pushes the image does not sign it"
+requirement: >
+  The workflow that pushes the image signs it by digest (`cosign sign <image>@<digest>`, the digest
+  from the build step's output), with GoReleaser `docker_signs:`, or with Notation. Signing by tag is
+  a partial: a tag can be moved after signing.
+fix:
+  human: "After the push step run `cosign sign --yes ${IMAGE}@${{ steps.build.outputs.digest }}` with `id-token: write` on the job (keyless) or `--key` on Gitea."
+  agent: "Add sigstore/cosign-installer and, after the build-push step with an id, `cosign sign --yes <registry>/<image>@${{ steps.<id>.outputs.digest }}`; grant `id-token: write` and `packages: write` to that job only."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.sigstore.dev/cosign/signing/signing_with_containers/"]

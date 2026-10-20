@@ -1,0 +1,20 @@
+id: release/sbom/android-app
+kind: outcome
+satisfiers:
+  - name: cyclonedx-gradle
+    expr: artifact_workflows("android-app").exists(w, steps(w).exists(s, s.run.matches("\\bcyclonedx(Direct)?Bom\\b")))
+  - name: syft
+    expr: artifact_workflows("android-app").exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not invoke it"
+requirement: >
+  The release produces an SBOM of the app's release runtime classpath (the CycloneDX Gradle plugin's
+  `cyclonedxBom` task, or syft over the APK) and publishes it next to the app.
+fix:
+  human: "Apply the CycloneDX Gradle plugin (`org.cyclonedx.bom`) and run `./gradlew cyclonedxBom` in the release workflow; upload the BOM with the release."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/CycloneDX/cyclonedx-gradle-plugin"]

@@ -1,20 +1,22 @@
 id: release/signing
 title: Release artifacts are signed
 kind: capability
-# A release belongs to the repository: the stack that publishes it decides.
-combine: any
+# Checked per published artifact: a repository that publishes binaries and an npm package must sign
+# both. `combine: all` (the default) is what makes "binaries signed, package not" visible.
+by: artifact
 severity: error
 tiers: [1]
 scope: root
-when: release.exists && tagged_workflows().size() > 0
+when: release.exists || repo.artifacts.size() > 0
 message: "release artifacts are not signed"
 requirement: >
-  Every release signs its artifacts, with the signature its ecosystem already checks where there is
-  one (an Android app's APK signature, PGP for Maven Central, npm provenance, PyPI attestations,
-  NuGet package signing), otherwise with cosign or gpg. Signatures are published with the release.
-  A container image is signed by digest with `cosign sign`, whatever the stack.
+  Every artifact a release publishes is signed, with the signature its ecosystem already checks where
+  there is one (an Android app's APK signature, PGP for Maven Central, npm provenance, PyPI
+  attestations, NuGet package signing), otherwise with cosign or gpg. Signatures are published with
+  the release. A container image is signed by digest with `cosign sign`. Each artifact kind's
+  implementation says what counts for it.
 rationale: Checksums prove integrity; only a signature proves who built it.
 fix:
-  human: "Sign with the stack's own format (`fleetlint explain release/signing/<stack>`); without one, add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` for a container image (keyless on GitHub, with a key on Gitea)."
-  agent: "Use the stack's signing format when the stack has one. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
+  human: "Sign each published artifact in its own format (`fleetlint explain release/signing/<artifact>`); without one, add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` for a container image (keyless on GitHub, with a key on Gitea)."
+  agent: "Use the artifact's own signing format when it has one. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
 refs: ["https://fleetlint.org/baseline/#releases"]

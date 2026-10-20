@@ -1,0 +1,6 @@
+id: release/provenance/crate
+kind: expr
+when: "false"
+expr: "true"
+requirement: "crates.io has no provenance attestations yet; a crate is checked for trusted publishing (release/trusted-publishing/crate)."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]

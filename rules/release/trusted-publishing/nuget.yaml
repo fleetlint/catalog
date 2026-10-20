@@ -1,0 +1,16 @@
+id: release/trusted-publishing/nuget
+kind: expr
+when: >
+  artifact_workflows("nuget").filter(w, ci_kind(w) in ["github", "gitlab"]).size() > 0
+foreach: >
+  artifact_workflows("nuget").filter(w, ci_kind(w) in ["github", "gitlab"])
+expr: >
+  ci_kind(item) == "gitlab"
+    ? text(item).matches("(?m)^\\s*id_tokens:")
+    : text(item).matches("id-token:\\s*write")
+      && !grep(item, r'^\s*-?\s*(?:NUGET_API_KEY|NUGET_AUTH_TOKEN)\s*:\s*["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+      && !grep(item, r'--(?:token|api-key)[\s=]+["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+requirement: "A GitHub or GitLab workflow that pushes to nuget.org uses trusted publishing: `id-token: write`, the key from NuGet/login, and no NUGET_API_KEY or `--api-key` from secrets; on GitLab `id_tokens:`."
+fix:
+  human: "Register the workflow as a trusted publisher on nuget.org, take the key from `NuGet/login` in a job with `id-token: write`, and delete the NUGET_API_KEY secret."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://learn.microsoft.com/nuget/nuget-org/trusted-publishing"]

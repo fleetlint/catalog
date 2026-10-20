@@ -1,0 +1,18 @@
+id: release/signing/helm-chart
+kind: outcome
+satisfiers:
+  - name: cosign
+    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
+  - name: helm-provenance
+    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.run.matches("\\bhelm package\\b[^\\n]*--sign|\\bcr upload\\b[^\\n]*--sign") || (s.uses.startsWith("helm/chart-releaser-action") && text(w).matches("(?m)^\\s*sign:\\s*true"))))
+partials:
+  - name: cosign-outside-release
+    severity: warning
+    expr: workflows().exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/cosign-installer") || s.run.contains("cosign ")))
+    message: "cosign is installed in a workflow but the workflow that publishes this artifact does not sign it"
+requirement: >
+  A chart pushed to an OCI registry is signed by digest with `cosign sign`; a chart in a chart
+  repository carries a provenance file (`helm package --sign`, chart-releaser `--sign`).
+fix:
+  human: "OCI: `cosign sign --yes <registry>/<chart>@<digest>` after `helm push`. Chart repository: `helm package --sign --key <name> --keyring <file>` so a `.prov` file is published next to the chart."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://helm.sh/docs/topics/provenance/"]

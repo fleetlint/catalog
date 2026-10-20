@@ -1,0 +1,24 @@
+id: release/sbom/maven
+kind: outcome
+satisfiers:
+  # The CycloneDX build plugins resolve the real dependency graph of the published artifact.
+  - name: cyclonedx-gradle
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bcyclonedx(Direct)?Bom\\b")))
+  - name: cyclonedx-maven
+    expr: >
+      glob("**/pom.xml").exists(f, text(f).contains("cyclonedx-maven-plugin") && text(f).matches("<goal>make(Aggregate)?Bom</goal>"))
+      || artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("cyclonedx(-maven)?:make(Aggregate)?Bom\\b")))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not invoke it"
+requirement: >
+  The release runs the CycloneDX Gradle plugin's `cyclonedxBom` task or the cyclonedx-maven-plugin
+  (`makeBom`/`makeAggregateBom`), which read the build's resolved dependencies, and publishes the BOM
+  as an extra artifact (the `cyclonedx` classifier on Maven Central).
+fix:
+  human: "Apply the CycloneDX Gradle plugin (`org.cyclonedx.bom`) and run `./gradlew cyclonedxBom` in the release workflow (or bind cyclonedx-maven-plugin's makeAggregateBom); publish the BOM with the artifact."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/CycloneDX/cyclonedx-maven-plugin"]

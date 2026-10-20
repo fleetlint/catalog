@@ -1,0 +1,14 @@
+id: release/signing/nuget
+kind: outcome
+satisfiers:
+  - name: nuget-sign
+    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget sign|nuget(\\.exe)? sign)\\b")))
+  - name: authenticode
+    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bsigntool(\\.exe)? sign\\b") || s.uses.startsWith("azure/trusted-signing-action")))
+requirement: >
+  NuGet packages are signed (`dotnet nuget sign`) or the binaries inside carry an Authenticode
+  signature (signtool, Azure Trusted Signing) in the workflow that pushes them. nuget.org adds its
+  own repository signature on upload; that proves the registry, not the author.
+fix:
+  human: "Sign packages with `dotnet nuget sign` (or binaries with signtool / Azure Trusted Signing) before `dotnet nuget push`."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://learn.microsoft.com/nuget/create-packages/sign-a-package"]

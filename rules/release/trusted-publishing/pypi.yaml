@@ -1,0 +1,17 @@
+id: release/trusted-publishing/pypi
+kind: expr
+when: >
+  artifact_workflows("pypi").filter(w, ci_kind(w) in ["github", "gitlab"]).size() > 0
+foreach: >
+  artifact_workflows("pypi").filter(w, ci_kind(w) in ["github", "gitlab"])
+expr: >
+  ci_kind(item) == "gitlab"
+    ? text(item).matches("(?m)^\\s*id_tokens:")
+    : text(item).matches("id-token:\\s*write")
+      && !steps(item).exists(s, s.uses.startsWith("pypa/gh-action-pypi-publish") && "password" in s.with)
+      && !grep(item, r'^\s*-?\s*(?:TWINE_PASSWORD|TWINE_API_KEY|UV_PUBLISH_TOKEN|UV_PUBLISH_PASSWORD|POETRY_PYPI_TOKEN_\w+|POETRY_HTTP_BASIC_PYPI_PASSWORD|FLIT_PASSWORD|HATCH_INDEX_AUTH|PDM_PUBLISH_PASSWORD)\s*:\s*["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+      && !grep(item, r'--(?:token|api-key)[\s=]+["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+requirement: "A GitHub or GitLab workflow that publishes to PyPI (pypa/gh-action-pypi-publish, twine, uv, poetry, flit, hatch, pdm) uses trusted publishing: `id-token: write`, no pypi-publish `password` and no TWINE_*/UV_PUBLISH_*/POETRY_PYPI_TOKEN_* or `--token` from secrets; on GitLab `id_tokens:`."
+fix:
+  human: "Register the workflow as a trusted publisher on pypi.org, publish with pypa/gh-action-pypi-publish (no password) from a job with `id-token: write`, and delete the token secret."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/trusted-publishers/"]

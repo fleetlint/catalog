@@ -1,0 +1,20 @@
+id: release/provenance/maven
+kind: outcome
+satisfiers:
+  - name: attest-action
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
+  - name: slsa-generator
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
+  - name: cosign-attest-blob
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest-blob\\b")))
+  - name: gitlab-artifact-metadata
+    expr: >
+      artifact_workflows("maven").exists(w, ci_kind(w) == "gitlab"
+        && text(w).matches("RUNNER_GENERATE_ARTIFACTS_METADATA:\\s*[\"']?true"))
+requirement: >
+  The workflow that publishes the Maven artifacts attests its provenance: actions/attest-build-provenance (the
+  subject path covering the files), the SLSA generator, `cosign attest-blob`, or GitLab's artifact
+  provenance (`RUNNER_GENERATE_ARTIFACTS_METADATA: "true"`). Maven Central accepts no attestations yet, so the attestation is published with the forge release or in the sigstore log.
+fix:
+  human: "Add actions/attest-build-provenance with `subject-path` covering the Maven artifacts (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release workflow."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://slsa.dev/spec/v1.0/provenance"]

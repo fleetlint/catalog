@@ -1,0 +1,6 @@
+id: release/signing/crate
+kind: expr
+when: "false"
+expr: "true"
+requirement: "crates.io has no package signatures yet; a crate is checked for trusted publishing (release/trusted-publishing/crate), and binaries built from it as release files."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]

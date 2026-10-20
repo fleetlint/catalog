@@ -1,0 +1,21 @@
+id: release/signing/maven
+kind: outcome
+satisfiers:
+  # Maven Central requires PGP signatures: Maven's gpg/sign plugin, or Gradle's signing plugin
+  # (or the vanniktech publish plugin) on a publishing release.
+  - name: maven-central-pgp
+    expr: >
+      glob("**/pom.xml").exists(f, text(f).matches("<artifactId>(maven-gpg-plugin|sign-maven-plugin)</artifactId>"))
+      || (glob("**/*.gradle*") + glob("buildSrc/**/*.kt") + glob("buildSrc/**/*.java") + glob("build-logic/**/*.kt"))
+        .exists(f, text(f).matches("(?m)^\\s*signing\\s*$|\\bsigning\\s*\\{|id\\(\\s*[\"']signing[\"']\\s*\\)|`signing`|\\bsignAllPublications\\(\\)|plugin\\s*[:=]\\s*[\"']signing[\"']"))
+  - name: jreleaser-sign
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bjreleaser (sign|deploy|full-release)\\b")))
+  - name: jarsigner
+    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bjarsigner\\b")))
+requirement: >
+  Artifacts for Maven Central are signed with PGP (Maven's gpg or sign plugin, Gradle's `signing`
+  plugin or `signAllPublications()`, JReleaser), or JARs are signed with jarsigner in the release
+  workflow.
+fix:
+  human: "Maven: add maven-gpg-plugin (or sign-maven-plugin) to the release profile; Gradle: apply the `signing` plugin to the Maven publication. The key comes from CI secrets."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://central.sonatype.org/publish/requirements/gpg/"]

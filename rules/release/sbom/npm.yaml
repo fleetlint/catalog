@@ -1,0 +1,6 @@
+id: release/sbom/npm
+kind: expr
+when: "false"
+expr: "true"
+requirement: "npm resolves a package's dependencies from its manifest and lockfile; the registry holds the graph, so a separate SBOM adds nothing unless the package bundles dependencies (then `npm sbom` with the files uploaded as release files)."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]

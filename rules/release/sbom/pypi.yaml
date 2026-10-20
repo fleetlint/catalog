@@ -1,0 +1,6 @@
+id: release/sbom/pypi
+kind: expr
+when: "false"
+expr: "true"
+requirement: "PyPI resolves a distribution's dependencies from its metadata; a wheel that vendors native libraries should ship an SBOM as a release file."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]

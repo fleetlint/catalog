@@ -1,6 +1,0 @@
-id: release/trusted-publishing/go
-kind: expr
-when: "false"
-expr: "true"
-requirement: "Go modules are not uploaded: the module proxy fetches them from the tag, so there is no publish token."
-refs: ["https://fleetlint.org/stacks/#go"]

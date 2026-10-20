@@ -1,0 +1,8 @@
+id: pypi
+title: PyPI distribution
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/trusted-publishers/"]
+summary: "pypa/gh-action-pypi-publish, `twine upload`, `uv|poetry|flit|hatch|pdm publish`; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s,
+    s.uses.startsWith("pypa/gh-action-pypi-publish")
+    || s.run.matches("\\b(twine upload|uv publish|poetry publish|flit publish|hatch publish|pdm publish)\\b")))

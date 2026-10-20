@@ -1,0 +1,16 @@
+id: release/trusted-publishing/crate
+kind: expr
+when: >
+  artifact_workflows("crate").filter(w, ci_kind(w) in ["github", "gitlab"]).size() > 0
+foreach: >
+  artifact_workflows("crate").filter(w, ci_kind(w) in ["github", "gitlab"])
+expr: >
+  ci_kind(item) == "gitlab"
+    ? text(item).matches("(?m)^\\s*id_tokens:")
+    : text(item).matches("id-token:\\s*write")
+      && !grep(item, r'^\s*-?\s*(?:CARGO_REGISTRY_TOKEN)\s*:\s*["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+      && !grep(item, r'--(?:token|api-key)[\s=]+["\x27]?\$\{\{\s*secrets\.(\w+)').exists(m, m.match.upperAscii() != "GITHUB_TOKEN")
+requirement: "A GitHub or GitLab workflow that publishes to crates.io (`cargo publish`, katyo/publish-crates) uses trusted publishing (rust-lang/crates-io-auth-action with `id-token: write`) and no CARGO_REGISTRY_TOKEN or `--token` from secrets; on GitLab `id_tokens:`."
+fix:
+  human: "Register the workflow as a trusted publisher on crates.io, get the token from rust-lang/crates-io-auth-action in a job with `id-token: write`, and delete the CARGO_REGISTRY_TOKEN secret."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://crates.io/docs/trusted-publishing"]

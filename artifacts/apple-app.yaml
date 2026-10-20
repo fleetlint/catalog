@@ -1,0 +1,10 @@
+id: apple-app
+title: Apple app or binary (IPA, app, pkg, dmg)
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"]
+# A build exported for the App Store, TestFlight or notarized download: xcodebuild export, fastlane
+# deliver/pilot/gym, notarytool, altool, upload-testflight-build, `flutter build ipa`.
+summary: "`xcodebuild -exportArchive`, fastlane `deliver|pilot|gym|upload_to_testflight|upload_to_app_store`, `notarytool submit`, `xcrun altool --upload`, apple-actions/upload-testflight-build, `flutter build ipa`; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s,
+    s.uses.startsWith("apple-actions/upload-testflight-build")
+    || s.run.matches("\\bxcodebuild\\b[^\\n]*-exportArchive|\\bfastlane\\b[^\\n]*\\b(deliver|pilot|gym|upload_to_testflight|upload_to_app_store|build_app|build_ios_app)\\b|\\bnotarytool submit\\b|\\bxcrun altool\\b[^\\n]*--upload|\\bflutter build ipa\\b")))

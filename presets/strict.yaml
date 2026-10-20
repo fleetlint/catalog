@@ -2,7 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-strict
-  engine: 4
+  engine: 5
   description: >
     Everything in recommended, held to a higher standard: every warning is an
     error, every informational rule a warning, and the security rules take no

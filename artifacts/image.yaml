@@ -1,0 +1,16 @@
+id: image
+title: Container image
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://fleetlint.org/baseline/#releases"]
+# An image pushed to a registry from a workflow that runs on push, tag, release, schedule or by
+# hand (not from a pull request): a build-push action that pushes, docker/podman/buildah push,
+# ko, Jib, crane, or GoReleaser `dockers:`.
+summary: "docker/build-push-action with `push: true`, `docker|podman|buildah|nerdctl push`, `docker buildx build --push`, ko, Jib, crane, redhat-actions/push-to-registry, or GoReleaser `dockers:`; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request)"
+detect: >
+  workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && (
+    steps(w).exists(s,
+      (s.uses.startsWith("docker/build-push-action") && "push" in s.with && string(s.with.push) == "true")
+      || s.uses.startsWith("redhat-actions/push-to-registry")
+      || s.run.matches("\\b(docker|podman|buildah|nerdctl) push\\b|\\bdocker buildx build\\b[^\\n]*--push|\\bko (build|publish|apply|resolve)\\b|\\bcrane (push|copy)\\b|\\bjib:build\\b")
+      || (s.run.matches("\\bgradlew?\\b[^\\n]*\\bjib\\b") && !s.run.contains("jibDockerBuild") && !s.run.contains("jibBuildTar")))
+    || (steps(w).exists(s, s.uses.startsWith("goreleaser/goreleaser-action") || s.run.matches("\\bgoreleaser\\b"))
+        && ((file(".goreleaser.yaml") && has(yaml(".goreleaser.yaml").dockers)) || (file(".goreleaser.yml") && has(yaml(".goreleaser.yml").dockers))))))

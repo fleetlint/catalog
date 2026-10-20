@@ -1,0 +1,9 @@
+id: helm-chart
+title: Helm chart
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://helm.sh/docs/topics/registries/"]
+# A chart pushed to an OCI registry or a chart repository: `helm push`, chart-releaser.
+summary: "`helm push`, helm/chart-releaser-action, `cr upload`, or `helm package --sign`; in any workflow not run from a pull request"
+detect: >
+  workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && steps(w).exists(s,
+    s.uses.startsWith("helm/chart-releaser-action")
+    || s.run.matches("\\bhelm push\\b|\\bcr (upload|index)\\b|\\bhelm package\\b[^\\n]*--sign")))

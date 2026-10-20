@@ -1,0 +1,14 @@
+id: release/provenance/helm-chart
+kind: outcome
+satisfiers:
+  - name: cosign-attest
+    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest(-blob)?\\b")))
+  - name: attest-action
+    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
+requirement: >
+  A chart pushed to an OCI registry gets provenance attached to its digest (`cosign attest`,
+  actions/attest-build-provenance with `subject-digest`); a chart in a chart repository gets an
+  attestation on the packaged file (`cosign attest-blob`).
+fix:
+  human: "After `helm push`, run `cosign attest --yes --type slsaprovenance --predicate provenance.json <registry>/<chart>@<digest>`, or add actions/attest-build-provenance with the chart's digest."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://slsa.dev/spec/v1.0/provenance"]

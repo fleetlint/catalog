@@ -1,20 +1,20 @@
 id: release/provenance
 title: Releases attest build provenance
 kind: capability
-# A release belongs to the repository: the stack that publishes it decides.
-combine: any
+by: artifact
 severity: warning
 tiers: [1]
 scope: root
-when: release.exists && tagged_workflows().size() > 0
+when: release.exists || repo.artifacts.size() > 0
 message: "no build provenance attestation in the release pipeline"
 requirement: >
-  The release pipeline produces a provenance attestation that ties the artifacts to the source commit
-  and the workflow that built them: the registry's own provenance where the stack publishes to one
-  (npm, PyPI, RubyGems), otherwise a stack-neutral attestation (GitHub artifact attestations, the SLSA
-  generator, `cosign attest`, BuildKit, GitLab artifact metadata).
+  Every artifact a release publishes carries a provenance attestation that ties it to the source
+  commit and the workflow that built it: the registry's own provenance where the artifact goes to one
+  (npm, PyPI, RubyGems), otherwise an attestation on the artifact (GitHub artifact attestations, the
+  SLSA generator, `cosign attest` for an image, `cosign attest-blob` for a file, BuildKit, GitLab
+  artifact metadata). Each artifact kind's implementation says what counts for it.
 rationale: Provenance ties the artifact to the exact source and workflow that built it, which a signature alone does not.
 fix:
-  human: "Add actions/attest-build-provenance (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release pipeline; a package published to npm, PyPI or RubyGems gets it from trusted publishing."
-  agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release artifacts; grant `id-token: write` and `attestations: write` to that job only. On GitLab set the variable RUNNER_GENERATE_ARTIFACTS_METADATA to \"true\" on the release job. On Gitea write a SLSA v1 predicate and run `cosign attest-blob --type slsaprovenance1`."
+  human: "Add actions/attest-build-provenance (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release pipeline for files, `cosign attest` or BuildKit provenance for an image; a package published to npm, PyPI or RubyGems gets it from trusted publishing."
+  agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release files (or `subject-name` and `subject-digest` for an image, with `push-to-registry: true`); grant `id-token: write` and `attestations: write` to that job only. On GitLab set the variable RUNNER_GENERATE_ARTIFACTS_METADATA to \"true\" on the release job. On Gitea write a SLSA v1 predicate and run `cosign attest-blob --type slsaprovenance1`."
 refs: ["https://fleetlint.org/baseline/#releases", "https://slsa.dev/spec/v1.0/provenance"]

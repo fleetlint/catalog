@@ -1,0 +1,19 @@
+id: release/signing/android-app
+kind: outcome
+satisfiers:
+  # The APK or AAB carries its own signature (APK Signature Scheme v2+, JAR signing for an AAB),
+  # which Android checks on install and on every update. The release verifies or applies it.
+  - name: apk-signature
+    expr: >
+      artifact_workflows("android-app").exists(w, steps(w).exists(s,
+        s.run.matches("\\bapksigner\\b[^\\n]*\\b(sign|verify)\\b|\\bjarsigner\\b")
+        || s.uses.matches("^(r0adkll|ilharp)/sign-android-release")))
+requirement: >
+  The APK or AAB is signed with the release key and the workflow that publishes it verifies the
+  signature (`apksigner verify` for an APK, `jarsigner -verify` for an AAB) or applies it (apksigner,
+  jarsigner, a sign-android-release action). Play App Signing re-signs the AAB for distribution; the
+  upload key signature is what the workflow checks.
+fix:
+  human: "Sign with the release key (a release signingConfig fed from CI secrets) and add `apksigner verify --print-certs <apk>` (or `jarsigner -verify <aab>`) to the release workflow; that is the signature Android checks, no cosign needed."
+  agent: "Keep the release key's signature and add `apksigner verify --print-certs` (APK) or `jarsigner -verify` (AAB) on the built artifact to the release workflow. Do not add cosign for the app itself."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://developer.android.com/studio/publish/app-signing"]

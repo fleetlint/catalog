@@ -1,0 +1,24 @@
+id: release/provenance/image
+kind: outcome
+satisfiers:
+  - name: buildkit
+    expr: >
+      artifact_workflows("image").exists(w, steps(w).exists(s,
+        (s.uses.startsWith("docker/build-push-action") && !s.uses.matches("@v[1-3](\\.|$)")
+          && !("provenance" in s.with && (s.with.provenance == false || s.with.provenance == "false")))
+        || s.run.matches("\\bdocker buildx build\\b[^\\n]*--provenance")))
+  - name: cosign-attest
+    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*slsaprovenance")))
+  - name: attest-action
+    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") && "subject-digest" in s.with))
+  - name: slsa-container-generator
+    expr: artifact_workflows("image").exists(w, jobs(w).exists(j, j.uses.startsWith("slsa-framework/slsa-github-generator/.github/workflows/generator_container")))
+requirement: >
+  Provenance is attached to the image digest: BuildKit (docker/build-push-action v4 or newer with
+  `provenance` not set to false, `docker buildx build --provenance`), `cosign attest --type
+  slsaprovenance`, actions/attest-build-provenance with `subject-digest` and `push-to-registry`, or
+  the SLSA container generator.
+fix:
+  human: "Keep docker/build-push-action v4 or newer and do not set `provenance: false`; or run `cosign attest --yes --type slsaprovenance --predicate provenance.json <image>@<digest>`."
+  agent: "Remove `provenance: false` from the docker/build-push-action step, or add actions/attest-build-provenance with `subject-name`, `subject-digest` from the build step and `push-to-registry: true`."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.docker.com/build/metadata/attestations/slsa-provenance/"]

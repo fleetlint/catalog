@@ -1,0 +1,15 @@
+id: release/signing/pypi
+kind: outcome
+satisfiers:
+  - name: pypi-attestations
+    expr: >
+      artifact_workflows("pypi").exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+        s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
+  - name: sigstore-python
+    expr: artifact_workflows("pypi").exists(w, steps(w).exists(s, s.uses.startsWith("sigstore/gh-action-sigstore-python")))
+requirement: >
+  Wheels and sdists carry PyPI attestations (pypa/gh-action-pypi-publish with trusted publishing,
+  which attests by default) or are signed with sigstore-python.
+fix:
+  human: "Publish with pypa/gh-action-pypi-publish and trusted publishing (`id-token: write`); it uploads Sigstore attestations."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.pypi.org/attestations/"]

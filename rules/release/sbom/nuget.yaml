@@ -1,0 +1,20 @@
+id: release/sbom/nuget
+kind: outcome
+satisfiers:
+  - name: cyclonedx-dotnet
+    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bdotnet[ -]CycloneDX\\b")))
+  - name: sbom-tool
+    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bsbom-tool generate\\b")))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not invoke it"
+requirement: >
+  The workflow that pushes the package runs the CycloneDX .NET tool (`dotnet CycloneDX`) or
+  Microsoft's sbom-tool and ships the SBOM inside or next to the package.
+fix:
+  human: "Install CycloneDX as a dotnet tool and run `dotnet CycloneDX <solution> -o sbom` before `dotnet nuget push`; include the file in the package or the release."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://github.com/CycloneDX/cyclonedx-dotnet"]

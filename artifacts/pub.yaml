@@ -1,0 +1,6 @@
+id: pub
+title: pub.dev package
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://dart.dev/tools/pub/automated-publishing"]
+summary: "`dart pub publish` or `flutter pub publish`; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s, s.run.matches("\\b(dart|flutter) pub publish\\b")))

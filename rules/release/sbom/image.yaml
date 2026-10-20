@@ -1,0 +1,32 @@
+id: release/sbom/image
+kind: outcome
+satisfiers:
+  - name: buildkit
+    expr: >
+      artifact_workflows("image").exists(w, steps(w).exists(s,
+        (s.uses.startsWith("docker/build-push-action") && "sbom" in s.with && string(s.with.sbom) == "true")
+        || s.run.matches("\\bdocker buildx build\\b[^\\n]*--sbom")))
+  - name: cosign-attest
+    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)")))
+  - name: syft-on-image
+    expr: >
+      artifact_workflows("image").exists(w, steps(w).exists(s,
+        s.uses.startsWith("anchore/sbom-action") || s.run.matches("\\bsyft\\b[^\\n]*\\b(registry:|docker:|ghcr\\.io|docker\\.io|quay\\.io)|\\btrivy image\\b[^\\n]*--format\\s*(spdx|cyclonedx)")))
+  - name: goreleaser-sboms
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map && "sboms" in yaml(f) && "dockers" in yaml(f))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not invoke it"
+requirement: >
+  The image's SBOM is attached to its digest: BuildKit `sbom: true` (build-push-action or `docker
+  buildx build --sbom=true`), `cosign attest --type spdx|cyclonedx`, or syft/trivy over the pushed
+  image with the result uploaded or attested.
+fix:
+  human: "Set `sbom: true` (and `provenance: true`) on docker/build-push-action; BuildKit attaches the SBOM to the image digest."
+  agent: "Add `sbom: true` to the docker/build-push-action step's `with:`; nothing else changes."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://docs.docker.com/build/metadata/attestations/sbom/"]

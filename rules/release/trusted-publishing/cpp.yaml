@@ -1,6 +1,0 @@
-id: release/trusted-publishing/cpp
-kind: expr
-when: "false"
-expr: "true"
-requirement: "C and C++ packages are not uploaded to a registry with trusted publishing (vcpkg and Conan Center take ports by pull request)."
-refs: ["https://fleetlint.org/stacks/#cc"]

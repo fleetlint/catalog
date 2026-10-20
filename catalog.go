@@ -1,5 +1,5 @@
-// Package catalog holds the fleetlint presets, rules, stacks and the
-// templates their fixes write, as data. The fleetlint binary embeds one
+// Package catalog holds the fleetlint presets, rules, stacks, artifacts and
+// the templates their fixes write, as data. The fleetlint binary embeds one
 // version of this module; a repository runs another with
 // `catalog: {version: <tag or commit>}`.
 package catalog
@@ -24,6 +24,14 @@ var Rules embed.FS
 //
 //go:embed stacks/*.yaml
 var Stacks embed.FS
+
+// Artifacts contains artifacts/<id>.yaml: what a release publishes (files
+// on a forge release, a container image, an npm package, ...) and how it is
+// detected from the workflows that publish it. Release capabilities implement
+// their checks per artifact id.
+//
+//go:embed artifacts/*.yaml
+var Artifacts embed.FS
 
 // Aliases is aliases.yaml: renamed rule ids and the ids that replace them.
 //

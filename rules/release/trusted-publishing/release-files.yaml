@@ -1,0 +1,6 @@
+id: release/trusted-publishing/release-files
+kind: expr
+when: "false"
+expr: "true"
+requirement: "Release files are uploaded with the forge's own job token (GITHUB_TOKEN, the Gitea or GitLab job token), which is minted per run already."
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts"]

@@ -1,0 +1,6 @@
+id: nuget
+title: NuGet package
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://learn.microsoft.com/nuget/nuget-org/trusted-publishing"]
+summary: "`dotnet nuget push` or `nuget push`; in a tag-triggered workflow"
+detect: >
+  tagged_workflows().filter(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget push|nuget(\\.exe)? push)\\b")))

@@ -1,0 +1,18 @@
+id: release-files
+title: Files on a forge release
+refs: ["https://fleetlint.org/rules/capabilities/#artifacts", "https://fleetlint.org/baseline/#releases"]
+# Binaries, archives and other assets uploaded to a GitHub, Gitea, Forgejo or GitLab release by a
+# tag-triggered workflow: a release action, the forge CLI, the release API or GoReleaser. An upload
+# that names only app packages (.apk, .aab, .ipa, .dmg, .pkg) is the app (android-app, apple-app),
+# which carries its own signature; it counts here only next to other assets.
+summary: "a release action (action-gh-release, ncipollo/release-action, upload-release-asset, gitea-release-action), `gh release create|upload`, `tea releases create`, `glab release create`, GitLab `release-cli` or a `release:` job, or GoReleaser; in a tag-triggered workflow. An upload that names only app packages is the app instead"
+detect: >
+  tagged_workflows().filter(w,
+    steps(w).exists(s,
+      ((s.uses.matches("^(softprops/action-gh-release|ncipollo/release-action|actions/upload-release-asset|svenstaro/upload-release-action|marvinpinto/action-automatic-releases|akkuman/gitea-release-action)@")
+          && !(text(w).matches("\\.(apk|aab|ipa|dmg|pkg)\\b") && !text(w).matches("\\.(tar\\.gz|tgz|tar\\.xz|zip|txt|sha256|sig|exe|msi|deb|rpm|jar|whl)\\b")))
+      || (s.run.matches("\\b(gh release (create|upload)|release-cli (create|upload)|glab release (create|upload)|tea releases? (create|assets push)|hub release create)\\b")
+          && !(s.run.matches("\\.(apk|aab|ipa|dmg|pkg)\\b") && !s.run.matches("\\.(tar\\.gz|tgz|tar\\.xz|zip|txt|sha256|sig|exe|msi|deb|rpm|jar|whl)\\b")))
+      || s.uses.startsWith("goreleaser/goreleaser-action")
+      || (s.run.matches("\\bgoreleaser\\b") && !s.run.contains("--snapshot") && !s.run.matches("\\bgoreleaser (check|healthcheck|init)\\b"))))
+    || (ci_kind(w) == "gitlab" && text(w).matches("(?m)^\\s+release:\\s*$")))
