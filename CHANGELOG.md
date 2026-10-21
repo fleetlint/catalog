@@ -5,6 +5,8 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-21
+
 Engine level 7: needs fleetlint 0.8.0 or newer (published artifacts as named instances, `locate:`; `combine:` and `artifact_workflows()` are gone).
 
 ### Changed
