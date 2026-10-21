@@ -5,6 +5,8 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-21
+
 Engine level 6: needs fleetlint 0.7.0 or newer (typed refs).
 
 ### Changed
