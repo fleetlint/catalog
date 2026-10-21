@@ -35,4 +35,6 @@ rationale: Pushing red is what breaks main for everyone else; the hook makes it 
 fix:
   human: "Add a local hook whose entry is the task runner's check (`make check`, `just check`, `npm run check`, ...), with stages: [pre-push] and always_run: true."
   agent: "Add a `repo: local` hook running the repository's task runner check (the command `fleetlint check` reports as the task runner, e.g. `just check`) at stage pre-push with pass_filenames: false and always_run: true."
-refs: ["https://fleetlint.org/baseline/#git-hooks"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#git-hooks", kind: convention}
+  - {url: "https://pre-commit.com/", kind: spec, section: "Confining hooks to run at certain stages"}

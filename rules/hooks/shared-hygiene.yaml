@@ -17,4 +17,6 @@ rationale: These catch the accidents no linter looks for, and the fixes are auto
 fix:
   human: "Add the four hooks to a `repo: builtin` block (prek) or the https://github.com/pre-commit/pre-commit-hooks repo."
   agent: "Add trailing-whitespace, end-of-file-fixer, check-merge-conflict and check-added-large-files to the `repo: builtin` block of .pre-commit-config.yaml (or pre-commit/pre-commit-hooks for plain pre-commit)."
-refs: ["https://fleetlint.org/baseline/#git-hooks"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#git-hooks", kind: convention}
+  - {url: "https://github.com/pre-commit/pre-commit-hooks", kind: spec}

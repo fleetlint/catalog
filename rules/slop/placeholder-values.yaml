@@ -13,4 +13,6 @@ rationale: "A placeholder that ships is a broken feature or a default credential
 fix:
   human: "Read the value from configuration and fail at startup when it is missing."
   agent: "Replace with a configuration lookup validated at startup; ask where the real value comes from if that is unclear."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#code-structure"

@@ -13,4 +13,8 @@ rationale: Without a license, nobody may legally use the code.
 fix:
   human: "Add LICENSE (MIT or Apache-2.0) with the current year and your name."
   agent: "Ask the user which license; add the LICENSE file and the SPDX identifier to the package manifest."
-refs: ["https://fleetlint.org/baseline/#public-repositories"]
+refs:
+  - {url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository", kind: guidance}
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "License"}
+  - {url: "https://reuse.software/spec/", kind: standard}
+  - "https://fleetlint.org/baseline/#public-repositories"

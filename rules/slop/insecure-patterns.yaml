@@ -13,4 +13,11 @@ rationale: "Each one was added to make something work once and removes a protect
 fix:
   human: "Scope the exception to one host or one path with explicit opt-in, or remove it."
   agent: "Report each occurrence with what it disables; replace only when the secure equivalent is evident."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]
+refs:
+  - {url: "https://cwe.mitre.org/data/definitions/295.html", kind: standard, section: "CWE-295: Improper Certificate Validation"}
+  - {url: "https://github.com/securego/gosec", kind: check, section: "G402"}
+  - {url: "https://bandit.readthedocs.io/en/latest/plugins/b501_request_with_no_cert_validation.html", kind: check, section: "B501"}
+  - {url: "https://docs.astral.sh/ruff/rules/suspicious-eval-usage/", kind: check, section: "S307"}
+  - {url: "https://docs.astral.sh/ruff/rules/bad-file-permissions/", kind: check, section: "S103"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#errors-types-and-robustness"

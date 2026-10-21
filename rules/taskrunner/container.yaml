@@ -27,4 +27,6 @@ fix:
   agent: "At the top of the task runner file add a CONTAINER switch defaulting to 1 and, when it is 1 and IN_CONTAINER is unset, run each target inside the container (devcontainer exec, docker run or podman run); keep the existing recipes for the other case. Set IN_CONTAINER=1 inside the container."
   actions:
     - template: "{taskrunner}"
-refs: ["https://fleetlint.org/baseline/#task-runner-contract"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#task-runner-contract", kind: convention}
+  - {url: "https://containers.dev/", kind: spec}

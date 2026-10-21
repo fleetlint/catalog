@@ -13,4 +13,6 @@ rationale: "A delay that papers over an ordering problem fails on a slower machi
 fix:
   human: "Wait for the event or condition itself; keep real backoff and rate limiting with a comment saying so."
   agent: "Report each delay; replace it with waiting on the actual condition where that is evident, and leave deliberate backoff alone."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#code-structure"

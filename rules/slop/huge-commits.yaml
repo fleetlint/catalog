@@ -17,4 +17,7 @@ rationale: "A commit that large was not reviewed line by line, and cannot be rev
 fix:
   human: "Split work into commits of one concern each."
   agent: "Commit one concern at a time. Do not rewrite pushed history without the user's decision."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#commits-and-history"]
+refs:
+  - {url: "https://google.github.io/eng-practices/review/developer/small-cls.html", kind: style-guide}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#commits-and-history"

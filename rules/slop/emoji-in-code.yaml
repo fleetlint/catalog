@@ -13,4 +13,6 @@ rationale: "They render inconsistently in terminals and logs and carry no inform
 fix:
   human: "Replace the symbol with a word or remove it."
   agent: "Replace each symbol with plain text; keep symbols that are test data."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

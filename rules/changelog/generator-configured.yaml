@@ -17,4 +17,7 @@ fix:
   agent: "Add cliff.toml for git-cliff with Conventional Commits groups; `fleetlint fix --apply` writes the template."
   actions:
     - template: cliff.toml
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://www.conventionalcommits.org/en/v1.0.0/", kind: standard, section: "Why Use Conventional Commits"}
+  - {url: "https://keepachangelog.com/en/1.1.0/", kind: standard, section: "How do I make a good changelog?"}
+  - "https://fleetlint.org/baseline/#releases"

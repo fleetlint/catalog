@@ -10,4 +10,7 @@ fix:
   human: "Add changesets (`npx changeset init`) or cliff.toml."
   actions:
     - template: cliff.toml
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://github.com/changesets/changesets", kind: spec}
+  - {url: "https://semantic-release.gitbook.io/semantic-release", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

@@ -13,4 +13,7 @@ rationale: "A file named after nothing collects everything, and everything then 
 fix:
   human: "Move each function to the module it belongs to."
   agent: "Report the file with its functions grouped by concept; move them only as a separate, behaviour-neutral change."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]
+refs:
+  - {url: "https://go.dev/blog/package-names", kind: guidance, section: "Bad package names"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#code-structure"

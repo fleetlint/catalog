@@ -17,4 +17,6 @@ rationale: "The history keeps old versions; a second file means nobody decided w
 fix:
   human: "Keep one file under the original name and delete the other."
   agent: "Report the pair; do not delete either without confirming which is in use."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#code-structure"

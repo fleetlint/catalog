@@ -13,4 +13,7 @@ fix:
   human: "Add `[tool.towncrier]` or `[tool.git-cliff]` to pyproject.toml, or cliff.toml."
   actions:
     - template: cliff.toml
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://towncrier.readthedocs.io/en/stable/", kind: spec}
+  - {url: "https://commitizen-tools.github.io/commitizen/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

@@ -23,4 +23,6 @@ rationale: >
 fix:
   human: "Turn off commit attribution in the agent's settings; rewrite only unpushed history."
   agent: "Stop adding Co-Authored-By trailers and generated-with footers. Report the offending commits; rewriting pushed history needs the user's explicit decision."
-refs: ["https://fleetlint.org/baseline/#public-repositories", "https://fleetlint.org/slop/#commits-and-history"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#public-repositories", kind: convention}
+  - "https://fleetlint.org/slop/#commits-and-history"

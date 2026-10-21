@@ -16,4 +16,7 @@ rationale: "The history is the record of why the code changed; a one-word subjec
 fix:
   human: "Write the subject from the diff; squash work-in-progress commits before merging."
   agent: "Write subjects from the diff. Do not rewrite pushed history without the user's decision."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#commits-and-history"]
+refs:
+  - {url: "https://git-scm.com/docs/git-commit", kind: spec, section: "DISCUSSION"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#commits-and-history"

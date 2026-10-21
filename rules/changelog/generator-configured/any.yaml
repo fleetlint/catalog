@@ -18,3 +18,6 @@ satisfiers:
   - name: commitizen
     expr: file(".cz.toml") || file("cz.toml") || file(".cz.json") || file("cz.json")
 requirement: "git-cliff (`cliff.toml`, `.cliff.toml`), GoReleaser (its changelog is on unless `changelog.disable`), release-please, cocogitto, semantic-release (`.releaserc*`, `release.config.*`) or commitizen (`.cz.toml`, `cz.toml`, `.cz.json`) is configured."
+refs:
+  - {url: "https://www.conventionalcommits.org/en/v1.0.0/", kind: standard, section: "Why Use Conventional Commits"}
+  - {url: "https://git-cliff.org/docs/configuration", kind: spec}

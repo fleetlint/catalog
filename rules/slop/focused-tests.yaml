@@ -15,4 +15,8 @@ rationale: "A focused test silently disables every other test in the suite while
 fix:
   human: "Remove the focus marker."
   agent: "Remove the focus marker and run the whole suite."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#tests"]
+refs:
+  - {url: "https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/no-focused-tests.md", kind: check, section: "no-focused-tests"}
+  - {url: "https://docs.rubocop.org/rubocop-rspec/latest/cops_rspec.html", kind: check, section: "RSpec/Focus"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#tests"

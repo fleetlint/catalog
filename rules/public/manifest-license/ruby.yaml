@@ -5,4 +5,6 @@ message: "the gemspec does not declare a license"
 requirement: "Every gemspec sets `spec.license` (or `spec.licenses`) to an SPDX identifier."
 fix:
   human: "Add `spec.license = \"<SPDX id>\"` to the gemspec."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://guides.rubygems.org/specification-reference/", kind: spec, section: "license=(o)"}
+  - "https://fleetlint.org/stacks/#ruby"

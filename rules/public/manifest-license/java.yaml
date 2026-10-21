@@ -8,4 +8,7 @@ message: "the published POM does not declare a license"
 requirement: "A Maven project lists `<licenses>` in pom.xml; a Gradle build that publishes with maven-publish sets `pom { licenses { license { ... } } }` (in the build or a convention plugin). Builds that publish nothing are not checked."
 fix:
   human: "Add `<licenses><license><name>SPDX-id</name><url>...</url></license></licenses>` to pom.xml, or `pom { licenses { license { name.set(\"SPDX-id\") } } }` to the Gradle publication."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://maven.apache.org/pom.html", kind: spec, section: "Licenses"}
+  - {url: "https://docs.gradle.org/current/userguide/publishing_maven.html", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

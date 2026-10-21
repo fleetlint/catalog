@@ -13,4 +13,10 @@ rationale: "Each suppression switches a check off for good; a list of them is th
 fix:
   human: "Fix the code instead of suppressing, or state the reason on the same line."
   agent: "For each suppression, try the fix first; if it stays, add the specific rule name and a one-line reason."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/rules/blanket-type-ignore/", kind: check, section: "PGH003"}
+  - {url: "https://docs.astral.sh/ruff/rules/blanket-noqa/", kind: check, section: "PGH004"}
+  - {url: "https://typescript-eslint.io/rules/ban-ts-comment/", kind: check, section: "ban-ts-comment"}
+  - {url: "https://golangci-lint.run/docs/linters/configuration/", kind: check, section: "nolintlint"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#errors-types-and-robustness"

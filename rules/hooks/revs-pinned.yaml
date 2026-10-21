@@ -22,4 +22,8 @@ rationale: A hook at a branch runs whatever was pushed there last, on every deve
 fix:
   human: "Run `prek update` (pre-commit: `pre-commit autoupdate`) to replace branch revs with the latest tags."
   agent: "Replace each flagged rev with the repository's latest release tag (`prek update` does this); do not change hooks or args."
-refs: ["https://fleetlint.org/baseline/#git-hooks", "https://fleetlint.org/baseline/#security"]
+refs:
+  - {url: "https://pre-commit.com/", kind: spec, section: ".pre-commit-config.yaml - repos"}
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Pinned-Dependencies"}
+  - "https://fleetlint.org/baseline/#git-hooks"
+  - "https://fleetlint.org/baseline/#security"

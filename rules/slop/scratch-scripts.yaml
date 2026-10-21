@@ -13,4 +13,6 @@ rationale: "They were written to answer one question once; nobody knows later wh
 fix:
   human: "Delete the script, or move it into a tools directory with a name that says what it does."
   agent: "Report the script; delete it only if nothing references it, otherwise move it under scripts/ with a descriptive name."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#repository-and-files"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#repository-and-files"

@@ -16,4 +16,7 @@ fix:
   actions:
     - template: "{stack}/pre-commit-config.yaml"
       to: .pre-commit-config.yaml
-refs: ["https://fleetlint.org/baseline/#git-hooks"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#git-hooks", kind: convention}
+  - {url: "https://pre-commit.com/", kind: spec, section: ".pre-commit-config.yaml - top level"}
+  - {url: "https://lefthook.dev/", kind: spec}

@@ -13,4 +13,6 @@ rationale: "The person reading it cannot act on it and the person debugging it c
 fix:
   human: "Say what failed and with which input."
   agent: "Rewrite the message to name the operation and the offending input; do not include secrets."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

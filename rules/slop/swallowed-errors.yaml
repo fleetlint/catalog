@@ -13,4 +13,11 @@ rationale: "A swallowed error turns a failure with a cause into a wrong result w
 fix:
   human: "Handle the error, wrap and return it, or log it where it is handled."
   agent: "Propagate the error with context unless the surrounding code shows it is safe to ignore; then say why in a comment."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]
+refs:
+  - {url: "https://go.dev/wiki/CodeReviewComments", kind: guidance, section: "Handle Errors"}
+  - {url: "https://docs.astral.sh/ruff/rules/try-except-pass/", kind: check, section: "S110"}
+  - {url: "https://eslint.org/docs/latest/rules/no-empty", kind: check, section: "no-empty"}
+  - {url: "https://detekt.dev/docs/rules/empty-blocks/", kind: check, section: "EmptyCatchBlock"}
+  - {url: "https://docs.rubocop.org/rubocop/latest/cops_lint.html", kind: check, section: "Lint/SuppressedException"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#errors-types-and-robustness"

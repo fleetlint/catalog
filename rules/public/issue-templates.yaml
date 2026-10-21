@@ -16,4 +16,6 @@ rationale: A template asks for the version, the steps and the expected result on
 fix:
   human: "Add .github/ISSUE_TEMPLATE/bug.md asking for version, steps and expected result; add a pull-request template listing what `make check` must show."
   agent: "Add a bug-report issue template and a pull-request template under .github/ (Gitea reads them too); keep each under 20 lines."
-refs: ["https://fleetlint.org/baseline/#public-repositories"]
+refs:
+  - {url: "https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/about-issue-and-pull-request-templates", kind: guidance}
+  - "https://fleetlint.org/baseline/#public-repositories"

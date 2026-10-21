@@ -13,4 +13,5 @@ rationale: The shape of the system is the one thing a newcomer cannot recover fr
 fix:
   human: "Write docs/ARCHITECTURE.md: components, boundaries, data flow, the three decisions that shaped it."
   agent: "Write docs/ARCHITECTURE.md from the actual package structure: one paragraph per component, one diagram, no marketing."
-refs: ["https://fleetlint.org/baseline/#documentation"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#documentation", kind: convention}

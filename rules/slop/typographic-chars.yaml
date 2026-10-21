@@ -13,4 +13,7 @@ rationale: "They are invisible in review, break grep and are a trace of pasted p
 fix:
   human: "Replace with the ASCII equivalent."
   agent: "Replace with ASCII equivalents; keep characters that are user-facing text or test data."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/rules/ambiguous-unicode-character-string/", kind: check, section: "RUF001"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

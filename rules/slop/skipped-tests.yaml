@@ -13,4 +13,7 @@ rationale: "A skipped test is coverage that the numbers still count and the suit
 fix:
   human: "Fix or delete the test; if it must be quarantined, reference the issue on the same line."
   agent: "Report each skipped test with its reason; do not un-skip tests that then fail without fixing the cause, and do not invent issue numbers."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#tests"]
+refs:
+  - {url: "https://github.com/jest-community/eslint-plugin-jest/blob/main/docs/rules/no-disabled-tests.md", kind: check, section: "no-disabled-tests"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#tests"

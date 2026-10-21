@@ -17,4 +17,7 @@ rationale: "The changelog and the next version number are computed from the subj
 fix:
   human: "Install the commit-msg hook so new commits are checked."
   agent: "Use Conventional Commits for new commits. Do not rewrite pushed history without the user's decision."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#commits-and-history"]
+refs:
+  - {url: "https://www.conventionalcommits.org/en/v1.0.0/", kind: standard, section: "Specification"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#commits-and-history"

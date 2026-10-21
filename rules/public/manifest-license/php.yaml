@@ -8,4 +8,6 @@ message: "composer.json does not declare a license"
 requirement: "A library's composer.json has `license` (an SPDX identifier or a list of them); `\"type\": \"project\"` (an application) is not checked."
 fix:
   human: "Add `\"license\": \"<SPDX id>\"` to composer.json."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://getcomposer.org/doc/04-schema.md", kind: spec, section: "license"}
+  - "https://fleetlint.org/stacks/#php"

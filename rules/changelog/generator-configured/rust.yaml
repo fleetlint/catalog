@@ -8,4 +8,6 @@ fix:
   human: "Add cliff.toml, or `[workspace.metadata.git-cliff]` to Cargo.toml."
   actions:
     - template: cliff.toml
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://git-cliff.org/docs/configuration", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

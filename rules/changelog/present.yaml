@@ -13,4 +13,6 @@ fix:
   agent: "Create CHANGELOG.md from the template; if cliff.toml exists, regenerate it with `git-cliff -o CHANGELOG.md` and review the result."
   actions:
     - template: CHANGELOG.md
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://keepachangelog.com/en/1.1.0/", kind: standard, section: "How do I make a good changelog?"}
+  - "https://fleetlint.org/baseline/#releases"

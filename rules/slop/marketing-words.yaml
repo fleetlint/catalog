@@ -12,4 +12,6 @@ rationale: "Filler words are the most recognisable trace of generated prose and 
 fix:
   human: "Rewrite the line to state the concrete behaviour; delete the adjective."
   agent: "Rewrite each flagged line without the flagged word, keeping the technical content; do not add new adjectives."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#documentation"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#documentation"

@@ -8,4 +8,6 @@ message: "pyproject.toml does not declare a license"
 requirement: "pyproject.toml sets `project.license` (SPDX, PEP 639), `license-files` or a license classifier, unless it carries the `Private :: Do Not Upload` classifier."
 fix:
   human: "Set `license = \"<SPDX id>\"` in pyproject.toml's `[project]` table."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://peps.python.org/pep-0639/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

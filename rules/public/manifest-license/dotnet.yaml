@@ -7,4 +7,6 @@ message: "the NuGet package does not declare a license"
 requirement: "A packable project (or Directory.Build.props) sets `PackageLicenseExpression` (SPDX) or `PackageLicenseFile`; projects that pack nothing are not checked."
 fix:
   human: "Add `<PackageLicenseExpression>SPDX-id</PackageLicenseExpression>` to Directory.Build.props or the packable project."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/nuget/reference/msbuild-targets", kind: spec, section: "pack target"}
+  - "https://fleetlint.org/stacks/#net"

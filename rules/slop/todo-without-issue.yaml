@@ -13,4 +13,9 @@ rationale: "An untracked TODO is a wish; a tracked one has an owner and can be c
 fix:
   human: "Open an issue and reference it, or do the work, or delete the note."
   agent: "Report each note; do not invent issue numbers."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://google.github.io/styleguide/pyguide.html", kind: style-guide, section: "3.12 TODO Comments"}
+  - {url: "https://google.github.io/styleguide/cppguide.html", kind: style-guide, section: "TODO Comments"}
+  - {url: "https://docs.astral.sh/ruff/rules/missing-todo-link/", kind: check, section: "TD003"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#comments-and-text"

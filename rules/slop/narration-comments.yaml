@@ -13,4 +13,7 @@ rationale: "The history records what changed; a comment that repeats it is wrong
 fix:
   human: "Delete the comment, or rewrite it to state the constraint the code satisfies."
   agent: "Delete narration comments; keep a comment only if it explains a constraint, and rewrite it to say that."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://go.dev/wiki/CodeReviewComments", kind: guidance, section: "Comment Sentences"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

@@ -12,4 +12,7 @@ rationale: Forges surface it in the community profile; contributors look for it 
 fix:
   human: "Add CODE_OF_CONDUCT.md (Contributor Covenant 2.1) with a contact address."
   agent: "Add CODE_OF_CONDUCT.md using the Contributor Covenant 2.1 text; ask the user for the contact address."
-refs: ["https://fleetlint.org/baseline/#public-repositories"]
+refs:
+  - {url: "https://docs.github.com/en/communities/setting-up-your-project-for-healthy-contributions/adding-a-code-of-conduct-to-your-project", kind: guidance}
+  - {url: "https://www.contributor-covenant.org/", kind: standard}
+  - "https://fleetlint.org/baseline/#public-repositories"

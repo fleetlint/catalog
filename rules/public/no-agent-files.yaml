@@ -13,4 +13,6 @@ rationale: "For projects that keep agent tooling out of their published tree: th
 fix:
   human: "git rm --cached the files and list them in .git/info/exclude so they stay local."
   agent: "Untrack the listed files with git rm --cached, add them to .git/info/exclude (not .gitignore), and commit."
-refs: ["https://fleetlint.org/baseline/#public-repositories", "https://fleetlint.org/slop/#repository-and-files"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#public-repositories", kind: convention}
+  - "https://fleetlint.org/slop/#repository-and-files"

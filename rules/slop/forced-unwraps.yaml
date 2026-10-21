@@ -15,4 +15,8 @@ rationale: "A forced unwrap turns a missing value or an error into a crash with 
 fix:
   human: "Handle the empty or error case, or propagate it (`?` in Rust, `?:`/`requireNotNull` in Kotlin, `try` in Swift)."
   agent: "Propagate the error or handle the empty case; where the value cannot be absent, state the invariant (`.expect(\"...\")` in Rust, `requireNotNull(x) { \"...\" }` in Kotlin)."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]
+refs:
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "unwrap_used"}
+  - {url: "https://detekt.dev/docs/rules/potential-bugs/", kind: check, section: "UnsafeCallOnNullableType"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#errors-types-and-robustness"

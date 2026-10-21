@@ -13,4 +13,6 @@ rationale: "It means two implementations exist and callers must know which one i
 fix:
   human: "Change the original and update its callers; delete the other."
   agent: "Report the pair; merge into the original name only when the callers and tests make the intended behaviour clear."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#code-structure"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#code-structure"

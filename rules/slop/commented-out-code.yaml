@@ -13,4 +13,7 @@ rationale: "Version control keeps old code; commented-out code is never updated 
 fix:
   human: "Delete it."
   agent: "Delete commented-out code."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/rules/commented-out-code/", kind: check, section: "ERA001"}
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

@@ -3,4 +3,6 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "pubspec.yaml has no license field; pub.dev reads the LICENSE file, which public/license checks."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://dart.dev/tools/pub/publishing", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

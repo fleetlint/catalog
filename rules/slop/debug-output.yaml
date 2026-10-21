@@ -13,4 +13,11 @@ rationale: "Raw prints cannot be levelled, redacted or switched off, and they le
 fix:
   human: "Use the logger; for a CLI, the output stream the command was given."
   agent: "Replace with the project's logger or output writer; delete prints and debugger statements that are debugging leftovers."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#errors-types-and-robustness"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/rules/print/", kind: check, section: "T201"}
+  - {url: "https://eslint.org/docs/latest/rules/no-console", kind: check, section: "no-console"}
+  - {url: "https://eslint.org/docs/latest/rules/no-debugger", kind: check, section: "no-debugger"}
+  - {url: "https://docs.rubocop.org/rubocop/latest/cops_lint.html", kind: check, section: "Lint/Debugger"}
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "dbg_macro"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#errors-types-and-robustness"

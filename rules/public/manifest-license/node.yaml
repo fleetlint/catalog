@@ -12,4 +12,6 @@ fix:
   human: "Add the SPDX identifier of the LICENSE file to package.json `license`; `fleetlint fix --apply` does it when the LICENSE text is one recognised license."
   actions:
     - set: {file: package.json, key: license, value: "{license}"}
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://docs.npmjs.com/cli/v11/configuring-npm/package-json", kind: spec, section: "license"}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

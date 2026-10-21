@@ -13,4 +13,6 @@ rationale: "The comment admits the code does not do what its name says."
 fix:
   human: "Implement it, or remove the code and track the gap in an issue."
   agent: "Report each placeholder; implement it only when the intended behaviour is clear from the callers, otherwise ask."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#comments-and-text"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#comments-and-text"

@@ -13,4 +13,7 @@ rationale: "The file does not mean what either side intended; code usually does 
 fix:
   human: "Resolve the conflict and remove the markers."
   agent: "Resolve the conflict using both sides' intent; ask when they contradict."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#repository-and-files"]
+refs:
+  - {url: "https://github.com/pre-commit/pre-commit-hooks", kind: check, section: "check-merge-conflict"}
+  - "https://fleetlint.org/baseline/#slop"
+  - "https://fleetlint.org/slop/#repository-and-files"

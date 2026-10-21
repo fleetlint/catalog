@@ -13,4 +13,6 @@ rationale: "They break anchors and search and mark the text as unedited generato
 fix:
   human: "Remove the emoji from the heading."
   agent: "Remove emoji from headings and update links to the changed anchors."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#documentation"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#documentation"

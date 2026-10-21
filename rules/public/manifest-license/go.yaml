@@ -3,4 +3,6 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "go.mod has no license field; pkg.go.dev reads the LICENSE file, which public/license checks."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://pkg.go.dev/license-policy", kind: spec}
+  - "https://fleetlint.org/stacks/#go"

@@ -34,4 +34,7 @@ rationale: The changelog and version bump are generated from commit types; one b
 fix:
   human: "Add the conventional-pre-commit hook with stages: [commit-msg] (lefthook: a commit-msg command running commitlint or cog verify)."
   agent: "Add compilerla/conventional-pre-commit to .pre-commit-config.yaml with stages: [commit-msg] and the allowed types (feat, fix, refactor, perf, test, docs, build, ci, style, chore, revert)."
-refs: ["https://fleetlint.org/baseline/#git-hooks"]
+refs:
+  - {url: "https://www.conventionalcommits.org/en/v1.0.0/", kind: standard, section: "Specification"}
+  - {url: "https://pre-commit.com/", kind: spec, section: "Confining hooks to run at certain stages"}
+  - "https://fleetlint.org/baseline/#git-hooks"

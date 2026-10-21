@@ -10,4 +10,6 @@ fix:
   human: "Add the SPDX identifier of the LICENSE file to Cargo.toml `package.license`; `fleetlint fix --apply` does it when the LICENSE text is one recognised license."
   actions:
     - set: {file: Cargo.toml, key: package.license, value: "{license}"}
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/cargo/reference/manifest.html", kind: spec, section: "The license and license-file fields"}
+  - "https://fleetlint.org/stacks/#rust"

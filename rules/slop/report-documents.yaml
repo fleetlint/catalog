@@ -15,4 +15,6 @@ rationale: "They describe one working session, go stale with the next commit and
 fix:
   human: "Delete the file; move anything lasting into the README, an ADR or the changelog."
   agent: "Move lasting content into README, docs/adr or CHANGELOG and delete the file."
-refs: ["https://fleetlint.org/baseline/#slop", "https://fleetlint.org/slop/#repository-and-files"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#slop", kind: convention}
+  - "https://fleetlint.org/slop/#repository-and-files"

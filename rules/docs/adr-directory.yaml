@@ -13,4 +13,6 @@ rationale: Without the why, the next person re-litigates every settled question.
 fix:
   human: "Add docs/adr/0001-record-architecture-decisions.md and one ADR per existing major decision."
   agent: "Create docs/adr/0001-record-architecture-decisions.md in MADR format; list the decisions already visible in the code as candidates."
-refs: ["https://fleetlint.org/baseline/#documentation"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#documentation", kind: convention}
+  - {url: "https://github.com/npryce/adr-tools", kind: spec}
