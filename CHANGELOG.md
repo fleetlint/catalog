@@ -5,6 +5,12 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+Engine level 6: needs fleetlint 0.7.0 or newer (typed refs).
+
+### Changed
+
+- **Every rule names its source with a typed ref.** A `refs:` entry is a bare URL or `{url, kind, section}`; the kinds, strongest first, are `spec` (a language or format specification, or an official tool), `guidance` (official guidance such as Go Code Review Comments, PEP 8 or GitHub's own docs), `style-guide` (a public style guide), `standard` (a process or supply-chain standard: NIST SSDF, SLSA, OpenSSF Scorecard, Keep a Changelog, Conventional Commits, Semantic Versioning, EditorConfig, Reproducible Builds), `check` (a linter's check, `section` is its id) and `convention` (a convention of this catalog with no outside source, pointing at the fleetlint.org baseline page). Implementations carry the stack's own source (the tool's documentation), capabilities the general one; the fleetlint.org page links stay as untyped refs after the typed sources.
+
 ## [0.3.1] - 2026-10-21
 
 ### Added

@@ -2,7 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-minimal
-  engine: 5
+  engine: 6
   description: >
     The floor for any repository, including experiments: nothing secret,
     accidental or oversized is tracked, no conflict markers are committed,

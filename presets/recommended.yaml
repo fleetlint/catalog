@@ -2,7 +2,7 @@ apiVersion: fleetlint.org/v1
 kind: Catalog
 metadata:
   name: fleetlint-recommended
-  engine: 5
+  engine: 6
   description: >
     The default for repositories you rely on: the task-runner contract,
     hook content, lint configuration per stack, changelog and CI basics.
