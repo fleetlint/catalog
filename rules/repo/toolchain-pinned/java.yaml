@@ -1,6 +1,6 @@
 id: repo/toolchain-pinned/java
 kind: expr
-locate: .java-version
+locate: '".java-version"'
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".java-version") && scan(d + ".java-version", r'^\s*\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".sdkmanrc") && scan(d + ".sdkmanrc", r'^\s*java\s*=\s*\d').size() > 0)

@@ -1,6 +1,6 @@
 id: repo/toolchain-pinned/ruby
 kind: expr
-locate: .ruby-version
+locate: '".ruby-version"'
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".ruby-version") && scan(d + ".ruby-version", r'^\s*(ruby-)?\d').size() > 0)
   || scan("Gemfile", r'^\s*ruby\s+["\x27]\d').size() > 0

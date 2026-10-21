@@ -1,6 +1,6 @@
 id: format/configured/rust
 kind: outcome
-locate: rustfmt.toml
+locate: '"rustfmt.toml"'
 satisfiers:
   - name: cargo-fmt-run
     expr: >

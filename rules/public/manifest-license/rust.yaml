@@ -1,6 +1,6 @@
 id: public/manifest-license/rust
 kind: expr
-locate: Cargo.toml
+locate: '"Cargo.toml"'
 expr: >
   !file("Cargo.toml")
   || scan("Cargo.toml", r'^\s*publish\s*=\s*false').size() > 0

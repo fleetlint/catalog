@@ -1,7 +1,7 @@
 id: lint/configured/java
 kind: outcome
 # The build files of the project, its parents (Maven parent POM, Gradle root build) and its convention plugins.
-locate: config/checkstyle/checkstyle.xml
+locate: '"config/checkstyle/checkstyle.xml"'
 satisfiers:
   - name: checkstyle
     expr: >

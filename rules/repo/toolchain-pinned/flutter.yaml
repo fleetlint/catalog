@@ -1,6 +1,6 @@
 id: repo/toolchain-pinned/flutter
 kind: expr
-locate: .fvmrc
+locate: '".fvmrc"'
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".fvmrc") || file(d + ".fvm/fvm_config.json"))
   || scan("pubspec.yaml", r'^\s+flutter:\s*["\x27]?\d+\.\d+\.\d+["\x27]?\s*$').size() > 0

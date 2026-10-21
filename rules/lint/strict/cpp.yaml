@@ -2,7 +2,7 @@ id: lint/strict/cpp
 kind: expr
 title: clang-tidy findings fail the build
 # clang-tidy uses the nearest .clang-tidy above each source file.
-locate: .clang-tidy
+locate: '".clang-tidy"'
 when: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".clang-tidy"))
 expr: >

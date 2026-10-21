@@ -1,6 +1,6 @@
 id: format/configured/node
 kind: outcome
-locate: .prettierrc.json
+locate: '".prettierrc.json"'
 satisfiers:
   # Prettier, Biome and dprint read their configuration from the package or a parent directory.
   - name: prettier

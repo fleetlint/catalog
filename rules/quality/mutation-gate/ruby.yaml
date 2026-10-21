@@ -1,6 +1,6 @@
 id: quality/mutation-gate/ruby
 kind: outcome
-locate: .mutant.yml
+locate: '".mutant.yml"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

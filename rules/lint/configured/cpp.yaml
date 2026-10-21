@@ -1,6 +1,6 @@
 id: lint/configured/cpp
 kind: outcome
-locate: .clang-tidy
+locate: '".clang-tidy"'
 satisfiers:
   # clang-tidy reads the nearest .clang-tidy above each source file; it must also run somewhere.
   - name: clang-tidy

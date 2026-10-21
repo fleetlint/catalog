@@ -1,6 +1,6 @@
 id: quality/mutation-gate/python
 kind: outcome
-locate: pyproject.toml
+locate: '"pyproject.toml"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

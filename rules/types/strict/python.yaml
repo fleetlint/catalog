@@ -1,6 +1,6 @@
 id: types/strict/python
 kind: outcome
-locate: pyproject.toml
+locate: '"pyproject.toml"'
 satisfiers:
   # mypy and pyright read their configuration from the project or a parent directory.
   - name: mypy-strict

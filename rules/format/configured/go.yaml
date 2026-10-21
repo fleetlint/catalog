@@ -1,6 +1,6 @@
 id: format/configured/go
 kind: outcome
-locate: .golangci.yml
+locate: '".golangci.yml"'
 satisfiers:
   # golangci-lint v2 runs the formatters its configuration enables (`golangci-lint fmt`).
   - name: golangci-formatters

@@ -4,7 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1]
-locate: docs/ARCHITECTURE.md
+locate: '"docs/ARCHITECTURE.md"'
 expr: >
   file("docs/ARCHITECTURE.md") || file("ARCHITECTURE.md")
   || (file("README.md") && scan("README.md", "(?i)^#+\\s*architecture").size() > 0)

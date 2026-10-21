@@ -4,7 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1]
-locate: SECURITY.md
+locate: '"SECURITY.md"'
 when: repo.public
 expr: exists("SECURITY*") || exists(".github/SECURITY*") || exists("docs/SECURITY*") || exists(".gitea/SECURITY*")
 message: "SECURITY.md is missing"

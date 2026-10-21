@@ -1,6 +1,6 @@
 id: lint/configured/go
 kind: outcome
-locate: .golangci.yml
+locate: '".golangci.yml"'
 satisfiers:
   # golangci-lint reads the nearest configuration up to the repository root.
   - name: golangci-lint-v2

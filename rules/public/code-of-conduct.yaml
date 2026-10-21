@@ -4,7 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
-locate: CODE_OF_CONDUCT.md
+locate: '"CODE_OF_CONDUCT.md"'
 when: repo.public
 expr: exists("CODE_OF_CONDUCT*") || exists(".github/CODE_OF_CONDUCT*") || exists("docs/CODE_OF_CONDUCT*") || exists(".gitea/CODE_OF_CONDUCT*")
 message: "CODE_OF_CONDUCT.md is missing"

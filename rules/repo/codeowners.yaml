@@ -4,7 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
-locate: .github/CODEOWNERS
+locate: '".github/CODEOWNERS"'
 expr: file("CODEOWNERS") || file(".github/CODEOWNERS") || file("docs/CODEOWNERS") || file(".gitea/CODEOWNERS")
 message: "no CODEOWNERS file"
 requirement: A CODEOWNERS file routes review requests for every path.

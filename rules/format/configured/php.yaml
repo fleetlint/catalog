@@ -1,6 +1,6 @@
 id: format/configured/php
 kind: outcome
-locate: .php-cs-fixer.dist.php
+locate: '".php-cs-fixer.dist.php"'
 satisfiers:
   - name: formatter-config
     expr: >

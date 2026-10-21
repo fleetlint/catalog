@@ -1,6 +1,6 @@
 id: public/manifest-license/python
 kind: expr
-locate: pyproject.toml
+locate: '"pyproject.toml"'
 expr: >
   !file("pyproject.toml")
   || scan("pyproject.toml", r'Private :: Do Not Upload').size() > 0

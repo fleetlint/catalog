@@ -1,6 +1,6 @@
 id: repo/toolchain-pinned/node
 kind: expr
-locate: .nvmrc
+locate: '".nvmrc"'
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".nvmrc") && scan(d + ".nvmrc", r'^\s*v?\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".node-version") && scan(d + ".node-version", r'^\s*v?\d').size() > 0)

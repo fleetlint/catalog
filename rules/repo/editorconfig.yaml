@@ -3,7 +3,7 @@ title: .editorconfig is present
 kind: expr
 severity: warning
 scope: root
-locate: .editorconfig
+locate: '".editorconfig"'
 expr: file(".editorconfig")
 message: ".editorconfig is missing"
 requirement: An .editorconfig declares charset, line endings, final newline and indentation.

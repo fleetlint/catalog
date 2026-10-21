@@ -5,13 +5,17 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
-Engine level 7: needs fleetlint 0.8.0 or newer (published artifacts as named instances; `combine:` is gone).
+Engine level 7: needs fleetlint 0.8.0 or newer (published artifacts as named instances, `locate:`; `combine:` and `artifact_workflows()` are gone).
 
 ### Changed
 
 - **Published artifacts are instances with names.** `artifacts/image.yaml`, `helm-chart.yaml` and `oci-artifact.yaml` say with `instances:` what tells one artifact of the kind from another (an image reference, a chart path, a registry reference), so two images in one repository are checked one by one and the report names the one that fails. The release implementations read the current artifact's workflows as `artifact.workflows` instead of `artifact_workflows(kind)`.
-- Rules whose finding is about one file say so with `locate:` (189 rules), so reports and SARIF point at the file.
+- Rules whose finding is about one file say so with `locate:` (189 rules), a CEL string expression (`'"README.md"'`, or computed from the task runner or the publishing workflow), so reports and SARIF point at the file.
 - **`combine:` is gone.** `changelog/generator-configured` is one rule at the root with every generator as a satisfier (the per-stack implementations are aliases of it). `release/reproducible-build` is keyed by artifact: `release-files` (Go `-trimpath` with `mod_timestamp`, Cargo `--locked` with `--remap-path-prefix`, .NET `ContinuousIntegrationBuild`, or `SOURCE_DATE_EPOCH`), `image` (`SOURCE_DATE_EPOCH` or `rewrite-timestamp=true`), `maven`, `nuget`, `pypi` and `gem`; `npm`, `crate` and `pub` are source packages and do not apply, `helm-chart`, `oci-artifact`, `android-app` and `apple-app` are not checked. The stack-keyed ids are aliases of the capability.
+
+### Security
+
+- The publish workflow passes the pushed digest to `cosign` through the environment instead of interpolating a step output into `run:`.
 
 ## [0.4.0] - 2026-10-21
 

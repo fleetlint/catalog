@@ -1,6 +1,6 @@
 id: repo/lockfile-committed/flutter
 kind: expr
-locate: pubspec.lock
+locate: '"pubspec.lock"'
 expr: >
   "pubspec.lock" in tracked() || scan("pubspec.yaml", r'^(dev_)?dependencies:').size() == 0
   || (scan("pubspec.yaml", r'^resolution:\s*workspace').size() > 0 && ["../", "../../", "../../../"].exists(d, file(d + "pubspec.lock")))

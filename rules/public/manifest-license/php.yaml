@@ -1,6 +1,6 @@
 id: public/manifest-license/php
 kind: expr
-locate: composer.json
+locate: '"composer.json"'
 expr: >
   !file("composer.json") || json("composer.json") == null
   || (has(json("composer.json").type) && json("composer.json").type == "project")

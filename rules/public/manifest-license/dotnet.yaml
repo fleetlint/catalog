@@ -1,6 +1,6 @@
 id: public/manifest-license/dotnet
 kind: expr
-locate: Directory.Build.props
+locate: '"Directory.Build.props"'
 expr: >
   !glob("**/*.csproj").exists(f, text(f).matches(r'<(PackageId|IsPackable>\s*true)'))
   || (glob("**/*.csproj") + glob("**/Directory.Build.props")).exists(f, text(f).matches(r'<PackageLicense(Expression|File)>'))

@@ -1,6 +1,6 @@
 id: quality/mutation-gate/node
 kind: outcome
-locate: stryker.config.mjs
+locate: '"stryker.config.mjs"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

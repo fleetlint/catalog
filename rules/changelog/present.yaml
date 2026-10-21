@@ -4,7 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1, 2]
-locate: CHANGELOG.md
+locate: '"CHANGELOG.md"'
 expr: file("CHANGELOG.md") && scan("CHANGELOG.md", "^##\\s+\\S").size() > 0
 message: "CHANGELOG.md is missing or has no version sections"
 requirement: "The repository keeps a CHANGELOG.md with one `## ` section per version (`## [Unreleased]` until the first release), as Keep a Changelog, git-cliff, release-please and changesets write it."

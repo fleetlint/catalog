@@ -3,7 +3,7 @@ title: .gitattributes normalizes line endings
 kind: expr
 severity: warning
 scope: root
-locate: .gitattributes
+locate: '".gitattributes"'
 expr: file(".gitattributes") && text(".gitattributes").contains("text=auto")
 message: ".gitattributes with `* text=auto` is missing"
 requirement: ".gitattributes sets `* text=auto eol=lf` and marks binaries."

@@ -1,6 +1,6 @@
 id: format/configured/dotnet
 kind: outcome
-locate: .editorconfig
+locate: '".editorconfig"'
 satisfiers:
   - name: dotnet-format-run
     expr: >

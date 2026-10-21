@@ -1,6 +1,6 @@
 id: public/manifest-license/node
 kind: expr
-locate: package.json
+locate: '"package.json"'
 expr: >
   !file("package.json")
   || (has(json("package.json").private) && json("package.json").private == true)

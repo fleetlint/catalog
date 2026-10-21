@@ -1,6 +1,6 @@
 id: quality/mutation-gate/dotnet
 kind: outcome
-locate: stryker-config.json
+locate: '"stryker-config.json"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

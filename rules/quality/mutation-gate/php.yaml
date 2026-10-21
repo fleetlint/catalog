@@ -1,6 +1,6 @@
 id: quality/mutation-gate/php
 kind: outcome
-locate: infection.json5
+locate: '"infection.json5"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

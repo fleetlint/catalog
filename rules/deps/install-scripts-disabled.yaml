@@ -4,7 +4,7 @@ kind: expr
 severity: info
 stacks: [node]
 tiers: [1, 2]
-locate: .npmrc
+locate: '".npmrc"'
 expr: >
   ["", "../", "../../", "../../../"].exists(d,
     (file(d + ".npmrc") && scan(d + ".npmrc", r'^\s*ignore-scripts\s*=\s*true').size() > 0)

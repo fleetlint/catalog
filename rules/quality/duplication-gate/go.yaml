@@ -1,6 +1,6 @@
 id: quality/duplication-gate/go
 kind: outcome
-locate: .golangci.yml
+locate: '".golangci.yml"'
 satisfiers:
   - name: golangci-dupl
     expr: >

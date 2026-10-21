@@ -1,6 +1,6 @@
 id: lint/configured/node
 kind: outcome
-locate: eslint.config.mjs
+locate: '"eslint.config.mjs"'
 satisfiers:
   # ESLint and Biome find their configuration in the working directory or above it.
   - name: eslint

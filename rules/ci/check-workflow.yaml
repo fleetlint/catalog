@@ -4,7 +4,7 @@ kind: outcome
 severity: warning
 scope: root
 tiers: [1, 2]
-locate: .github/workflows/check.yml
+locate: '".github/workflows/check.yml"'
 satisfiers:
   - name: task-runner
     expr: >

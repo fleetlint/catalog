@@ -1,6 +1,6 @@
 id: lint/configured/kotlin
 kind: outcome
-locate: config/detekt/detekt.yml
+locate: '"config/detekt/detekt.yml"'
 satisfiers:
   # The detekt 2 Gradle plugin (id dev.detekt), in this build, a parent build or a convention plugin.
   # A version-catalog alias or a bare detekt {} block counts when the catalog maps detekt to dev.detekt.

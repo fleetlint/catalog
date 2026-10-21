@@ -4,7 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
-locate: .github/ISSUE_TEMPLATE/bug.md
+locate: '".github/ISSUE_TEMPLATE/bug.md"'
 when: repo.public
 expr: >
   exists(".github/ISSUE_TEMPLATE/*") || exists(".gitea/ISSUE_TEMPLATE/*") || exists(".gitea/issue_template/*")
