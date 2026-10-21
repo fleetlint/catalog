@@ -2,9 +2,9 @@ id: release/sbom/nuget
 kind: outcome
 satisfiers:
   - name: cyclonedx-dotnet
-    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bdotnet[ -]CycloneDX\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bdotnet[ -]CycloneDX\\b")))
   - name: sbom-tool
-    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bsbom-tool generate\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bsbom-tool generate\\b")))
 partials:
   - name: sbom-outside-release
     severity: info

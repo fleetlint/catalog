@@ -3,14 +3,14 @@ kind: outcome
 satisfiers:
   - name: buildkit
     expr: >
-      artifact_workflows("image").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         (s.uses.startsWith("docker/build-push-action") && "sbom" in s.with && string(s.with.sbom) == "true")
         || s.run.matches("\\bdocker buildx build\\b[^\\n]*--sbom")))
   - name: cosign-attest
-    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)")))
   - name: syft-on-image
     expr: >
-      artifact_workflows("image").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         s.uses.startsWith("anchore/sbom-action") || s.run.matches("\\bsyft\\b[^\\n]*\\b(registry:|docker:|ghcr\\.io|docker\\.io|quay\\.io)|\\btrivy image\\b[^\\n]*--format\\s*(spdx|cyclonedx)")))
   - name: goreleaser-sboms
     expr: >

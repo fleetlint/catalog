@@ -2,9 +2,9 @@ id: release/signing/nuget
 kind: outcome
 satisfiers:
   - name: nuget-sign
-    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget sign|nuget(\\.exe)? sign)\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget sign|nuget(\\.exe)? sign)\\b")))
   - name: authenticode
-    expr: artifact_workflows("nuget").exists(w, steps(w).exists(s, s.run.matches("\\bsigntool(\\.exe)? sign\\b") || s.uses.startsWith("azure/trusted-signing-action")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bsigntool(\\.exe)? sign\\b") || s.uses.startsWith("azure/trusted-signing-action")))
 requirement: >
   NuGet packages are signed (`dotnet nuget sign`) or the binaries inside carry an Authenticode
   signature (signtool, Azure Trusted Signing) in the workflow that pushes them. nuget.org adds its

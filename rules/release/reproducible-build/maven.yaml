@@ -1,0 +1,24 @@
+id: release/reproducible-build/maven
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: maven-output-timestamp
+    expr: file("pom.xml") && text("pom.xml").matches(r'<project\.build\.outputTimestamp>\s*[^<\s]')
+  - name: gradle-archives
+    expr: >
+      glob("**/build.gradle*").exists(f, text(f).matches(r'preserveFileTimestamps\s*=\s*false') && text(f).matches(r'reproducibleFileOrder\s*=\s*true'))
+      || (file("gradle/wrapper/gradle-wrapper.properties") && text("gradle/wrapper/gradle-wrapper.properties").matches(r'gradle-([9]|[1-9]\d)\.'))
+  - name: source-date-epoch
+    expr: >
+      artifact.workflows.exists(w, text(w).contains("SOURCE_DATE_EPOCH"))
+      || taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.contains("SOURCE_DATE_EPOCH") && !l.matches(params.skip)))
+      || (taskrunner.kind == "make" && scan(taskrunner.file, r'^\s*(export\s+)?SOURCE_DATE_EPOCH\s*[:?]?=').size() > 0)
+requirement: "The published archives are reproducible: Maven sets `project.build.outputTimestamp`; Gradle sets `preserveFileTimestamps = false` and `reproducibleFileOrder = true` on its archive tasks, or the wrapper is Gradle 9 or later, where that is the default; or `SOURCE_DATE_EPOCH` is set for the release build."
+fix:
+  human: "Maven: set `<project.build.outputTimestamp>` (the release plugin updates it); Gradle: configure `tasks.withType<AbstractArchiveTask>` or update to Gradle 9."
+refs:
+  - {url: "https://maven.apache.org/guides/mini/guide-reproducible-builds.html", kind: spec}
+  - {url: "https://docs.gradle.org/current/userguide/working_with_files.html", kind: spec, section: "Reproducible archives"}
+  - {url: "https://reproducible-builds.org/docs/source-date-epoch/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

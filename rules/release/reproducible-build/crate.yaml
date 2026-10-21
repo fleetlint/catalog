@@ -1,0 +1,7 @@
+id: release/reproducible-build/crate
+kind: expr
+when: "false"
+expr: "true"
+requirement: "`cargo package` writes the sources with fixed timestamps; the crate of a commit is the same wherever it is packaged. Binaries built from it are checked as release files."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

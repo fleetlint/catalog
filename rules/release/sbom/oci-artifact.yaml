@@ -2,10 +2,10 @@ id: release/sbom/oci-artifact
 kind: outcome
 satisfiers:
   - name: cosign-attest
-    expr: artifact_workflows("oci-artifact").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)|\\bcosign attach sbom\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)|\\bcosign attach sbom\\b")))
   - name: oras-attach
     expr: >
-      artifact_workflows("oci-artifact").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         s.run.matches("\\boras attach\\b[^\\n]*--artifact-type[= ][^\\n]*(spdx|cyclonedx|sbom)")
         || glob("**/*.sh").exists(f, s.run.contains(f) && text(f).matches("\\boras attach\\b[^\\n]*--artifact-type[= ][^\\n]*(spdx|cyclonedx|sbom)"))))
 partials:

@@ -1,9 +1,9 @@
 id: release/trusted-publishing/gem
 kind: expr
 when: >
-  artifact_workflows("gem").filter(w, ci_kind(w) in ["github", "gitlab"]).size() > 0
+  artifact.workflows.filter(w, ci_kind(w) in ["github", "gitlab"]).size() > 0
 foreach: >
-  artifact_workflows("gem").filter(w, ci_kind(w) in ["github", "gitlab"])
+  artifact.workflows.filter(w, ci_kind(w) in ["github", "gitlab"])
 expr: >
   ci_kind(item) == "gitlab"
     ? text(item).matches("(?m)^\\s*id_tokens:")

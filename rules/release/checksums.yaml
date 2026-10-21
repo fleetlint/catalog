@@ -21,7 +21,7 @@ satisfiers:
       tagged_workflows().exists(w, steps(w).exists(s, s.uses.startsWith("docker/build-push-action")
         || s.run.matches("\\b(docker|podman|buildah) push\\b|\\bdocker buildx build\\b[^\\n]*--push|/kaniko/executor\\b|\\bko (build|publish)\\b|\\bcrane push\\b")))
   - name: registry-artifact
-    expr: artifact_workflows("oci-artifact").size() > 0 || artifact_workflows("helm-chart").size() > 0
+    expr: artifact.workflows.size() > 0 || artifact.workflows.size() > 0
 message: "the release publishes no checksums file"
 requirement: >
   A checksums file (sha256) covering every artifact is uploaded with the release, and is what gets

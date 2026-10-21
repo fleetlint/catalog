@@ -3,7 +3,7 @@ kind: outcome
 satisfiers:
   - name: pypi-attestations
     expr: >
-      artifact_workflows("pypi").exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+      artifact.workflows.exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
         s.uses.startsWith("pypa/gh-action-pypi-publish") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
 requirement: "Distributions are uploaded by pypa/gh-action-pypi-publish with trusted publishing, which attaches PEP 740 attestations unless `attestations: false`."
 fix:

@@ -1,0 +1,7 @@
+id: release/reproducible-build/pub
+kind: expr
+when: "false"
+expr: "true"
+requirement: "`dart pub publish` uploads the sources; nothing is compiled."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

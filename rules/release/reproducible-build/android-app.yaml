@@ -1,0 +1,7 @@
+id: release/reproducible-build/android-app
+kind: expr
+when: "false"
+expr: "true"
+requirement: "a reproducible APK needs a pinned toolchain and a build that avoids per-build identifiers; fleetlint does not check Gradle for it. Not checked."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

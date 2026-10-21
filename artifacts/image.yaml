@@ -4,7 +4,7 @@ refs: ["https://fleetlint.org/baseline/#releases"]
 # An image pushed to a registry from a workflow that runs on push, tag, release, schedule or by
 # hand (not from a pull request): a build-push action that pushes, docker/podman/buildah push,
 # ko, Jib, crane, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`.
-summary: "docker/build-push-action with `push: true`, `docker|podman|buildah|nerdctl push`, `docker buildx build --push`, ko, Jib, crane, redhat-actions/push-to-registry, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request)"
+summary: "docker/build-push-action with `push: true`, `docker|podman|buildah|nerdctl push`, `docker buildx build --push`, ko, Jib, crane, redhat-actions/push-to-registry, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request). Each image reference pushed (without tag or digest) is one artifact: from docker/metadata-action `images`, else docker/build-push-action `tags`, else the push command; plus GoReleaser's first `image_templates`, `images` or `repositories` entry per item."
 detect: >
   workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && (
     steps(w).exists(s,
@@ -15,3 +15,29 @@ detect: >
     || (steps(w).exists(s, s.uses.startsWith("goreleaser/goreleaser-action") || s.run.matches("\\bgoreleaser\\b"))
         && [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map
              && (has(yaml(f).dockers) || has(yaml(f).dockers_v2) || has(yaml(f).kos))))))
+# The image references the workflow pushes, each without `:tag` or `@digest` (`^(.+?)(:[^/]*|@.*)?$`
+# keeps a registry port). The first non-empty of, in order: docker/metadata-action `images` (one per
+# line, `name=` prefix and `,options` dropped), docker/build-push-action `tags` (one per line or
+# comma), `docker|podman|buildah|nerdctl push <ref>` and `crane push <src> <ref>` in run steps; a
+# `${{ ... }}` expression stays whole. When the workflow runs GoReleaser, the first `image_templates`
+# of each `dockers` item, the first `images` of each `dockers_v2` item and the first `repositories`
+# of each `kos` item are added. A workflow that names nothing is one image named after the file.
+instances: >
+  ([
+    steps(item).filter(s, s.uses.startsWith("docker/metadata-action") && "images" in s.with)
+      .map(s, findall(string(s.with.images), "(?m)^[ \\t]*(?:name=)?([^,\\n]+)")).flatten(),
+    steps(item).filter(s, s.uses.startsWith("docker/build-push-action") && "tags" in s.with)
+      .map(s, findall(string(s.with.tags), "[^\\n,]+")).flatten()
+      .map(t, find(string(t).trim(), "^(.+?)(?::[^/]*|@.*)?$")),
+    steps(item).map(s,
+      findall(s.run, "\\b(?:docker|podman|buildah|nerdctl) push\\s+(?:-\\S+\\s+)*((?:\\$\\{\\{[^}]*\\}\\}|\\S)+)")
+      + findall(s.run, "\\bcrane push\\s+(?:-\\S+\\s+)*\\S+\\s+((?:\\$\\{\\{[^}]*\\}\\}|\\S)+)")).flatten()
+      .map(t, find(string(t), "^(.+?)(?::[^/]*|@.*)?$"))
+  ].filter(l, l.size() > 0) + [[]])[0]
+  + (steps(item).exists(s, s.uses.startsWith("goreleaser/goreleaser-action") || s.run.matches("\\bgoreleaser\\b"))
+     ? [".goreleaser.yaml", ".goreleaser.yml"].filter(f, file(f) && type(yaml(f)) == map).map(f,
+         (has(yaml(f).dockers) ? yaml(f).dockers.filter(d, has(d.image_templates) && d.image_templates.size() > 0).map(d, d.image_templates[0]) : [])
+         + (has(yaml(f).dockers_v2) ? yaml(f).dockers_v2.filter(d, has(d.images) && d.images.size() > 0).map(d, d.images[0]) : [])
+         + (has(yaml(f).kos) ? yaml(f).kos.filter(k, has(k.repositories) && k.repositories.size() > 0).map(k, k.repositories[0]) : [])
+       ).flatten().map(t, find(string(t), "^(.+?)(?::[^/]*|@.*)?$"))
+     : [])

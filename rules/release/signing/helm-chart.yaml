@@ -2,9 +2,9 @@ id: release/signing/helm-chart
 kind: outcome
 satisfiers:
   - name: cosign
-    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
   - name: helm-provenance
-    expr: artifact_workflows("helm-chart").exists(w, steps(w).exists(s, s.run.matches("\\bhelm package\\b[^\\n]*--sign|\\bcr upload\\b[^\\n]*--sign") || (s.uses.startsWith("helm/chart-releaser-action") && text(w).matches("(?m)^\\s*sign:\\s*true"))))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bhelm package\\b[^\\n]*--sign|\\bcr upload\\b[^\\n]*--sign") || (s.uses.startsWith("helm/chart-releaser-action") && text(w).matches("(?m)^\\s*sign:\\s*true"))))
 partials:
   - name: cosign-outside-release
     severity: warning

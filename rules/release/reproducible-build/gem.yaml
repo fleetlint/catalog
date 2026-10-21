@@ -1,0 +1,17 @@
+id: release/reproducible-build/gem
+kind: outcome
+params:
+  skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'
+satisfiers:
+  - name: source-date-epoch
+    expr: >
+      artifact.workflows.exists(w, text(w).contains("SOURCE_DATE_EPOCH"))
+      || taskrunner.recipes.exists(t, taskrunner.recipes[t].exists(l, l.contains("SOURCE_DATE_EPOCH") && !l.matches(params.skip)))
+      || (taskrunner.kind == "make" && scan(taskrunner.file, r'^\s*(export\s+)?SOURCE_DATE_EPOCH\s*[:?]?=').size() > 0)
+requirement: "`SOURCE_DATE_EPOCH` is set for the build of the gem (RubyGems takes the file timestamps from `SOURCE_DATE_EPOCH`), in the workflow that publishes it or in the task runner."
+fix:
+  human: "Export `SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)` before the build step of the publishing workflow."
+refs:
+  - {url: "https://guides.rubygems.org/specification-reference/", kind: spec}
+  - {url: "https://reproducible-builds.org/docs/source-date-epoch/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

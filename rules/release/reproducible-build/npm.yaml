@@ -1,0 +1,7 @@
+id: release/reproducible-build/npm
+kind: expr
+when: "false"
+expr: "true"
+requirement: "npm, pnpm, yarn and bun pack a package with fixed file timestamps, so the tarball of a commit is the same wherever it is built; nothing to configure."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

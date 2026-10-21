@@ -6,9 +6,20 @@ refs: ["https://fleetlint.org/baseline/#releases", "https://oras.land/docs/"]
 # in the step itself or in a repository script the step runs (`scripts/publish.sh`). A push to a
 # throwaway registry (localhost, plain HTTP) in a test job is not a release. Images are `image`,
 # charts `helm-chart`.
-summary: "`oras push`, `flux push artifact`, `cosign upload blob`, `regctl artifact put`, in the step or in a repository script the step runs, to a registry that is not localhost; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request)"
+summary: "`oras push`, `flux push artifact`, `cosign upload blob`, `regctl artifact put`, in the step or in a repository script the step runs, to a registry that is not localhost; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request). Each registry reference pushed (without tag or digest) is one artifact; a workflow whose push names none is one artifact named after the file."
 detect: >
   workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && steps(w).exists(s,
     !s.run.matches("\\blocalhost\\b|127\\.0\\.0\\.1|--plain-http") && (
     s.run.matches("\\boras push\\b|\\bflux push artifact\\b|\\bcosign upload blob\\b|\\bregctl artifact put\\b")
     || glob("**/*.sh").exists(f, s.run.contains(f) && text(f).matches("\\boras push\\b|\\bflux push artifact\\b|\\bcosign upload blob\\b|\\bregctl artifact put\\b")))))
+# The registry reference pushed, without `:tag`, `@digest` or `oci://`: the first `host/path`
+# argument (a `${{ ... }}` or `$VAR` host counts) of `oras push`, `flux push artifact` and
+# `regctl artifact put`, the last argument of a `cosign upload blob` line. Read from the step and,
+# as detect does, from the repository scripts the step runs; a localhost push names nothing.
+instances: >
+  steps(item).map(s, [s.run] + glob("**/*.sh").filter(f, s.run.contains(f)).map(f, text(f))).flatten()
+    .filter(t, !t.matches("\\blocalhost\\b|127\\.0\\.0\\.1|--plain-http"))
+    .map(t,
+      findall(t, "\\b(?:oras push|flux push artifact|regctl artifact put)\\b[^\\n]*?\\s(?:oci://)?((?:\\$\\{\\{[^}]*\\}\\}|\\$\\w+|[\\w.-]+\\.[\\w-]+)(?::\\d+)?/\\S+)")
+      + findall(t, "(?m)\\bcosign upload blob\\b.*\\s(?:oci://)?((?:\\$\\{\\{[^}]*\\}\\}|\\S)+)[ \\t]*$"))
+    .flatten().map(t, find(string(t), "^(.+?)(?::[^/]*|@.*)?$"))

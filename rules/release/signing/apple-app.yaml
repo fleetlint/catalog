@@ -3,10 +3,10 @@ kind: outcome
 satisfiers:
   - name: codesign-on-export
     expr: >
-      artifact_workflows("apple-app").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         s.run.matches("\\bxcodebuild\\b[^\\n]*-exportArchive|\\bcodesign\\b[^\\n]*(--sign|-s\\b)|\\bfastlane\\b[^\\n]*\\b(gym|build_app|build_ios_app|match|sigh)\\b|\\bflutter build ipa\\b[^\\n]*--export-options-plist")))
   - name: notarized
-    expr: artifact_workflows("apple-app").exists(w, steps(w).exists(s, s.run.matches("\\bnotarytool submit\\b") && s.run.matches("\\bstapler staple\\b|--wait")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bnotarytool submit\\b") && s.run.matches("\\bstapler staple\\b|--wait")))
 requirement: >
   The build is code-signed with a Developer ID or distribution identity on export (xcodebuild
   -exportArchive with a signing identity, codesign, fastlane gym/match, `flutter build ipa

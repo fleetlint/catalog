@@ -9,9 +9,9 @@ satisfiers:
       || (glob("**/*.gradle*") + glob("buildSrc/**/*.kt") + glob("buildSrc/**/*.java") + glob("build-logic/**/*.kt"))
         .exists(f, text(f).matches("(?m)^\\s*signing\\s*$|\\bsigning\\s*\\{|id\\(\\s*[\"']signing[\"']\\s*\\)|`signing`|\\bsignAllPublications\\(\\)|plugin\\s*[:=]\\s*[\"']signing[\"']"))
   - name: jreleaser-sign
-    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bjreleaser (sign|deploy|full-release)\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bjreleaser (sign|deploy|full-release)\\b")))
   - name: jarsigner
-    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bjarsigner\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bjarsigner\\b")))
 requirement: >
   Artifacts for Maven Central are signed with PGP (Maven's gpg or sign plugin, Gradle's `signing`
   plugin or `signAllPublications()`, JReleaser), or JARs are signed with jarsigner in the release

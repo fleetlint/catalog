@@ -3,10 +3,10 @@ kind: outcome
 satisfiers:
   - name: npm-provenance
     expr: >
-      artifact_workflows("npm").exists(w, steps(w).exists(s, s.run.matches("\\b(npm|pnpm|yarn npm|bun) publish\\b")
+      artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\b(npm|pnpm|yarn npm|bun) publish\\b")
         && (s.run.matches("publish[^\\n]*--provenance") || text(w).matches("NPM_CONFIG_PROVENANCE:\\s*[\"']?true|id-token:\\s*write"))))
   - name: npm-publish-action
-    expr: artifact_workflows("npm").exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s, s.uses.startsWith("JS-DevTools/npm-publish") && "provenance" in s.with && string(s.with.provenance) == "true"))
+    expr: artifact.workflows.exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s, s.uses.startsWith("JS-DevTools/npm-publish") && "provenance" in s.with && string(s.with.provenance) == "true"))
 requirement: >
   The package is published with provenance (`npm publish --provenance`, `NPM_CONFIG_PROVENANCE`, or
   trusted publishing with `id-token: write`), which npm signs with Sigstore; that signature is what

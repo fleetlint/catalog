@@ -1,0 +1,7 @@
+id: release/reproducible-build/oci-artifact
+kind: expr
+when: "false"
+expr: "true"
+requirement: "the artifact is whatever the step pushes (a bundle, a catalog, a module): its reproducibility is that of the files, which are checked where they are built. Not checked."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

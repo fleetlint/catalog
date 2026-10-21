@@ -1,0 +1,7 @@
+id: release/reproducible-build/helm-chart
+kind: expr
+when: "false"
+expr: "true"
+requirement: "`helm package` keeps the file timestamps of the checkout; the chart archive of a commit differs only in those, and the registry stores it by digest. Not checked."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

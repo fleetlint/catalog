@@ -3,17 +3,17 @@ kind: outcome
 satisfiers:
   - name: cosign-by-digest
     expr: >
-      artifact_workflows("image").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         s.run.matches("\\bcosign sign\\b[^\\n]*(@sha256:|@\\$\\{\\{|@\\$\\{?[A-Z_]*DIGEST|\\$\\{\\{\\s*steps\\.[^}]*\\.outputs\\.digest)")))
   - name: goreleaser-docker-signs
     expr: >
       [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map && "docker_signs" in yaml(f))
   - name: notation
-    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bnotation sign\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bnotation sign\\b")))
 partials:
   - name: cosign-by-tag
     severity: warning
-    expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))
     message: "the image is signed by tag, not by digest: a tag can move after signing"
   - name: cosign-outside-release
     severity: warning

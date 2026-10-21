@@ -3,11 +3,11 @@ kind: outcome
 satisfiers:
   # The CycloneDX build plugins resolve the real dependency graph of the published artifact.
   - name: cyclonedx-gradle
-    expr: artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("\\bcyclonedx(Direct)?Bom\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcyclonedx(Direct)?Bom\\b")))
   - name: cyclonedx-maven
     expr: >
       glob("**/pom.xml").exists(f, text(f).contains("cyclonedx-maven-plugin") && text(f).matches("<goal>make(Aggregate)?Bom</goal>"))
-      || artifact_workflows("maven").exists(w, steps(w).exists(s, s.run.matches("cyclonedx(-maven)?:make(Aggregate)?Bom\\b")))
+      || artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("cyclonedx(-maven)?:make(Aggregate)?Bom\\b")))
 partials:
   - name: sbom-outside-release
     severity: info

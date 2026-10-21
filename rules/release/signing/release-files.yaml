@@ -6,9 +6,9 @@ satisfiers:
       [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map
         && ("signs" in yaml(f) || "binary_signs" in yaml(f)))
   - name: cosign-in-release
-    expr: artifact_workflows("release-files").exists(w, steps(w).exists(s, s.run.matches("\\bcosign (sign|sign-blob|attest-blob)\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign (sign|sign-blob|attest-blob)\\b")))
   - name: gpg
-    expr: artifact_workflows("release-files").exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("gpg .*(--detach-sign|-b\\b)")))
 partials:
   - name: cosign-outside-release
     severity: warning

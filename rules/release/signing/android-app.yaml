@@ -5,7 +5,7 @@ satisfiers:
   # which Android checks on install and on every update. The release verifies or applies it.
   - name: apk-signature
     expr: >
-      artifact_workflows("android-app").exists(w, steps(w).exists(s,
+      artifact.workflows.exists(w, steps(w).exists(s,
         s.run.matches("\\bapksigner\\b[^\\n]*\\b(sign|verify)\\b|\\bjarsigner\\b")
         || s.uses.matches("^(r0adkll|ilharp)/sign-android-release")))
 requirement: >

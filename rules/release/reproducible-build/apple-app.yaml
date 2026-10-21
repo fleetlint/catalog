@@ -1,0 +1,7 @@
+id: release/reproducible-build/apple-app
+kind: expr
+when: "false"
+expr: "true"
+requirement: "Xcode archives carry signing identities and per-build identifiers; reproducibility is not reachable from the repository alone. Not checked."
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

@@ -1,14 +1,15 @@
 id: release/reproducible-build
 title: Release builds are reproducible
 kind: capability
-# A release belongs to the repository: the stack that publishes it decides.
-combine: any
+# Checked per published artifact: what makes a build reproducible differs between binaries, an
+# image and a Maven archive, and some kinds are source packages with nothing to reproduce.
+by: artifact
 severity: info
 scope: root
 tiers: [1]
-when: release.exists
+when: release.exists || repo.artifacts.size() > 0
 message: "the release build is not set up to be reproducible"
-requirement: "The release build removes what differs between two builds of the same commit: local paths and timestamps. The stack's build settings do it, or `SOURCE_DATE_EPOCH` is set for the release build (in a tag-triggered CI file or the task runner)."
+requirement: "The release build removes what differs between two builds of the same commit: local paths and timestamps. The stack's build settings do it for the artifact, or `SOURCE_DATE_EPOCH` is set for the release build (in the workflow that publishes the artifact or in the task runner). Each artifact kind's implementation says what counts for it."
 rationale: When anyone can rebuild a release bit for bit from the tag, a tampered artifact or a compromised build machine shows up as a mismatch.
 fix:
   human: "Set the stack's reproducibility options in the release build (see https://reproducible-builds.org/docs/) and export SOURCE_DATE_EPOCH from the commit time."

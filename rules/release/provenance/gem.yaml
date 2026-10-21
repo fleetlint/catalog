@@ -3,7 +3,7 @@ kind: outcome
 satisfiers:
   - name: release-gem
     expr: >
-      artifact_workflows("gem").exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
+      artifact.workflows.exists(w, text(w).matches("id-token:\\s*write") && steps(w).exists(s,
         s.uses.startsWith("rubygems/release-gem") && !("attestations" in s.with && (s.with.attestations == false || s.with.attestations == "false"))))
 requirement: "Gems are pushed by rubygems/release-gem with trusted publishing, which attaches Sigstore attestations."
 fix:

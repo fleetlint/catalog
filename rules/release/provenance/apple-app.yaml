@@ -2,14 +2,14 @@ id: release/provenance/apple-app
 kind: outcome
 satisfiers:
   - name: attest-action
-    expr: artifact_workflows("apple-app").exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))
   - name: slsa-generator
-    expr: artifact_workflows("apple-app").exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.uses.startsWith("slsa-framework/")) || jobs(w).exists(j, j.uses.startsWith("slsa-framework/")))
   - name: cosign-attest-blob
-    expr: artifact_workflows("apple-app").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest-blob\\b")))
+    expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest-blob\\b")))
   - name: gitlab-artifact-metadata
     expr: >
-      artifact_workflows("apple-app").exists(w, ci_kind(w) == "gitlab"
+      artifact.workflows.exists(w, ci_kind(w) == "gitlab"
         && text(w).matches("RUNNER_GENERATE_ARTIFACTS_METADATA:\\s*[\"']?true"))
 requirement: >
   The workflow that publishes the IPA, app, pkg or dmg attests its provenance: actions/attest-build-provenance (the
