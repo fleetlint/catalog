@@ -11,4 +11,6 @@ message: "a Go build may rewrite go.mod (-mod=mod)"
 requirement: "Go verifies every download against go.sum and, since Go 1.16, refuses to change go.mod during a build (`-mod=readonly`); this holds unless a recipe or CI step passes `-mod=mod` (or sets it in GOFLAGS), which is what is checked."
 fix:
   human: "Drop `-mod=mod`; run `go mod tidy` and commit go.mod and go.sum instead."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://go.dev/ref/mod", kind: spec, section: "Build commands"}
+  - "https://fleetlint.org/stacks/#go"

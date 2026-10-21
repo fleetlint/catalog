@@ -18,4 +18,6 @@ satisfiers:
 requirement: "A recipe, a package.json script or a CI step runs knip (or depcheck)."
 fix:
   human: "Run `npx knip --dependencies` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://knip.dev/", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

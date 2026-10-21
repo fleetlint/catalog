@@ -12,4 +12,7 @@ fix:
   agent: "Create .gitignore with the standard patterns for the detected stacks and OS/editor files."
   actions:
     - gitignore: [".DS_Store", "*.log", ".env", ".env.*", "!.env.example"]
-refs: ["https://fleetlint.org/baseline/#hygiene"]
+refs:
+  - {url: "https://git-scm.com/docs/gitignore", kind: spec}
+  - {url: "https://docs.github.com/en/get-started/git-basics/ignoring-files", kind: guidance}
+  - "https://fleetlint.org/baseline/#hygiene"

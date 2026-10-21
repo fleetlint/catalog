@@ -9,4 +9,6 @@ message: "no Node lockfile is tracked"
 requirement: "package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock or bun.lock is tracked when package.json declares dependencies or workspaces; a workspace member uses the lockfile at the workspace root (a parent directory with `workspaces` in package.json or pnpm-workspace.yaml)."
 fix:
   human: "Run the package manager's install and commit its lockfile."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://docs.npmjs.com/cli/v11/configuring-npm/package-lock-json", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

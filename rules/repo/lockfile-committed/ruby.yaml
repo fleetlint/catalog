@@ -5,4 +5,6 @@ message: "Gemfile.lock is not tracked"
 requirement: "Gemfile.lock is tracked when there is a Gemfile."
 fix:
   human: "Run `bundle lock` and commit Gemfile.lock."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://guides.rubygems.org/dependency_management/", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

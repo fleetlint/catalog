@@ -53,4 +53,7 @@ fix:
   actions:
     - template: "{stack}/devcontainer.json"
       to: .devcontainer/devcontainer.json
-refs: ["https://fleetlint.org/baseline/#task-runner-contract"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#task-runner-contract", kind: convention}
+  - {url: "https://containers.dev/", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}

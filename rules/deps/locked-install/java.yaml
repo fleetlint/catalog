@@ -12,4 +12,7 @@ message: "a Gradle build rewrites its lock state"
 requirement: "Gradle checks resolved versions against gradle.lockfile (and artifacts against verification metadata) on every build; this holds unless a recipe or CI step outside an update target passes `--write-locks`, `--update-locks` or `--write-verification-metadata`, which is what is checked."
 fix:
   human: "Move lock updates to an `update-locks` target that is not part of CI."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://docs.gradle.org/current/userguide/dependency_locking.html", kind: spec, section: "Running a build with lock state present"}
+  - {url: "https://docs.gradle.org/current/userguide/dependency_verification.html", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

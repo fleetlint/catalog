@@ -22,4 +22,7 @@ rationale: A process that is root in the container is one kernel or runtime bug 
 fix:
   human: "Create a user in the final stage and add `USER <name>` before the entrypoint."
   agent: "In the final stage add a dedicated user and a USER instruction before ENTRYPOINT/CMD; make sure files the process writes are owned by that user."
-refs: ["https://fleetlint.org/baseline/#robustness"]
+refs:
+  - {url: "https://docs.docker.com/build/building/best-practices/", kind: guidance, section: "USER"}
+  - {url: "https://github.com/hadolint/hadolint/wiki/DL3002", kind: check, section: "DL3002"}
+  - "https://fleetlint.org/baseline/#robustness"

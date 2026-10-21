@@ -15,4 +15,6 @@ satisfiers:
 requirement: "A recipe or CI step runs deptry (or FawltyDeps)."
 fix:
   human: "Run `uvx deptry .` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://deptry.com/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

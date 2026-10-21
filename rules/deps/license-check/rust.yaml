@@ -23,4 +23,6 @@ satisfiers:
 requirement: "deny.toml (in the crate or a parent directory) has a `[licenses]` allowlist and a task-runner recipe or a CI step runs `cargo deny check` including licenses (or cargo-deny-action), or a stack-neutral license checker runs."
 fix:
   human: "Add a `[licenses]` allow list to deny.toml and run `cargo deny check licenses` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://embarkstudios.github.io/cargo-deny/checks/licenses/cfg.html", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

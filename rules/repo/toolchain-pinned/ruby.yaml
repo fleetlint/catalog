@@ -10,4 +10,7 @@ message: "no Ruby version is pinned"
 requirement: "`.ruby-version` names a version, the Gemfile declares `ruby \"x.y.z\"`, or `.tool-versions`/mise names ruby with a version."
 fix:
   human: "Write the Ruby version to .ruby-version."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://guides.rubygems.org/gemfile_ruby/", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

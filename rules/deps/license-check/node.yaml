@@ -18,4 +18,6 @@ satisfiers:
 requirement: "A task-runner recipe, a package.json script or a CI step runs license-checker with `--onlyAllow`/`--failOn`, licensee or license-compliance, or a stack-neutral license checker."
 fix:
   human: "Run `npx license-checker-rseidelsohn --onlyAllow \"MIT;ISC;Apache-2.0;BSD-3-Clause\"` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://github.com/davglass/license-checker", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

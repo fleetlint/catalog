@@ -15,4 +15,6 @@ satisfiers:
 requirement: "A task-runner recipe or a CI step runs nuget-license (or its predecessor dotnet-project-licenses) with an allowed-licenses file (`-a`/`--allowed-license-types`), or a stack-neutral license checker."
 fix:
   human: "Install nuget-license as a local dotnet tool and run `dotnet nuget-license -i x.sln -a allowed-licenses.json` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://github.com/sensslen/nuget-license", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

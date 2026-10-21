@@ -7,4 +7,6 @@ message: "pubspec.lock is not tracked"
 requirement: "pubspec.lock is tracked when pubspec.yaml declares dependencies; a pub workspace member (`resolution: workspace`) uses the pubspec.lock of the workspace root above it."
 fix:
   human: "Run `flutter pub get` (or `dart pub get`) and commit pubspec.lock."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://dart.dev/tools/pub/packages", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

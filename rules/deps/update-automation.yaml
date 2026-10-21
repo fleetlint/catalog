@@ -24,4 +24,8 @@ fix:
   actions:
     - template: "{stack}/renovate.json"
       to: renovate.json
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Dependency-Update-Tool"}
+  - {url: "https://docs.renovatebot.com/", kind: spec}
+  - {url: "https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuring-dependabot-version-updates", kind: guidance}
+  - "https://fleetlint.org/baseline/#dependencies"

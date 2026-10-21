@@ -11,4 +11,6 @@ rationale: Without it the whole working tree, including `.env` files and the git
 fix:
   human: "Add .dockerignore listing .git, .env*, build output and anything the image does not need."
   agent: "Add .dockerignore with .git, .env*, the stack's build output and dependency directories; check that the image still builds."
-refs: ["https://fleetlint.org/baseline/#robustness"]
+refs:
+  - {url: "https://docs.docker.com/build/building/best-practices/", kind: guidance, section: "Exclude with .dockerignore"}
+  - "https://fleetlint.org/baseline/#robustness"

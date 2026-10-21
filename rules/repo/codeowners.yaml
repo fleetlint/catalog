@@ -11,4 +11,7 @@ rationale: Review ownership that lives in people's heads does not survive a holi
 fix:
   human: "Add .github/CODEOWNERS with a default owner line."
   agent: "Add .github/CODEOWNERS containing `* @<owner>` and commit."
-refs: ["https://fleetlint.org/baseline/#public-repositories"]
+refs:
+  - {url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners", kind: guidance}
+  - {url: "https://docs.gitlab.com/user/project/codeowners/", kind: spec}
+  - "https://fleetlint.org/baseline/#public-repositories"

@@ -15,4 +15,7 @@ rationale: Binaries in history make every clone slower forever; lfs or a release
 fix:
   human: "Move the file to git-lfs (`git lfs track <pattern>`) or publish it as a release asset and remove it from history."
   agent: "Report the file; do not rewrite history. Suggest `git lfs track` for the pattern or an external home for the file."
-refs: ["https://fleetlint.org/baseline/#hygiene"]
+refs:
+  - {url: "https://docs.github.com/en/repositories/working-with-files/managing-large-files/about-large-files-on-github", kind: guidance}
+  - {url: "https://git-lfs.com/", kind: spec}
+  - "https://fleetlint.org/baseline/#hygiene"

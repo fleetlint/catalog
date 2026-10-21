@@ -15,4 +15,6 @@ satisfiers:
 requirement: "A task-runner recipe or a CI step runs madewithlove/license-checker (`license-checker check` against .allowed-licenses), or a stack-neutral license checker. `composer licenses` alone only lists licenses and does not count."
 fix:
   human: "Add madewithlove/license-checker, generate .allowed-licenses and run `vendor/bin/license-checker check` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://github.com/madewithlove/license-checker-php", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

@@ -7,4 +7,6 @@ expr: >
   || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
   || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
 requirement: "A git dependency in package.json is documented in FORKS.md or a Forks section (package.json has no comments)."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://docs.npmjs.com/cli/v11/configuring-npm/package-json", kind: spec, section: "Git URLs as Dependencies"}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

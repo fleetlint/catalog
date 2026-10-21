@@ -20,4 +20,6 @@ satisfiers:
 requirement: "maven-dependency-plugin's `analyze` runs with `failOnWarning` (bound in pom.xml or invoked as `dependency:analyze`), or the Gradle dependency-analysis plugin's `buildHealth` runs (in a recipe, a CI step, a task dependency, or with `severity(\"fail\")`)."
 fix:
   human: "Gradle: apply com.autonomousapps.dependency-analysis and run `buildHealth` in `audit`; Maven: bind dependency:analyze-only with failOnWarning."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://maven.apache.org/plugins/maven-dependency-plugin/analyze-mojo.html", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

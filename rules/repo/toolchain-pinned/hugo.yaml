@@ -11,4 +11,7 @@ message: "no Hugo version is pinned"
 requirement: "The Hugo version is pinned: `.tool-versions`/mise naming hugo with a version, `HUGO_VERSION` in netlify.toml or vercel.json, or a CI file setting `HUGO_VERSION`, `hugo-version` or a versioned gohugoio/hugo image."
 fix:
   human: "Pin Hugo in mise.toml (`hugo-extended = \"0.x.y\"`) or set HUGO_VERSION in CI."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://gohugo.io/host-and-deploy/host-on-netlify/", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#hugo--static-sites"

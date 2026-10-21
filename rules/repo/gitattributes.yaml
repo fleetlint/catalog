@@ -13,4 +13,7 @@ fix:
   actions:
     - template: gitattributes
       to: .gitattributes
-refs: ["https://fleetlint.org/baseline/#hygiene"]
+refs:
+  - {url: "https://git-scm.com/docs/gitattributes", kind: spec, section: "End-of-line conversion"}
+  - {url: "https://docs.github.com/en/get-started/git-basics/configuring-git-to-handle-line-endings", kind: guidance, section: "Per-repository settings"}
+  - "https://fleetlint.org/baseline/#hygiene"

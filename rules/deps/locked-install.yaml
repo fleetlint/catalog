@@ -9,4 +9,6 @@ rationale: An install that quietly re-resolves builds and tests something other 
 fix:
   human: "Use the locked install in CI and in the check targets (npm ci, uv sync --locked, cargo --locked, ...)."
   agent: "Switch the CI and task-runner installs to the package manager's locked mode; if that fails, regenerate the lockfile in a separate commit rather than relaxing the install."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Pinned-Dependencies"}
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

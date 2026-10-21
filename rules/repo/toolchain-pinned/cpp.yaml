@@ -10,4 +10,6 @@ message: "no C/C++ toolchain version is pinned"
 requirement: "The compiler or build tool is pinned: `.tool-versions`/mise naming cmake, clang/llvm, gcc, conan, ninja or meson with a version, a Conan profile with `compiler.version`, or a dev container image pinned by digest. `cmake_minimum_required` is a floor, not a pin."
 fix:
   human: "Pin the toolchain with mise (`mise use cmake@3.x clang@18`) or build in a digest-pinned dev container image."
-refs: ["https://fleetlint.org/stacks/#cc"]
+refs:
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://fleetlint.org/stacks/#cc", kind: convention}

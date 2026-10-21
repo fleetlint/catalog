@@ -17,4 +17,6 @@ satisfiers:
 requirement: "A recipe or CI step runs `go mod tidy -diff` (Go 1.23+), or `go mod tidy` followed by `git diff --exit-code`, which fails when go.mod requires a module nothing imports."
 fix:
   human: "Run `go mod tidy -diff` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://go.dev/ref/mod", kind: spec, section: "go mod tidy"}
+  - "https://fleetlint.org/stacks/#go"

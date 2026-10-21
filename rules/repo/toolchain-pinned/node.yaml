@@ -11,4 +11,7 @@ message: "no Node.js version is pinned"
 requirement: "`.nvmrc` or `.node-version` names a version (not `lts/*` or `node`), a package.json here or in a parent directory has a `volta` pin, or `.tool-versions`/mise names node with a version. `engines.node` is a range and `packageManager` pins the package manager, not Node; neither counts."
 fix:
   human: "Write the Node version you use to .nvmrc (e.g. `node --version > .nvmrc`)."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://github.com/nvm-sh/nvm", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

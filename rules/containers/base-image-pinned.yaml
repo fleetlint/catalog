@@ -18,4 +18,7 @@ rationale: A tag can be moved to a different image at any time; a digest cannot,
 fix:
   human: "Append the digest to each base image (`image:tag@sha256:...`); Renovate updates both."
   agent: "Resolve each base image tag to its current digest and write it as image:tag@sha256:<digest>; do not change the tag."
-refs: ["https://fleetlint.org/baseline/#robustness"]
+refs:
+  - {url: "https://docs.docker.com/build/building/best-practices/", kind: guidance, section: "Pin base image versions"}
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Pinned-Dependencies"}
+  - "https://fleetlint.org/baseline/#robustness"

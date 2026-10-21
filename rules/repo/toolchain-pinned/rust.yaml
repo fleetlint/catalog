@@ -11,4 +11,7 @@ message: "no Rust toolchain is pinned"
 requirement: "`rust-toolchain.toml` (or `rust-toolchain`) names a version or a dated channel (`1.86.0`, `nightly-2026-01-15`; `stable` moves and does not count), or `.tool-versions`/mise names rust with a version. `rust-version` in Cargo.toml is the minimum supported version, not a pin."
 fix:
   human: "Add rust-toolchain.toml with `[toolchain] channel = \"1.x.y\"`."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://rust-lang.github.io/rustup/overrides.html", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

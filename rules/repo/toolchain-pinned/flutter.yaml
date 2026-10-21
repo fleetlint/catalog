@@ -10,4 +10,7 @@ message: "no Flutter version is pinned"
 requirement: "`.fvmrc` (or `.fvm/fvm_config.json`) exists, pubspec.yaml's `environment.flutter` is an exact version, or `.tool-versions`/mise names flutter with a version."
 fix:
   human: "Run `fvm use <version>` (writes .fvmrc)."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://fvm.app/documentation/getting-started/configuration", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

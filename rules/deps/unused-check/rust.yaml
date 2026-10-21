@@ -16,4 +16,6 @@ satisfiers:
 requirement: "A recipe or CI step runs cargo-machete, cargo-shear or cargo-udeps."
 fix:
   human: "Run `cargo machete` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://github.com/bnjbvr/cargo-machete", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

@@ -7,4 +7,7 @@ message: "no Gradle lockfile or verification metadata is tracked"
 requirement: "A Gradle build tracks dependency lock state (gradle.lockfile from `dependencyLocking`) or dependency verification metadata (gradle/verification-metadata.xml, also at the root of a multi-project build)."
 fix:
   human: "Enable `dependencyLocking { lockAllConfigurations() }` and run `./gradlew dependencies --write-locks`, or write verification metadata with `./gradlew --write-verification-metadata sha256 help`; commit the result."
-refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+refs:
+  - {url: "https://docs.gradle.org/current/userguide/dependency_locking.html", kind: spec}
+  - {url: "https://docs.gradle.org/current/userguide/dependency_verification.html", kind: spec}
+  - "https://fleetlint.org/stacks/#kotlin-jvm--android"

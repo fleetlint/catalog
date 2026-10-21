@@ -17,4 +17,10 @@ rationale: Install scripts are the usual way a compromised package executes code
 fix:
   human: "Add `ignore-scripts=true` to .npmrc and allow the few packages that need a build step explicitly."
   agent: "Add ignore-scripts=true to .npmrc (or the package manager's equivalent), run a clean install and the tests, and list the packages that need their build script allowed."
-refs: ["https://fleetlint.org/baseline/#dependencies", "https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://docs.npmjs.com/cli/v11/using-npm/config", kind: spec, section: "ignore-scripts"}
+  - {url: "https://pnpm.io/settings", kind: spec, section: "Build Settings"}
+  - {url: "https://yarnpkg.com/configuration/yarnrc", kind: spec, section: "enableScripts"}
+  - {url: "https://bun.sh/docs/install/lifecycle", kind: spec, section: "trustedDependencies"}
+  - "https://fleetlint.org/baseline/#dependencies"
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

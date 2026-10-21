@@ -20,4 +20,6 @@ satisfiers:
 requirement: "A task-runner recipe or a CI step runs `pip-licenses --allow-only=...` (or `--fail-on=...`) or liccheck, or a stack-neutral license checker. pip-licenses without an allow or fail list only prints."
 fix:
   human: "Run `pip-licenses --allow-only=\"MIT;BSD License;Apache Software License\"` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://github.com/raimon49/pip-licenses", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

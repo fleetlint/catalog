@@ -10,4 +10,7 @@ message: "no PHP version is pinned"
 requirement: "`.php-version` names a version, composer.json's `config.platform.php` fixes the PHP version dependencies are resolved for, or `.tool-versions`/mise names php with a version."
 fix:
   human: "Write the PHP version to .php-version (setup-php reads it)."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://getcomposer.org/doc/06-config.md", kind: spec, section: "platform"}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

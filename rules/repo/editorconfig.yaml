@@ -13,4 +13,6 @@ fix:
   actions:
     - template: editorconfig
       to: .editorconfig
-refs: ["https://fleetlint.org/baseline/#hygiene"]
+refs:
+  - {url: "https://editorconfig.org/", kind: standard, section: "Supported Properties"}
+  - "https://fleetlint.org/baseline/#hygiene"

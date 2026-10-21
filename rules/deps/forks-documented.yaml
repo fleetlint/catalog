@@ -10,4 +10,5 @@ rationale: A fork without a note outlives the reason for it; the next upgrade ei
 fix:
   human: "Add docs/FORKS.md listing each forked or patched dependency with upstream, base version, the change and why, or comment each line."
   agent: "Document each forked or patched dependency (upstream, base version, change, reason) in docs/FORKS.md; ask the user for the reason where the history does not say."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

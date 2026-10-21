@@ -15,4 +15,6 @@ satisfiers:
 requirement: "A task-runner recipe or a CI step runs license_finder (which fails on dependencies without a permitted license in doc/dependency_decisions.yml), or a stack-neutral license checker."
 fix:
   human: "Add license_finder, permit your licenses (`license_finder permitted_licenses add MIT`) and run `license_finder` in the `audit` target."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://github.com/pivotal/LicenseFinder", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

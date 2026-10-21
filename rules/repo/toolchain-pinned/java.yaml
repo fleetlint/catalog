@@ -14,4 +14,7 @@ message: "no JDK version is pinned"
 requirement: "The JDK is pinned: `.java-version`, `.sdkmanrc` with `java=`, a Gradle toolchain in the project's or a parent build (`JavaLanguageVersion.of(n)`, `jvmToolchain(n)`) or `gradle-daemon-jvm.properties`, the Maven enforcer's `requireJavaVersion`, or `.tool-versions`/mise naming java. The Gradle and Maven wrappers pin the build tool, not the JDK, and `maven.compiler.release` only sets the bytecode level; none of them counts."
 fix:
   human: "Add a Gradle toolchain in the project's or a parent build (`java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }`) or a .java-version file."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://docs.gradle.org/current/userguide/toolchains.html", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

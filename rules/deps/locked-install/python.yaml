@@ -20,4 +20,6 @@ message: "Python installs do not enforce the lockfile"
 requirement: "A recipe or CI step installs or verifies with the lockfile enforced: `uv sync --locked` (or `--frozen`, or `UV_LOCKED` set in the workflow), `uv lock --check`, `uv pip sync`, `poetry install` / `poetry sync` (which refuse a stale poetry.lock), `pip install --require-hashes`, `pip-sync`, `pdm sync` or `pdm install --frozen-lockfile`, `pipenv sync` or `pipenv install --deploy`. No recipe or CI step runs a plain `uv sync` without those."
 fix:
   human: "Use `uv sync --locked` in CI and the check targets."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://docs.astral.sh/uv/concepts/projects/sync/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

@@ -7,4 +7,7 @@ expr: >
   || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
   || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
 requirement: "A git source in Cargo.toml (including `[patch]` entries) is documented in FORKS.md or a Forks section, or carries a ` #` comment on the line."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html", kind: spec}
+  - {url: "https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

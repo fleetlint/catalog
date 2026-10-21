@@ -21,4 +21,7 @@ rationale: Hijacked releases are usually found and pulled within days; a short w
 fix:
   human: "Set `\"minimumReleaseAge\": \"3 days\"` in renovate.json, or `cooldown: {default-days: 3}` on each Dependabot entry."
   agent: "Add minimumReleaseAge (Renovate) or a cooldown per updates entry (Dependabot) of a few days; keep security updates immediate where the tool allows it."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://docs.renovatebot.com/configuration-options/", kind: spec, section: "minimumReleaseAge"}
+  - {url: "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference", kind: spec, section: "cooldown"}
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

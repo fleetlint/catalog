@@ -18,4 +18,6 @@ message: "NuGet restores do not use locked mode"
 requirement: "Where packages.lock.json files exist, restore runs in locked mode: `--locked-mode` on `dotnet restore` in a recipe or CI step, or `RestoreLockedMode` set to true (typically conditioned on CI) in a project or Directory.Build.props."
 fix:
   human: "Add `<RestoreLockedMode Condition=\"'$(CI)' == 'true'\">true</RestoreLockedMode>` to Directory.Build.props."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

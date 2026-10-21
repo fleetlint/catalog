@@ -9,4 +9,6 @@ rationale: Builds are reproducible only when dependency versions are pinned in g
 fix:
   human: "Generate the lockfile with the package manager and commit it; remove it from .gitignore."
   agent: "Run the package manager to produce the lockfile, remove any .gitignore entry for it, and commit it."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://github.com/ossf/package-manager-best-practices/blob/main/published/npm.md", kind: guidance}
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

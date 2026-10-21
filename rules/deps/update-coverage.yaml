@@ -33,4 +33,8 @@ rationale: An automation that updates the npm packages but not the base image or
 fix:
   human: "Add an `updates` entry per ecosystem to .github/dependabot.yml, or switch to Renovate (config:recommended covers every manager)."
   agent: "Add the missing ecosystems to the Dependabot updates list (or the Renovate enabledManagers list) with the same schedule as the existing entries."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Dependency-Update-Tool"}
+  - {url: "https://docs.renovatebot.com/configuration-options/", kind: spec, section: "enabledManagers"}
+  - {url: "https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference", kind: spec, section: "package-ecosystem"}
+  - "https://fleetlint.org/baseline/#dependencies"

@@ -9,4 +9,6 @@ expr: >
   || grep("README.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
   || grep("docs/**/*.md", r'^#+ .*\b(forks?|vendored|patched|patches)\b').size() > 0
 requirement: "A git requirement in pyproject.toml or requirements*.txt is documented in FORKS.md or a Forks section, or carries a ` #` comment on the line."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://pip.pypa.io/en/stable/topics/vcs-support/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

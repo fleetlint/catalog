@@ -14,4 +14,6 @@ rationale: The first screen of the README must be enough to run the project.
 fix:
   human: "Write a README with purpose, requirements, quickstart and the task-runner targets."
   agent: "Write README.md: 2-3 sentence purpose, requirements, quickstart commands, the make targets, configuration table. Plain language, no marketing."
-refs: ["https://fleetlint.org/baseline/#documentation"]
+refs:
+  - {url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes", kind: guidance}
+  - "https://fleetlint.org/baseline/#documentation"

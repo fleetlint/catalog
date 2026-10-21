@@ -18,4 +18,6 @@ message: "Bundler installs do not enforce Gemfile.lock"
 requirement: "Bundler runs frozen: `bundle config set frozen true` (or deployment) in a recipe or CI step, `BUNDLE_FROZEN`/`BUNDLE_DEPLOYMENT` in a workflow or a tracked .bundle/config, or ruby/setup-ruby with `bundler-cache: true` (which installs in deployment mode)."
 fix:
   human: "Set `BUNDLE_FROZEN: \"true\"` in the CI environment, or use ruby/setup-ruby with bundler-cache."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://guides.rubygems.org/command-reference/bundle-config/", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

@@ -8,4 +8,6 @@ message: "Cargo.lock is not tracked"
 requirement: "Cargo.lock is tracked when Cargo.toml declares dependencies or a workspace; a workspace member uses the Cargo.lock of the workspace root above it."
 fix:
   human: "Run `cargo generate-lockfile` and commit Cargo.lock."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/cargo/faq.html", kind: spec, section: "Why have Cargo.lock in version control?"}
+  - "https://fleetlint.org/stacks/#rust"

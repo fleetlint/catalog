@@ -10,4 +10,6 @@ rationale: A dependency under an incompatible license is found cheaply before it
 fix:
   human: "Add the stack's license checker with an allowlist to the `audit` target (see https://fleetlint.org/stacks/)."
   agent: "Add the stack's license checker to the audit target with an allowlist compatible with the repository's own license; report dependencies outside it instead of widening the list."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://openchainproject.org/", kind: standard}
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

@@ -5,4 +5,6 @@ message: "go.sum is not tracked"
 requirement: "go.sum is tracked when go.mod requires any module."
 fix:
   human: "Run `go mod tidy` and commit go.sum."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://go.dev/ref/mod", kind: spec, section: "go.sum files"}
+  - "https://fleetlint.org/stacks/#go"

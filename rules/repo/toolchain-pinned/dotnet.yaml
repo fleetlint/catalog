@@ -9,4 +9,7 @@ message: "global.json pins no .NET SDK"
 requirement: "global.json sets `sdk.version`, or `.tool-versions`/mise names dotnet with a version."
 fix:
   human: "Run `dotnet new globaljson --sdk-version <version> --roll-forward latestFeature`."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/dotnet/core/tools/global-json", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

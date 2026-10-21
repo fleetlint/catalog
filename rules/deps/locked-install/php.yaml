@@ -18,4 +18,6 @@ message: "Composer installs do not use composer.lock"
 requirement: "A recipe or CI step runs `composer install` (which installs exactly composer.lock) or `composer validate` (which checks the lock is current), and none runs `composer update` outside an update target."
 fix:
   human: "Use `composer install` in CI and the check targets."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://getcomposer.org/doc/01-basic-usage.md", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

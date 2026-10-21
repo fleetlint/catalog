@@ -9,4 +9,5 @@ rationale: Every declared dependency is attack surface and update churn; one not
 fix:
   human: "Add the stack's unused-dependency check to the `audit` target (see https://fleetlint.org/stacks/)."
   agent: "Add the stack's unused-dependency checker to the audit target; remove the dependencies it reports in a separate change after confirming nothing loads them dynamically."
-refs: ["https://fleetlint.org/baseline/#dependencies"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#dependencies", kind: convention}

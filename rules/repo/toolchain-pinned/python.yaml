@@ -9,4 +9,7 @@ message: "no Python version is pinned"
 requirement: "`.python-version` names a version, or `.tool-versions`/mise names python with a version. `requires-python` is a range, not a pin."
 fix:
   human: "Run `uv python pin 3.x` (writes .python-version)."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://docs.astral.sh/uv/concepts/python-versions/", kind: spec}
+  - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

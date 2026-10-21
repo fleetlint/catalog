@@ -21,4 +21,7 @@ satisfiers:
 requirement: "pom.xml configures license-maven-plugin to fail on licenses outside its list (`failOnBlacklist`/`failOnNotWhitelisted`), or the Gradle dependency-license-report plugin has an `allowedLicensesFile` and its `checkLicense` task runs (from a recipe, a CI step or a task dependency); or a stack-neutral license checker runs."
 fix:
   human: "Gradle: add com.github.jk1.dependency-license-report with allowedLicensesFile and run checkLicense in `audit`; Maven: configure license-maven-plugin with an included-licenses list and failOnBlacklist."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://www.mojohaus.org/license-maven-plugin/add-third-party-mojo.html", kind: spec}
+  - {url: "https://github.com/jk1/Gradle-License-Report", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

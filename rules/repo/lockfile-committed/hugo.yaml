@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "Hugo has no lockfile of its own: Hugo modules are locked by go.sum and npm tooling by its lockfile, both checked as their own stacks; themes added as git submodules are pinned by commit."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

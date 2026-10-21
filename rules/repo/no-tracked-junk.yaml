@@ -21,4 +21,7 @@ fix:
   actions:
     - untrack: "*"
       gitignore: [".DS_Store", "Thumbs.db", "*.bak", "*.orig", "*.swp", "*~", "*.log", "nohup.out", "__pycache__/"]
-refs: ["https://fleetlint.org/baseline/#hygiene"]
+refs:
+  - {url: "https://docs.github.com/en/get-started/git-basics/ignoring-files", kind: guidance}
+  - {url: "https://git-scm.com/docs/gitignore", kind: spec}
+  - "https://fleetlint.org/baseline/#hygiene"
