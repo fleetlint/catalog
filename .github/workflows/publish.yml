@@ -51,12 +51,16 @@ jobs:
             --annotation "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}")
           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
       - name: Sign the artifact (keyless, sigstore bundle attached as a referrer)
-        run: cosign sign --yes --new-bundle-format "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
+        run: cosign sign --yes --new-bundle-format "ghcr.io/${GITHUB_REPOSITORY}@${DIGEST}"
       - name: SBOM of the tree, attested to the digest
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
         run: |
           syft dir:. -o spdx-json > sbom.spdx.json
           cosign attest --yes --new-bundle-format --type spdxjson --predicate sbom.spdx.json \
-            "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+            "ghcr.io/${GITHUB_REPOSITORY}@${DIGEST}"
       - name: Build provenance (SLSA), attached to the digest
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
@@ -64,10 +68,12 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
       - name: Verify what was just signed
+        env:
+          DIGEST: ${{ steps.push.outputs.digest }}
         run: |
           cosign verify --new-bundle-format \
             --certificate-identity-regexp "^${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/\.github/workflows/publish\.yml@refs/tags/v" \
             --certificate-oidc-issuer https://token.actions.githubusercontent.com \
-            "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+            "ghcr.io/${GITHUB_REPOSITORY}@${DIGEST}"
       - name: Load it the way a repository pins it (by tag, through the signature)
         run: scripts/oci-check.sh "ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}"
