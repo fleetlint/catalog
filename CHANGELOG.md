@@ -11,7 +11,7 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ### Changed
 
-- CI installs fleetlint v0.8.0.
+- CI installs fleetlint v0.8.1 (0.8.0 is a source tag without binaries).
 
 ## [0.5.0] - 2026-10-21
 
