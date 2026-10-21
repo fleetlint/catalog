@@ -27,4 +27,6 @@ fix:
   agent: "Add [lints.rust] and [lints.clippy] tables per the Rust profile to Cargo.toml, or `[lints] workspace = true` in a workspace member."
   actions:
     - append: {file: Cargo.toml, template: rust/cargo-lints.toml, unless: '(?m)^\[(workspace\.)?lints'}
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/cargo/reference/manifest.html", kind: spec, section: "The [lints] section"}
+  - "https://fleetlint.org/stacks/#rust"

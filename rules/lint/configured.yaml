@@ -9,4 +9,6 @@ rationale: Without a committed configuration every developer's editor runs diffe
 fix:
   human: "Configure the stack's linter as described in the stack profile (https://fleetlint.org/stacks/)."
   agent: "Configure the stack's linter from the stack profile and run it from the lint target; fix what it reports instead of disabling checks."
-refs: ["https://fleetlint.org/baseline/#static-analysis"]
+refs:
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PW.7.2: Perform the code review and/or code analysis based on the organization's secure coding standards"}
+  - {url: "https://fleetlint.org/baseline/#static-analysis", kind: convention}

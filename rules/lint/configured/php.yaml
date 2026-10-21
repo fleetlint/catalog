@@ -18,4 +18,7 @@ fix:
     - template: php/phpstan.neon.dist
       to: phpstan.neon.dist
     - merge: {file: composer.json, template: php/require-dev-lint.json}
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://phpstan.org/config-reference", kind: spec}
+  - {url: "https://psalm.dev/docs/", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

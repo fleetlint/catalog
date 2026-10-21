@@ -11,4 +11,6 @@ satisfiers:
 requirement: "golangci-lint has `dupl` enabled (in `enable`, or `default: all`) and not in `disable`; or a stack-neutral detector."
 fix:
   human: "Add `dupl` to `linters.enable` in .golangci.yml."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://golangci-lint.run/docs/linters/configuration/", kind: check, section: "dupl"}
+  - "https://fleetlint.org/stacks/#go"

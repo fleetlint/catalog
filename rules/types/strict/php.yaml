@@ -22,4 +22,7 @@ rationale: PHPStan's lower levels skip mixed types and missing type information,
 fix:
   human: "Set `level: max` in phpstan.neon.dist and ratchet existing errors with `vendor/bin/phpstan analyse --generate-baseline`."
   agent: "Set level: max in phpstan.neon.dist, generate a baseline for existing errors, and fix new code to pass without it."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://phpstan.org/user-guide/rule-levels", kind: spec}
+  - {url: "https://psalm.dev/docs/running_psalm/error_levels/", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

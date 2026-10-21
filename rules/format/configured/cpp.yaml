@@ -19,4 +19,6 @@ fix:
   actions:
     - template: cpp/clang-format
       to: .clang-format
-refs: ["https://fleetlint.org/stacks/#cc"]
+refs:
+  - {url: "https://clang.llvm.org/docs/ClangFormat.html", kind: spec}
+  - "https://fleetlint.org/stacks/#cc"

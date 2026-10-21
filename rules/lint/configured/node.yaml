@@ -30,4 +30,6 @@ fix:
     - template: node/eslint.config.mjs
       to: eslint.config.mjs
     - merge: {file: package.json, template: node/devdeps-lint.json}
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://eslint.org/docs/latest/use/configure/configuration-files", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

@@ -19,4 +19,8 @@ requirement: "golangci-lint v2 enables `formatters:` in its configuration, or go
 fix:
   human: "Enable formatters (gofumpt, goimports) in .golangci.yml and run `golangci-lint fmt` from the fmt target and a hook."
   agent: "Add `formatters: enable: [gofumpt, goimports]` to .golangci.yml and a golangci-lint fmt hook; reformat the code base in a separate commit."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://go.dev/wiki/CodeReviewComments", kind: guidance, section: "Gofmt"}
+  - {url: "https://go.dev/doc/effective_go", kind: guidance, section: "Formatting"}
+  - {url: "https://pkg.go.dev/cmd/gofmt", kind: spec}
+  - "https://fleetlint.org/stacks/#go"

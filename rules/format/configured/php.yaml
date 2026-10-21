@@ -19,4 +19,7 @@ fix:
     - template: php/php-cs-fixer.dist.php
       to: .php-cs-fixer.dist.php
     - merge: {file: composer.json, template: php/require-dev-format.json}
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://www.php-fig.org/per/coding-style/", kind: style-guide}
+  - {url: "https://cs.symfony.com/", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

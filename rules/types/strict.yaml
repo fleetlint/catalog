@@ -9,4 +9,5 @@ rationale: A lenient type checker lets untyped and implicitly dynamic values thr
 fix:
   human: "Switch the type checker to strict mode (see https://fleetlint.org/stacks/)."
   agent: "Switch the type checker to strict mode and list the errors that appear instead of adding ignores."
-refs: ["https://fleetlint.org/baseline/#static-analysis"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#static-analysis", kind: convention}

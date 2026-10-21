@@ -25,4 +25,7 @@ fix:
   agent: "Add each reported family to [tool.ruff.lint] select; ratchet the violations that appear with `ruff check --add-noqa` instead of fixing them in the same change."
   actions:
     - append: {file: pyproject.toml, template: python/ruff-lint.toml, unless: '(?m)^\[tool\.ruff\.lint\]|^select\s*='}
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/rules/", kind: check, section: "E, F, I, B, UP, SIM, BLE, S, C90, T20"}
+  - {url: "https://docs.astral.sh/ruff/configuration/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

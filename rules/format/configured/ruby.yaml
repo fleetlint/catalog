@@ -15,4 +15,7 @@ requirement: "RuboCop or Standard is configured in the project or a parent direc
 fix:
   human: "Add .rubocop.yml and run `rubocop --autocorrect` in a hook."
   agent: "Add .rubocop.yml and a rubocop hook with --autocorrect; reformat in a separate commit."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://rubystyle.guide/", kind: style-guide, section: "Source Code Layout"}
+  - {url: "https://docs.rubocop.org/rubocop/", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

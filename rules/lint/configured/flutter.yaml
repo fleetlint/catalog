@@ -16,4 +16,7 @@ fix:
   actions:
     - template: flutter/analysis_options.yaml
       to: analysis_options.yaml
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://dart.dev/tools/analysis", kind: spec}
+  - {url: "https://pub.dev/packages/flutter_lints", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "Hugo has no formatter for content and templates; the Markdown and the code of other stacks in the site are formatted by their own tools."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

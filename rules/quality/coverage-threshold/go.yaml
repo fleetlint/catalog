@@ -11,4 +11,6 @@ satisfiers:
 requirement: "go-test-coverage runs with a threshold (`.testcoverage.yml` with `threshold.total`/`file`/`package`, or the action with a threshold input), or a stack-neutral floor applies (the `cover` recipe compares with a minimum, diff-cover `--fail-under`, codecov `target`)."
 fix:
   human: "Add go-test-coverage with `threshold: {total: 80}` in .testcoverage.yml, or compare the `go tool cover -func` total with COVER_MIN in the `cover` recipe."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://github.com/vladopajic/go-test-coverage", kind: spec}
+  - "https://fleetlint.org/stacks/#go"

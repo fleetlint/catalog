@@ -24,4 +24,10 @@ rationale: These lints are off by default, and they are the ones that find the c
 fix:
   human: "Add the missing lints to [lints.clippy] with level deny."
   agent: "Add each reported lint to [lints.clippy] as \"deny\"; where an unwrap is a proven invariant, replace it with expect and an INVARIANT comment instead of allowing the lint."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "unwrap_used"}
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "expect_used"}
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "panic"}
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "todo"}
+  - {url: "https://rust-lang.github.io/rust-clippy/master/index.html", kind: check, section: "dbg_macro"}
+  - "https://fleetlint.org/stacks/#rust"

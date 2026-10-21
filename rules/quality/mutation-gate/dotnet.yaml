@@ -11,4 +11,6 @@ satisfiers:
 requirement: "Stryker.NET runs on the core projects, from the task runner or a workflow."
 fix:
   human: "Add Stryker.NET as a dotnet tool (`stryker-config.json` with a break threshold) and run `dotnet stryker` weekly."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://stryker-mutator.io/docs/stryker-net/introduction/", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

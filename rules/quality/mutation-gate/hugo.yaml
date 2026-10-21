@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "A Hugo site has templates and content, not code under test; scripts in the site are checked as their own stack."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

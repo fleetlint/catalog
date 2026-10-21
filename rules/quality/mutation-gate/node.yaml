@@ -11,4 +11,6 @@ satisfiers:
 requirement: "StrykerJS runs on the core modules, from the task runner or a workflow."
 fix:
   human: "Add StrykerJS (`stryker.config.mjs` with `thresholds.break`) and run `npx stryker run` weekly."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://stryker-mutator.io/docs/stryker-js/introduction/", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

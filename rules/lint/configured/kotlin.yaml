@@ -32,4 +32,6 @@ fix:
   actions:
     - template: kotlin/detekt.yml
       to: config/detekt/detekt.yml
-refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+refs:
+  - {url: "https://detekt.dev/docs/gettingstarted/gradle/", kind: spec}
+  - "https://fleetlint.org/stacks/#kotlin-jvm--android"

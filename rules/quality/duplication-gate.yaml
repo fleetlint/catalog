@@ -10,4 +10,5 @@ rationale: Near-duplicate implementations are how a fix lands in one copy and no
 fix:
   human: "Enable `dupl` in .golangci.yml, or add `jscpd` to the lint target (see https://fleetlint.org/stacks/ for the stack's tool)."
   agent: "Add the stack's duplication detector to the lint target with a threshold, and remove or merge the duplicates it reports rather than raising the threshold."
-refs: ["https://fleetlint.org/baseline/#design"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#design", kind: convention}

@@ -11,4 +11,6 @@ satisfiers:
 requirement: "mutmut (or cosmic-ray) runs on the core packages, from the task runner or a workflow."
 fix:
   human: "Configure `[tool.mutmut]` in pyproject.toml for the core package and run `mutmut run` weekly."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://mutmut.readthedocs.io/en/latest/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

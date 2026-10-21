@@ -9,4 +9,5 @@ rationale: A linter with its defaults reports style; the checks that find swallo
 fix:
   human: "Enable the reported checks in the linter configuration (see https://fleetlint.org/stacks/)."
   agent: "Enable each reported check in the linter configuration and fix or ratchet the findings it produces instead of suppressing them."
-refs: ["https://fleetlint.org/baseline/#static-analysis"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#static-analysis", kind: convention}

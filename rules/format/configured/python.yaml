@@ -16,4 +16,8 @@ requirement: "ruff format or black runs in a hook, the task runner or CI, or is 
 fix:
   human: "Add `ruff format` to the fmt target and a ruff-format hook."
   agent: "Add `uv run ruff format` to the fmt target and the ruff-format pre-commit hook; reformat the code base in a separate commit."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://peps.python.org/pep-0008/", kind: guidance, section: "Code Lay-out"}
+  - {url: "https://docs.astral.sh/ruff/formatter/", kind: spec}
+  - {url: "https://black.readthedocs.io/en/stable/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

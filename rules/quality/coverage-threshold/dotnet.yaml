@@ -18,4 +18,6 @@ satisfiers:
 requirement: "coverlet enforces a minimum: `/p:Threshold=...` on `dotnet test`, `--threshold` for the coverlet tool, or `<Threshold>` in a project or Directory.Build.props; or a stack-neutral floor applies."
 fix:
   human: "Run `dotnet test /p:CollectCoverage=true /p:Threshold=80` in the `cover` target."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/MSBuildIntegration.md", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

@@ -15,4 +15,6 @@ satisfiers:
 requirement: "`very_good test --min-coverage` runs in a recipe or a CI step, or a stack-neutral floor applies (diff-cover `--fail-under` on lcov, codecov `target`)."
 fix:
   human: "Run `very_good test --coverage --min-coverage 80` in the `cover` target."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://cli.vgv.dev/docs/commands/test", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

@@ -14,4 +14,7 @@ rationale: Unquoted variables and unchecked exit codes are the bugs shell script
 fix:
   human: "Add the shellcheck hook to .pre-commit-config.yaml (or lefthook.yml)."
   agent: "Add the shellcheck hook (and shfmt) to .pre-commit-config.yaml and fix what it reports in the tracked scripts."
-refs: ["https://fleetlint.org/baseline/#static-analysis"]
+refs:
+  - {url: "https://google.github.io/styleguide/shellguide.html", kind: style-guide, section: "ShellCheck"}
+  - {url: "https://github.com/koalaman/shellcheck", kind: spec}
+  - "https://fleetlint.org/baseline/#static-analysis"

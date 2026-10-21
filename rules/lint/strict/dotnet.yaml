@@ -29,4 +29,8 @@ fix:
   actions:
     - template: dotnet/Directory.Build.props
       to: Directory.Build.props
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/dotnet/csharp/nullable-references", kind: spec}
+  - {url: "https://learn.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props", kind: spec}
+  - {url: "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/errors-warnings", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

@@ -12,4 +12,7 @@ requirement: "`dart format` runs in a hook, the task runner or CI (with `--set-e
 fix:
   human: "Add `dart format --set-exit-if-changed .` to the lint target and a dart format hook."
   agent: "Add `dart format --set-exit-if-changed .` to the lint target and the dart-format pre-commit hook; reformat in a separate commit."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://dart.dev/effective-dart/style", kind: guidance, section: "DO format your code using dart format"}
+  - {url: "https://dart.dev/tools/dart-format", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

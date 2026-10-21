@@ -12,4 +12,5 @@ rationale: A coverage number nobody enforces drifts down one "quick fix" at a ti
 fix:
   human: "Make `make cover` fail below the floor (diff-cover --fail-under=80 is the stack-neutral option)."
   agent: "Add a threshold to the cover recipe using the stack profile's tool (go: go-test-coverage or a cover script with a minimum; python: --cov-fail-under; node: coverageThreshold; rust: cargo llvm-cov --fail-under-lines; kotlin: kover verify)."
-refs: ["https://fleetlint.org/baseline/#tests"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#tests", kind: convention}

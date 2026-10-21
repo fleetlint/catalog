@@ -11,4 +11,6 @@ satisfiers:
 requirement: "cargo-mutants runs on the core crates, from the task runner or a workflow."
 fix:
   human: "Run `cargo mutants` on the core crates weekly (`.cargo/mutants.toml` for exclusions)."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://mutants.rs/", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

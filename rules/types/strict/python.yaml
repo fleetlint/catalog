@@ -34,4 +34,8 @@ fix:
   agent: "Add [tool.mypy] strict = true to pyproject.toml (or set typeCheckingMode strict for pyright) and list the errors that appear instead of adding ignores."
   actions:
     - append: {file: pyproject.toml, template: python/mypy.toml, unless: '(?m)^\[tool\.(mypy|pyright|basedpyright)\]'}
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://mypy.readthedocs.io/en/stable/command_line.html", kind: spec, section: "Miscellaneous strictness flags"}
+  - {url: "https://microsoft.github.io/pyright/", kind: spec}
+  - {url: "https://docs.basedpyright.com/latest/configuration/config-files/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

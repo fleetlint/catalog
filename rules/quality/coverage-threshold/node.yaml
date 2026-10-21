@@ -15,4 +15,7 @@ satisfiers:
 requirement: "Jest `coverageThreshold`, Vitest `coverage.thresholds`, or c8/nyc with `check-coverage` is configured, or a stack-neutral floor applies."
 fix:
   human: "Set `coverage.thresholds` in vitest.config (or `coverageThreshold` for Jest)."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://jestjs.io/docs/configuration", kind: spec}
+  - {url: "https://vitest.dev/config/coverage", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

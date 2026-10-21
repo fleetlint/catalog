@@ -9,3 +9,5 @@ satisfiers:
   - name: config-file
     expr: exists(".jscpd.json") || exists("sonar-project.properties")
 requirement: "jscpd, Simian or duplo runs in the task runner, the hooks or CI, or Sonar is configured (`sonar-project.properties`)."
+refs:
+  - {url: "https://github.com/kucherenko/jscpd", kind: spec}

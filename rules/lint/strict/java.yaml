@@ -24,4 +24,6 @@ fix:
   actions:
     - template: java/checkstyle.xml
       to: config/checkstyle/checkstyle.xml
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://maven.apache.org/plugins/maven-checkstyle-plugin/check-mojo.html", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

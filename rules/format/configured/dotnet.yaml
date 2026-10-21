@@ -19,4 +19,7 @@ requirement: "`dotnet format` or CSharpier runs in a hook, the task runner or CI
 fix:
   human: "Add `dotnet format --verify-no-changes` to the lint target and a hook; keep the style rules in .editorconfig."
   agent: "Add `dotnet format --verify-no-changes` to the lint target and the dotnet-format hook, with code style rules in .editorconfig; reformat in a separate commit."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-format", kind: spec}
+  - {url: "https://csharpier.com/", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

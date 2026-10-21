@@ -27,4 +27,6 @@ fix:
   agent: "Set each reported flag to true in tsconfig.json compilerOptions, run tsc --noEmit and list the errors that appear instead of silencing them."
   actions:
     - merge: {file: tsconfig.json, template: node/tsconfig-strict.json}
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://www.typescriptlang.org/tsconfig/", kind: spec, section: "Type Checking"}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

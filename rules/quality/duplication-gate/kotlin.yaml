@@ -9,4 +9,6 @@ satisfiers:
 requirement: "PMD's copy-paste detector runs: maven-pmd-plugin's `cpd-check`, the Gradle CPD plugin's `cpdCheck`, or `pmd cpd` in the task runner or CI; or a stack-neutral detector."
 fix:
   human: "Bind maven-pmd-plugin's cpd-check goal, or apply the de.aaschmid.cpd Gradle plugin so `./gradlew check` runs cpdCheck."
-refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+refs:
+  - {url: "https://pmd.github.io/pmd/pmd_userdocs_cpd.html", kind: spec}
+  - "https://fleetlint.org/stacks/#kotlin-jvm--android"

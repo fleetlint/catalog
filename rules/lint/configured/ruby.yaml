@@ -19,4 +19,6 @@ fix:
     - template: ruby/rubocop.yml
       to: .rubocop.yml
     - append: {file: Gemfile, template: ruby/Gemfile-lint, unless: '(?m)^\s*gem\s+["'']rubocop["'']'}
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://docs.rubocop.org/rubocop/latest/configuration.html", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

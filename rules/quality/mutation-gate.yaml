@@ -10,4 +10,5 @@ rationale: Coverage says a line ran; a surviving mutant says the tests would not
 fix:
   human: "Add the stack's mutation tool for the core packages, as a `mutate` target run weekly or on release (see https://fleetlint.org/stacks/)."
   agent: "Add a mutate target that runs the stack's mutation tool on the core packages with a survivor threshold, and a weekly workflow that calls it."
-refs: ["https://fleetlint.org/baseline/#tests"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#tests", kind: convention}

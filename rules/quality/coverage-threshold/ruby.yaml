@@ -9,4 +9,6 @@ satisfiers:
 requirement: "SimpleCov sets `minimum_coverage` (in .simplecov or the spec/test helper), or a stack-neutral floor applies."
 fix:
   human: "Add `minimum_coverage 80` to the SimpleCov block in .simplecov."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://github.com/simplecov-ruby/simplecov", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

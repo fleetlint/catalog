@@ -14,4 +14,6 @@ rationale: clang-tidy reports warnings and exits 0; without WarningsAsErrors its
 fix:
   human: "Set `WarningsAsErrors: '*'` in .clang-tidy."
   agent: "Set WarningsAsErrors: '*' in .clang-tidy and fix the findings that now fail instead of narrowing the check list."
-refs: ["https://fleetlint.org/stacks/#cc"]
+refs:
+  - {url: "https://clang.llvm.org/extra/clang-tidy/", kind: spec}
+  - "https://fleetlint.org/stacks/#cc"

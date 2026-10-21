@@ -13,4 +13,6 @@ rationale: Hugo prints warnings for broken references and deprecated configurati
 fix:
   human: "Add `--panicOnWarning` to the hugo invocation in the lint or build target (see https://fleetlint.org/stacks/#hugo--static-sites)."
   agent: "Add --panicOnWarning to the hugo build in the lint or build target and fix the warnings it surfaces instead of removing the flag."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://gohugo.io/commands/hugo/", kind: spec}
+  - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

@@ -36,4 +36,9 @@ fix:
   actions:
     - template: java/checkstyle.xml
       to: config/checkstyle/checkstyle.xml
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://checkstyle.org/", kind: spec}
+  - {url: "https://errorprone.info/", kind: spec}
+  - {url: "https://spotbugs.github.io/", kind: spec}
+  - {url: "https://pmd.github.io/", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

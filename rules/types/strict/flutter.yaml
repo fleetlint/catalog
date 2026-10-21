@@ -26,4 +26,6 @@ fix:
   agent: "Set each reported mode to true under analyzer.language and list the analyzer errors that appear instead of adding ignores."
   actions:
     - append: {file: analysis_options.yaml, template: flutter/analyzer-strict.yaml, unless: '(?m)^analyzer:'}
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://dart.dev/tools/analysis", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

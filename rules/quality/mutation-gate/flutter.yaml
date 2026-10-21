@@ -11,4 +11,6 @@ satisfiers:
 requirement: "mutation_test runs on the core libraries, from the task runner or a workflow."
 fix:
   human: "Add the mutation_test package with a rules file for lib/ and run it weekly."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://pub.dev/packages/mutation_test", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

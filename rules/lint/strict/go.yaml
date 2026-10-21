@@ -27,4 +27,12 @@ rationale: Swallowed errors, unsafe calls and oversized functions are exactly wh
 fix:
   human: "Add the missing linters to linters.enable in .golangci.yml and remove them from linters.disable."
   agent: "Add each reported linter to the linters.enable list in .golangci.yml (and drop it from linters.disable); keep the rest of the file unchanged."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://golangci-lint.run/docs/linters/", kind: spec}
+  - {url: "https://pkg.go.dev/cmd/vet", kind: spec}
+  - {url: "https://staticcheck.dev/docs/checks/", kind: check}
+  - {url: "https://golangci-lint.run/docs/linters/configuration/", kind: check, section: "errorlint"}
+  - {url: "https://github.com/securego/gosec", kind: check}
+  - {url: "https://golangci-lint.run/docs/linters/configuration/", kind: check, section: "gocognit"}
+  - {url: "https://golangci-lint.run/docs/linters/configuration/", kind: check, section: "funlen"}
+  - "https://fleetlint.org/stacks/#go"

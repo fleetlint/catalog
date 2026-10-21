@@ -9,4 +9,5 @@ rationale: Without one formatter every editor reformats differently and diffs fi
 fix:
   human: "Add the stack's formatter to the hooks and the fmt target (see https://fleetlint.org/stacks/)."
   agent: "Add the stack's formatter to the pre-commit hooks and the fmt target; reformat the code base in a separate commit."
-refs: ["https://fleetlint.org/baseline/#static-analysis"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#static-analysis", kind: convention}

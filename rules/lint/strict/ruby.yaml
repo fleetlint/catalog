@@ -18,4 +18,6 @@ rationale: RuboCop adds most new checks as pending; without NewCops enable a pro
 fix:
   human: "Set `NewCops: enable` under AllCops in .rubocop.yml."
   agent: "Set NewCops: enable under AllCops in .rubocop.yml and fix or ratchet (.rubocop_todo.yml) what the new cops report."
-refs: ["https://fleetlint.org/stacks/#ruby"]
+refs:
+  - {url: "https://docs.rubocop.org/rubocop/latest/versioning.html", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

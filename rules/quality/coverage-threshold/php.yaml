@@ -15,4 +15,6 @@ satisfiers:
 requirement: "PHPUnit has no coverage minimum of its own: phpunit-coverage-check (`coverage-check clover.xml 80`) runs after the tests, or a stack-neutral floor applies (diff-cover `--fail-under` on the Cobertura report)."
 fix:
   human: "Run `vendor/bin/coverage-check build/clover.xml 80` after PHPUnit in the `cover` target."
-refs: ["https://fleetlint.org/stacks/#php"]
+refs:
+  - {url: "https://github.com/richardregeer/phpunit-coverage-check", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

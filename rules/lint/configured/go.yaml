@@ -28,4 +28,7 @@ fix:
   actions:
     - template: golangci.yml
       to: .golangci.yml
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://golangci-lint.run/docs/configuration/file/", kind: spec}
+  - {url: "https://staticcheck.dev/docs/", kind: spec}
+  - "https://fleetlint.org/stacks/#go"

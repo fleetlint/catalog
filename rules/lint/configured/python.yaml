@@ -24,4 +24,6 @@ fix:
   actions:
     - append: {file: pyproject.toml, template: python/ruff.toml, unless: '(?m)^\[tool\.ruff\]'}
     - append: {file: pyproject.toml, template: python/dev-group.toml, unless: '(?m)^\[dependency-groups\]|ruff[>=~<]'}
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://docs.astral.sh/ruff/configuration/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"

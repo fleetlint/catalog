@@ -18,4 +18,6 @@ satisfiers:
 requirement: "`cargo llvm-cov` with `--fail-under-lines` (or another `--fail-under-*`) or `cargo tarpaulin --fail-under` runs in a recipe or a CI step, or tarpaulin.toml sets `fail-under`; or a stack-neutral floor applies."
 fix:
   human: "Run `cargo llvm-cov --fail-under-lines 80` in the `cover` target."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://github.com/taiki-e/cargo-llvm-cov", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

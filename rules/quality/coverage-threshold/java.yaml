@@ -13,4 +13,7 @@ satisfiers:
 requirement: "JaCoCo's `check` goal with a `<minimum>` in pom.xml, JaCoCo `violationRules` (jacocoTestCoverageVerification) or Kover `minBound` verification in a Gradle build, or a stack-neutral floor applies."
 fix:
   human: "Add a Kover (or JaCoCo) verification rule with a minimum and run its verify task in `cover`."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://www.jacoco.org/jacoco/trunk/doc/check-mojo.html", kind: spec}
+  - {url: "https://kotlin.github.io/kotlinx-kover/gradle-plugin/", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

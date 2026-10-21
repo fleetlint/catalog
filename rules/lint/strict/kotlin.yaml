@@ -27,4 +27,10 @@ fix:
   actions:
     - template: kotlin/detekt.yml
       to: config/detekt/detekt.yml
-refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+refs:
+  - {url: "https://detekt.dev/docs/rules/exceptions/", kind: check, section: "SwallowedException"}
+  - {url: "https://detekt.dev/docs/rules/exceptions/", kind: check, section: "TooGenericExceptionCaught"}
+  - {url: "https://detekt.dev/docs/rules/empty-blocks/", kind: check, section: "EmptyCatchBlock"}
+  - {url: "https://detekt.dev/docs/rules/complexity/", kind: check, section: "LongMethod"}
+  - {url: "https://detekt.dev/docs/rules/complexity/", kind: check, section: "CognitiveComplexMethod"}
+  - "https://fleetlint.org/stacks/#kotlin-jvm--android"

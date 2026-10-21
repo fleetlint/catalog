@@ -15,4 +15,7 @@ requirement: "`cargo fmt` runs in a hook, the task runner or CI, or a `rustfmt.t
 fix:
   human: "Add `cargo fmt --all --check` to the lint target and a cargo fmt hook, with a committed rustfmt.toml."
   agent: "Add `cargo fmt --all --check` to the lint target and a cargo-fmt pre-commit hook; reformat in a separate commit."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/style-guide/", kind: guidance, section: "Formatting conventions"}
+  - {url: "https://github.com/rust-lang/rustfmt", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

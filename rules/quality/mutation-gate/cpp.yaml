@@ -11,4 +11,6 @@ satisfiers:
 requirement: "Mull (or dextool mutate) runs on the core code, from the task runner or a workflow."
 fix:
   human: "Build the tests with the Mull compiler plugin (`mull.yml`) and run `mull-runner` weekly."
-refs: ["https://fleetlint.org/stacks/#cc"]
+refs:
+  - {url: "https://github.com/mull-project/mull", kind: spec}
+  - "https://fleetlint.org/stacks/#cc"

@@ -11,4 +11,6 @@ satisfiers:
 requirement: "pylint runs with `duplicate-code` (R0801) not disabled; or a stack-neutral detector."
 fix:
   human: "Run pylint in the lint target without disabling `duplicate-code`, or add jscpd."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://pylint.readthedocs.io/en/stable/user_guide/messages/refactor/duplicate-code.html", kind: check, section: "R0801"}
+  - "https://fleetlint.org/stacks/#python"

@@ -32,4 +32,6 @@ fix:
   actions:
     - template: cpp/clang-tidy
       to: .clang-tidy
-refs: ["https://fleetlint.org/stacks/#cc"]
+refs:
+  - {url: "https://clang.llvm.org/extra/clang-tidy/", kind: spec}
+  - "https://fleetlint.org/stacks/#cc"
