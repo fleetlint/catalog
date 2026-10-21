@@ -1,0 +1,26 @@
+id: release/sbom/oci-artifact
+kind: outcome
+satisfiers:
+  - name: cosign-attest
+    expr: artifact_workflows("oci-artifact").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)|\\bcosign attach sbom\\b")))
+  - name: oras-attach
+    expr: >
+      artifact_workflows("oci-artifact").exists(w, steps(w).exists(s,
+        s.run.matches("\\boras attach\\b[^\\n]*--artifact-type[= ][^\\n]*(spdx|cyclonedx|sbom)")
+        || glob("**/*.sh").exists(f, s.run.contains(f) && text(f).matches("\\boras attach\\b[^\\n]*--artifact-type[= ][^\\n]*(spdx|cyclonedx|sbom)"))))
+partials:
+  - name: sbom-outside-release
+    severity: info
+    expr: >
+      (taskrunner.kind == "make" && "sbom" in makefile("Makefile").targets)
+      || workflows().exists(w, steps(w).exists(s, s.run.matches("\\bsyft\\b") || s.uses.startsWith("anchore/sbom-action")))
+    message: "an SBOM producer exists but the workflow that publishes this artifact does not attach it"
+requirement: >
+  An SBOM of what went into the artifact is attached to its digest: `cosign attest --type
+  spdx|cyclonedx` or `cosign attach sbom`, or `oras attach --artifact-type` with an SPDX or
+  CycloneDX media type. An artifact built from a repository tree has the repository's dependency
+  SBOM (`syft dir:.`); one built from nothing but data states that in its annotations.
+fix:
+  human: "Generate the SBOM with syft (`syft dir:. -o spdx-json > sbom.spdx.json`) and attach it: `cosign attest --yes --type spdxjson --predicate sbom.spdx.json <repository>@<digest>`."
+  agent: "Add anchore/sbom-action (or `syft dir:.`) before the push step and `cosign attest --yes --type spdxjson --predicate <sbom> <repository>@${{ steps.<id>.outputs.digest }}` after it."
+refs: ["https://fleetlint.org/baseline/#releases", "https://oras.land/docs/how_to_guides/manifest_config/"]

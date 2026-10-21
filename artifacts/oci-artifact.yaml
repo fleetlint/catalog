@@ -1,0 +1,14 @@
+id: oci-artifact
+title: OCI artifact (not an image)
+refs: ["https://fleetlint.org/baseline/#releases", "https://oras.land/docs/"]
+# Anything but an image pushed to an OCI registry: a policy bundle, a rule catalog, a WASM module, a
+# config bundle. `oras push`, `flux push artifact`, `cosign upload blob` or `regctl artifact put`,
+# in the step itself or in a repository script the step runs (`scripts/publish.sh`). A push to a
+# throwaway registry (localhost, plain HTTP) in a test job is not a release. Images are `image`,
+# charts `helm-chart`.
+summary: "`oras push`, `flux push artifact`, `cosign upload blob`, `regctl artifact put`, in the step or in a repository script the step runs, to a registry that is not localhost; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request)"
+detect: >
+  workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && steps(w).exists(s,
+    !s.run.matches("\\blocalhost\\b|127\\.0\\.0\\.1|--plain-http") && (
+    s.run.matches("\\boras push\\b|\\bflux push artifact\\b|\\bcosign upload blob\\b|\\bregctl artifact put\\b")
+    || glob("**/*.sh").exists(f, s.run.contains(f) && text(f).matches("\\boras push\\b|\\bflux push artifact\\b|\\bcosign upload blob\\b|\\bregctl artifact put\\b")))))

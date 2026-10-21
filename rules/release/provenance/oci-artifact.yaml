@@ -1,0 +1,19 @@
+id: release/provenance/oci-artifact
+kind: outcome
+satisfiers:
+  - name: cosign-attest
+    expr: artifact_workflows("oci-artifact").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*slsaprovenance")))
+  - name: attest-action
+    expr: >
+      artifact_workflows("oci-artifact").exists(w, steps(w).exists(s,
+        (s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")) && "subject-digest" in s.with))
+  - name: slsa-generic-generator
+    expr: artifact_workflows("oci-artifact").exists(w, jobs(w).exists(j, j.uses.startsWith("slsa-framework/slsa-github-generator/.github/workflows/generator_generic")))
+requirement: >
+  Provenance is attached to the artifact digest: actions/attest-build-provenance with
+  `subject-digest` and `push-to-registry: true`, `cosign attest --type slsaprovenance`, or the SLSA
+  generic generator over the digest.
+fix:
+  human: "After the push step add actions/attest-build-provenance with `subject-name: <registry>/<repository>`, `subject-digest: <digest>` and `push-to-registry: true`; the job needs `id-token: write` and `attestations: write`."
+  agent: "Add actions/attest-build-provenance after the push step with `subject-name`, `subject-digest` from the push step's output and `push-to-registry: true`; grant `id-token: write`, `attestations: write` and `packages: write` to that job only."
+refs: ["https://fleetlint.org/baseline/#releases", "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds"]
