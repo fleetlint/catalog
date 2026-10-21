@@ -77,7 +77,7 @@ jobs:
       - uses: oras-project/setup-oras@005458ad77f1c8facd38a094e4af2e69e5607ff4 # v2.0.2
       - name: fleetlint, to load the artifact
         env:
-          FLEETLINT_REF: 5ed665a82eef87d248e5433b109e487d2142de17   # fleetlint v0.6.0, which reads engine level 5
+          FLEETLINT_REF: f48924d214f228ceb2403eb844e7115176ebd357   # fleetlint typed-refs (pre-0.7.0), which reads engine level 6
         run: |
           go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
