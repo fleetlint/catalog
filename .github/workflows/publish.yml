@@ -1,6 +1,6 @@
 # Publishes this catalog version as a signed OCI artifact on every tag: the
 # whole tree (presets/, rules/, stacks/, artifacts/, templates/, aliases.yaml), the same
-# version the git tag holds. A repository pins it with
+# version the git tag holds, with an SBOM and build provenance attested to its digest. A repository pins it with
 #   catalog: {oci: ghcr.io/fleetlint/catalog:<tag>}
 # and fleetlint verifies the signature of this workflow on a version tag.
 # check.yml loads the same artifact on every push to main, so a tag only
@@ -20,14 +20,16 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-      packages: write   # push to ghcr.io
-      id-token: write   # keyless cosign
+      packages: write      # push to ghcr.io
+      id-token: write      # keyless cosign
+      attestations: write  # build provenance
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - uses: oras-project/setup-oras@005458ad77f1c8facd38a094e4af2e69e5607ff4 # v2.0.2
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+      - uses: anchore/sbom-action/download-syft@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
@@ -50,6 +52,17 @@ jobs:
           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
       - name: Sign the artifact (keyless, sigstore bundle attached as a referrer)
         run: cosign sign --yes --new-bundle-format "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+      - name: SBOM of the tree, attested to the digest
+        run: |
+          syft dir:. -o spdx-json > sbom.spdx.json
+          cosign attest --yes --new-bundle-format --type spdxjson --predicate sbom.spdx.json \
+            "ghcr.io/${GITHUB_REPOSITORY}@${{ steps.push.outputs.digest }}"
+      - name: Build provenance (SLSA), attached to the digest
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
       - name: Verify what was just signed
         run: |
           cosign verify --new-bundle-format \

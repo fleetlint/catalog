@@ -3,7 +3,7 @@ version: 1
 extends:
   - fleetlint:recommended
 facts:
-  tier: 2
+  tier: 1
   visibility: public
   container: none       # data and one Go test: the gates run on the machine
 scopes: []              # the templates are files for other repositories, not projects of this one

@@ -45,9 +45,17 @@ Rules are YAML with [CEL](https://cel.dev) predicates. This repository only chec
 make check    # format, vet, tests
 ```
 
-## Layout
+## Architecture
 
-`catalog.go` exposes `presets/`, `rules/`, `stacks/`, `artifacts/` and `templates/` as embedded file systems (`catalog.Presets`, `catalog.Rules`, `catalog.Stacks`, `catalog.Artifacts`, `catalog.Templates`) and `aliases.yaml` as `catalog.Aliases`; fleetlint imports this module for them. The presets carry no version of their own: they are versioned with this repository's tags.
+The repository is data: no code runs here beyond one Go file and its presence test.
+
+- `presets/` are the entry points a repository extends (`fleetlint:minimal`, `fleetlint:recommended`, `fleetlint:strict`, `fleetlint:oss`, `fleetlint:slop`). A preset selects rules from the library with `use:` and sets the engine level it needs.
+- `rules/` is the library, one YAML file per rule with CEL predicates. A capability (`kind: capability`) has one implementation per stack in `rules/<family>/<name>/<stack>.yaml`, or per artifact kind when it says `by: artifact`.
+- `stacks/` and `artifacts/` define what the engine detects: a stack from the files of a repository, an artifact kind from the workflows that publish it. Rules address them by id.
+- `templates/` are the files `fleetlint fix` writes, per stack and forge.
+- `aliases.yaml` maps retired rule ids to their successors, so a pinned configuration keeps working across versions.
+
+The data flows one way: fleetlint embeds this module (`catalog.go` exposes each directory as an `embed.FS`) and loads presets, library, stacks, artifacts and templates from it; the publish workflow pushes the same tree as one signed OCI artifact per tag, with an SBOM and build provenance on its digest, so a repository can pin `catalog: {oci: ghcr.io/fleetlint/catalog:<tag>}` and get the same files through the registry. The presets carry no version of their own: they are versioned with this repository's tags. Everything that evaluates a rule, and every fixture, lives in fleetlint.
 
 ## License
 

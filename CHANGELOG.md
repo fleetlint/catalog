@@ -8,6 +8,12 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 ### Added
 
 - Artifact kind `oci-artifact`: a non-image artifact pushed to a registry with `oras push`, `flux push artifact`, `cosign upload blob` or `regctl artifact put`, in the workflow step or in a repository script the step runs. Implementations of the four release capabilities for it: signing by digest with cosign or Notation, an SBOM attached with `cosign attest` or `oras attach`, provenance with actions/attest-build-provenance, `cosign attest` or the SLSA generic generator; trusted publishing does not apply.
+- The published catalog version carries an SPDX SBOM (`cosign attest`) and SLSA build provenance (actions/attest-build-provenance) on its digest, next to the signature.
+
+### Changed
+
+- `release/checksums` does not ask a release that publishes an OCI artifact or a chart for a checksums file: the registry digest is the checksum.
+- The catalog repository checks itself at tier 1.
 
 ## [0.3.0] - 2026-10-20
 
