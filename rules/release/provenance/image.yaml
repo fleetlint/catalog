@@ -11,6 +11,10 @@ satisfiers:
     expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*slsaprovenance")))
   - name: attest-action
     expr: artifact_workflows("image").exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") && "subject-digest" in s.with))
+  - name: goreleaser-buildx
+    expr: >
+      [".goreleaser.yaml", ".goreleaser.yml"].exists(f, file(f) && type(yaml(f)) == map && "dockers_v2" in yaml(f)
+        && !yaml(f).dockers_v2.exists(d, "provenance" in d && (d.provenance == false || d.provenance == "false")))
   - name: slsa-container-generator
     expr: artifact_workflows("image").exists(w, jobs(w).exists(j, j.uses.startsWith("slsa-framework/slsa-github-generator/.github/workflows/generator_container")))
 requirement: >
