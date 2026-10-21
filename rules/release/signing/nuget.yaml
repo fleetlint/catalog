@@ -11,4 +11,6 @@ requirement: >
   own repository signature on upload; that proves the registry, not the author.
 fix:
   human: "Sign packages with `dotnet nuget sign` (or binaries with signtool / Azure Trusted Signing) before `dotnet nuget push`."
-refs: ["https://fleetlint.org/baseline/#releases", "https://learn.microsoft.com/nuget/create-packages/sign-a-package"]
+refs:
+  - {url: "https://learn.microsoft.com/nuget/create-packages/sign-a-package", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

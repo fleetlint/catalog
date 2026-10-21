@@ -8,4 +8,6 @@ satisfiers:
 requirement: "Psalm's taint analysis (`psalm --taint-analysis`) runs in CI or the task runner; or a stack-neutral scanner (CodeQL, Semgrep, GitLab SAST, SonarQube)."
 fix:
   human: "Run `vendor/bin/psalm --taint-analysis` in the check workflow, or add a Semgrep step."
-refs: ["https://fleetlint.org/stacks/#php", "https://psalm.dev/docs/security_analysis/"]
+refs:
+  - {url: "https://psalm.dev/docs/security_analysis/", kind: spec}
+  - "https://fleetlint.org/stacks/#php"

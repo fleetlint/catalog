@@ -24,4 +24,7 @@ rationale: The default job timeout is six hours on GitHub and one hour on GitLab
 fix:
   human: "Add `timeout-minutes: 15` (GitLab: `timeout: 15m`, or once under `default:`) sized to what the job needs."
   agent: "Add timeout-minutes to each Actions job in the flagged file (GitLab: `timeout:` per job or under `default:`), sized to roughly twice its typical duration."
-refs: ["https://fleetlint.org/baseline/#continuous-integration"]
+refs:
+  - {url: "https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions", kind: spec, section: "timeout-minutes"}
+  - {url: "https://docs.gitlab.com/ci/yaml/", kind: spec, section: "timeout"}
+  - "https://fleetlint.org/baseline/#continuous-integration"

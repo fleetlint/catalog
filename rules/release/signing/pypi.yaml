@@ -12,4 +12,6 @@ requirement: >
   which attests by default) or are signed with sigstore-python.
 fix:
   human: "Publish with pypa/gh-action-pypi-publish and trusted publishing (`id-token: write`); it uploads Sigstore attestations."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.pypi.org/attestations/"]
+refs:
+  - {url: "https://docs.pypi.org/attestations/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

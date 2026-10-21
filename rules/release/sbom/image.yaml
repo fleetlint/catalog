@@ -33,4 +33,8 @@ requirement: >
 fix:
   human: "Set `sbom: true` (and `provenance: true`) on docker/build-push-action; BuildKit attaches the SBOM to the image digest."
   agent: "Add `sbom: true` to the docker/build-push-action step's `with:`; nothing else changes."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.docker.com/build/metadata/attestations/sbom/"]
+refs:
+  - {url: "https://docs.docker.com/build/metadata/attestations/sbom/", kind: spec}
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds", kind: guidance, section: "Generating an SBOM attestation for container images"}
+  - {url: "https://github.com/anchore/syft", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

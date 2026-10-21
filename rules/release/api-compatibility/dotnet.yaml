@@ -12,4 +12,6 @@ satisfiers:
 requirement: "A packable project enables package validation against the previous version (`EnablePackageValidation` with `PackageValidationBaselineVersion`) or runs ApiCompat."
 fix:
   human: "Set `<EnablePackageValidation>true</EnablePackageValidation>` and `<PackageValidationBaselineVersion>` (the previous release) in the packable project."
-refs: ["https://fleetlint.org/stacks/#net"]
+refs:
+  - {url: "https://learn.microsoft.com/en-us/dotnet/fundamentals/apicompat/package-validation/baseline-version-validator", kind: spec}
+  - "https://fleetlint.org/stacks/#net"

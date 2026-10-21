@@ -13,4 +13,6 @@ expr: >
 requirement: "A GitHub or GitLab workflow that publishes to RubyGems (`gem push`, rubygems/release-gem) uses trusted publishing: `id-token: write` and no GEM_HOST_API_KEY or `--token` from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Register the workflow as a trusted publisher on rubygems.org, release with rubygems/release-gem from a job with `id-token: write`, and delete the API key secret."
-refs: ["https://fleetlint.org/baseline/#releases", "https://guides.rubygems.org/trusted-publishing/"]
+refs:
+  - {url: "https://guides.rubygems.org/trusted-publishing/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

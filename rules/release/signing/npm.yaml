@@ -13,4 +13,6 @@ requirement: >
   `npm audit signatures` checks.
 fix:
   human: "Publish with `npm publish --provenance` from a job with `id-token: write`, or use trusted publishing."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.npmjs.com/generating-provenance-statements"]
+refs:
+  - {url: "https://docs.npmjs.com/generating-provenance-statements", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

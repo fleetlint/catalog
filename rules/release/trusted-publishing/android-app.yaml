@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "Google Play has no OIDC publishing; the service-account key stays a CI secret, scoped to the app."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

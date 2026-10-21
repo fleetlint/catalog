@@ -16,4 +16,8 @@ requirement: >
 fix:
   human: "After the push step add actions/attest-build-provenance with `subject-name: <registry>/<repository>`, `subject-digest: <digest>` and `push-to-registry: true`; the job needs `id-token: write` and `attestations: write`."
   agent: "Add actions/attest-build-provenance after the push step with `subject-name`, `subject-digest` from the push step's output and `push-to-registry: true`; grant `id-token: write`, `attestations: write` and `packages: write` to that job only."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/provenance", kind: standard}
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds", kind: guidance, section: "Generating build provenance for container images"}
+  - {url: "https://docs.sigstore.dev/cosign/verifying/attestation/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

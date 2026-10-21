@@ -10,4 +10,8 @@ satisfiers:
 requirement: "Archives are reproducible: Maven sets `project.build.outputTimestamp`; Gradle sets `preserveFileTimestamps = false` and `reproducibleFileOrder = true` on its archive tasks, or the wrapper is Gradle 9 or later, where that is the default; or SOURCE_DATE_EPOCH is set for the release build."
 fix:
   human: "Maven: set `<project.build.outputTimestamp>` (the release plugin updates it); Gradle: configure `tasks.withType<AbstractArchiveTask>` or update to Gradle 9."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://maven.apache.org/guides/mini/guide-reproducible-builds.html", kind: spec}
+  - {url: "https://docs.gradle.org/current/userguide/working_with_files.html", kind: spec, section: "Reproducible archives"}
+  - {url: "https://reproducible-builds.org/docs/source-date-epoch/", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

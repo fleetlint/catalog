@@ -24,4 +24,6 @@ rationale: Hand-written release notes drift from the changelog and from what was
 fix:
   human: "Use git-cliff --latest --strip header as the release body."
   agent: "Add a step that runs `git-cliff --latest --strip header -o release-notes.md` and pass it as the release body."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://keepachangelog.com/en/1.1.0/", kind: standard, section: "How do I make a good changelog?"}
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

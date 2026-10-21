@@ -3,4 +3,6 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "crates.io holds the dependency graph and cargo-auditable embeds it in binaries; binaries built from the crate are checked as release files."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}
+  - {url: "https://github.com/rust-secure-code/cargo-auditable", kind: spec}

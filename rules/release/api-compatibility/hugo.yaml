@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "A Hugo site is not a library; it has no API to keep compatible."
-refs: ["https://fleetlint.org/stacks/#hugo--static-sites"]
+refs:
+  - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

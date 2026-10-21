@@ -8,4 +8,6 @@ satisfiers:
 requirement: "Brakeman (taint analysis for Rails) runs in CI or the task runner; or a stack-neutral scanner (CodeQL, Semgrep, GitLab SAST, SonarQube)."
 fix:
   human: "Add `bundle exec brakeman --no-pager` to the check workflow, or a CodeQL/Semgrep step."
-refs: ["https://fleetlint.org/stacks/#ruby", "https://brakemanscanner.org/"]
+refs:
+  - {url: "https://brakemanscanner.org/", kind: spec}
+  - "https://fleetlint.org/stacks/#ruby"

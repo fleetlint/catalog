@@ -12,4 +12,7 @@ rationale: Release tooling, changelog generation and dependency resolvers all ke
 fix:
   human: "Delete or rename the offending tags; tag releases as vX.Y.Z from now on."
   agent: "List the offending tags for the user; do not delete tags without confirmation."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://semver.org/spec/v2.0.0.html", kind: standard}
+  - {url: "https://go.dev/ref/mod", kind: spec, section: "Mapping versions to commits"}
+  - "https://fleetlint.org/baseline/#releases"

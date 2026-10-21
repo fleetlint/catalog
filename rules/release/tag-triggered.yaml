@@ -15,4 +15,8 @@ fix:
   actions:
     - template: "{stack}/release.yml"
       to: .github/workflows/release.yml
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/requirements", kind: standard, section: "Follow a consistent build process"}
+  - {url: "https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions", kind: spec, section: "on.push.tags"}
+  - {url: "https://docs.gitlab.com/ci/yaml/", kind: spec, section: "rules:if"}
+  - "https://fleetlint.org/baseline/#releases"

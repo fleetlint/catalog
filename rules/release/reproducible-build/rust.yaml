@@ -13,4 +13,7 @@ satisfiers:
 requirement: "The release build runs `cargo build --release --locked` (from Cargo.lock) and maps local paths away with `--remap-path-prefix` (in RUSTFLAGS, .cargo/config.toml or the release workflow); or SOURCE_DATE_EPOCH is set for the release build."
 fix:
   human: "Build releases with `cargo build --release --locked` and `RUSTFLAGS=\"--remap-path-prefix=$PWD=.\"`."
-refs: ["https://fleetlint.org/stacks/#rust"]
+refs:
+  - {url: "https://doc.rust-lang.org/rustc/command-line-arguments.html", kind: spec, section: "--remap-path-prefix: remap source paths in output"}
+  - {url: "https://reproducible-builds.org/docs/source-date-epoch/", kind: spec}
+  - "https://fleetlint.org/stacks/#rust"

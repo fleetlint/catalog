@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "A chart is templates and a values file; its dependencies are the images it references, which carry their own SBOMs."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

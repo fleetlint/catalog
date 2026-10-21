@@ -20,4 +20,9 @@ rationale: >
 fix:
   human: "Run the artifact's SBOM producer in the release workflow (`fleetlint explain release/sbom/<artifact>`): syft or GoReleaser `sboms:` for release files, BuildKit `sbom: true` or `cosign attest --type spdx` for an image, the CycloneDX build plugin for Maven, NuGet and Android; upload the files with the release."
   agent: "In the tag-triggered release workflow add a step producing an SPDX JSON SBOM for each published artifact (syft for files, BuildKit `sbom: true` for images, the stack's CycloneDX plugin otherwise) and include the files in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PS.3.2: Collect, safeguard, maintain, and share provenance data for all components of each software release"}
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "SBOM"}
+  - {url: "https://spdx.github.io/spdx-spec/v2.3/", kind: spec}
+  - {url: "https://cyclonedx.org/specification/overview/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

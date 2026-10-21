@@ -28,4 +28,6 @@ fix:
   actions:
     - template: "{stack}/check.yml"
       to: .github/workflows/check.yml
-refs: ["https://fleetlint.org/baseline/#continuous-integration"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "CI-Tests"}
+  - {url: "https://fleetlint.org/baseline/#continuous-integration", kind: convention}

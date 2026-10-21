@@ -13,4 +13,6 @@ expr: >
 requirement: "A GitHub or GitLab workflow that publishes to pub.dev uses automated publishing with OIDC: `id-token: write` and no PUB_CREDENTIALS or PUB_TOKEN from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Enable automated publishing from GitHub Actions on pub.dev for the package, publish from a job with `id-token: write` (dart-lang/setup-dart exchanges the token), and delete the credentials secret."
-refs: ["https://fleetlint.org/baseline/#releases", "https://dart.dev/tools/pub/automated-publishing"]
+refs:
+  - {url: "https://dart.dev/tools/pub/automated-publishing", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

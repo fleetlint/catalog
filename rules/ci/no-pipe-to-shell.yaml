@@ -24,4 +24,6 @@ rationale: Whatever the server returns at that moment runs with the job's secret
 fix:
   human: "Download the installer or release archive to a file, verify its sha256 against a pinned value, then run it; or install through a pinned action or the package manager."
   agent: "Replace each flagged pipe with: download to a file, `sha256sum -c` against a pinned checksum (Renovate-annotated), then execute or extract; keep the installed version unchanged."
-refs: ["https://fleetlint.org/baseline/#security"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Pinned-Dependencies"}
+  - {url: "https://fleetlint.org/baseline/#security", kind: convention}

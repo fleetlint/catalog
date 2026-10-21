@@ -32,4 +32,8 @@ requirement: >
 fix:
   human: "Add an SBOM step to the release workflow (syft, SPDX JSON, one per artifact) or a `sboms:` section to .goreleaser.yaml, and upload the files with the release."
   agent: "In the release workflow add a step running syft on each artifact producing SPDX JSON files, and include them in the release upload step. Do not change other steps. If the repo uses GoReleaser, add a `sboms:` section instead."
-refs: ["https://fleetlint.org/baseline/#releases", "https://github.com/anchore/syft"]
+refs:
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds", kind: guidance, section: "Generating an SBOM attestation for binaries"}
+  - {url: "https://goreleaser.com/customization/sbom/", kind: spec}
+  - {url: "https://github.com/anchore/syft", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

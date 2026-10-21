@@ -25,4 +25,9 @@ requirement: >
 fix:
   human: "Keep docker/build-push-action v4 or newer and do not set `provenance: false`; or run `cosign attest --yes --type slsaprovenance --predicate provenance.json <image>@<digest>`."
   agent: "Remove `provenance: false` from the docker/build-push-action step, or add actions/attest-build-provenance with `subject-name`, `subject-digest` from the build step and `push-to-registry: true`."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.docker.com/build/metadata/attestations/slsa-provenance/"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/provenance", kind: standard}
+  - {url: "https://docs.docker.com/build/metadata/attestations/slsa-provenance/", kind: spec}
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds", kind: guidance, section: "Generating build provenance for container images"}
+  - {url: "https://docs.sigstore.dev/cosign/verifying/attestation/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

@@ -19,4 +19,8 @@ rationale: A registry token in CI secrets is valid for months and publishes from
 fix:
   human: "Register the repository and workflow as a trusted publisher on the registry, grant `id-token: write` to the release job and delete the token secret."
   agent: "Grant `id-token: write` on the publishing job, remove the registry token from env/with (pypa/gh-action-pypi-publish without password, `npm publish` with npm 11.5.1 or newer, rust-lang/crates-io-auth-action for cargo, rubygems/release-gem for gems, NuGet/login for nuget.org, dart-lang/setup-dart for pub.dev; on GitLab add `id_tokens:` with the registry's audience), and tell the user to register the trusted publisher and delete the secret."
-refs: ["https://fleetlint.org/baseline/#releases", "https://fleetlint.org/baseline/#security"]
+refs:
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/security-hardening-your-deployments/about-security-hardening-with-openid-connect", kind: guidance}
+  - {url: "https://docs.gitlab.com/ci/secrets/id_token_authentication/", kind: spec, section: "id_tokens"}
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}
+  - "https://fleetlint.org/baseline/#security"

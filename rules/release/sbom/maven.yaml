@@ -21,4 +21,7 @@ requirement: >
   as an extra artifact (the `cyclonedx` classifier on Maven Central).
 fix:
   human: "Apply the CycloneDX Gradle plugin (`org.cyclonedx.bom`) and run `./gradlew cyclonedxBom` in the release workflow (or bind cyclonedx-maven-plugin's makeAggregateBom); publish the BOM with the artifact."
-refs: ["https://fleetlint.org/baseline/#releases", "https://github.com/CycloneDX/cyclonedx-maven-plugin"]
+refs:
+  - {url: "https://github.com/CycloneDX/cyclonedx-maven-plugin", kind: spec}
+  - {url: "https://github.com/CycloneDX/cyclonedx-gradle-plugin", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

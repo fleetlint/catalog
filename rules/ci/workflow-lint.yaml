@@ -21,4 +21,7 @@ rationale: Workflow mistakes (bad expressions, unquoted inputs, risky triggers) 
 fix:
   human: "Add the zizmor or actionlint pre-commit hook, or a lint step in the check workflow."
   agent: "Add the zizmor pre-commit hook (zizmorcore/zizmor-pre-commit) or actionlint to .pre-commit-config.yaml and fix what it reports in .github/workflows."
-refs: ["https://fleetlint.org/baseline/#security"]
+refs:
+  - {url: "https://github.com/rhysd/actionlint", kind: spec}
+  - {url: "https://docs.zizmor.sh/", kind: spec}
+  - "https://fleetlint.org/baseline/#security"

@@ -13,4 +13,6 @@ requirement: >
   --export-options-plist`); a macOS download is notarized and stapled (`notarytool submit`, `stapler`).
 fix:
   human: "Export with a signing identity (`xcodebuild -exportArchive -exportOptionsPlist` with the distribution certificate from CI secrets, or fastlane match + gym); for a macOS download add `notarytool submit --wait` and `stapler staple`."
-refs: ["https://fleetlint.org/baseline/#releases", "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"]
+refs:
+  - {url: "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

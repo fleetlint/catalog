@@ -32,4 +32,6 @@ rationale: Checksums let a downloader verify integrity even without signature to
 fix:
   human: "Generate checksums.txt with sha256sum in the release job and upload it."
   agent: "Add `sha256sum dist/* > dist/checksums.txt` before the upload step and include dist/checksums.txt in the release assets."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PS.2.1: Make software integrity verification information available to software acquirers"}
+  - "https://fleetlint.org/baseline/#releases"

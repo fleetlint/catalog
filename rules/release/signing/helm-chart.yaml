@@ -15,4 +15,7 @@ requirement: >
   repository carries a provenance file (`helm package --sign`, chart-releaser `--sign`).
 fix:
   human: "OCI: `cosign sign --yes <registry>/<chart>@<digest>` after `helm push`. Chart repository: `helm package --sign --key <name> --keyring <file>` so a `.prov` file is published next to the chart."
-refs: ["https://fleetlint.org/baseline/#releases", "https://helm.sh/docs/topics/provenance/"]
+refs:
+  - {url: "https://helm.sh/docs/topics/provenance/", kind: spec}
+  - {url: "https://docs.sigstore.dev/cosign/signing/signing_with_containers/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

@@ -25,4 +25,7 @@ rationale: A persistent self-hosted runner carries state between jobs; anything 
 fix:
   human: "Move the release job to a GitHub-hosted runner (`ubuntu-latest`), or document why it cannot and add an exception."
   agent: "Change `runs-on` of the flagged release jobs to a GitHub-hosted label such as ubuntu-latest; if the build needs special hardware, tell the user instead of changing it."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/levels", kind: standard, section: "Build L2: Hosted build platform"}
+  - {url: "https://slsa.dev/spec/v1.0/requirements", kind: standard, section: "Isolation strength"}
+  - "https://fleetlint.org/baseline/#releases"

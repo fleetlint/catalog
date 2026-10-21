@@ -17,4 +17,8 @@ rationale: Provenance ties the artifact to the exact source and workflow that bu
 fix:
   human: "Add actions/attest-build-provenance (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release pipeline for files, `cosign attest` or BuildKit provenance for an image; a package published to npm, PyPI or RubyGems gets it from trusted publishing."
   agent: "Add a step `uses: actions/attest-build-provenance` with `subject-path` covering the release files (or `subject-name` and `subject-digest` for an image, with `push-to-registry: true`); grant `id-token: write` and `attestations: write` to that job only. On GitLab set the variable RUNNER_GENERATE_ARTIFACTS_METADATA to \"true\" on the release job. On Gitea write a SLSA v1 predicate and run `cosign attest-blob --type slsaprovenance1`."
-refs: ["https://fleetlint.org/baseline/#releases", "https://slsa.dev/spec/v1.0/provenance"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/provenance", kind: standard}
+  - {url: "https://slsa.dev/spec/v1.0/levels", kind: standard, section: "Build L1: Provenance exists"}
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PS.3.2: Collect, safeguard, maintain, and share provenance data for all components of each software release"}
+  - "https://fleetlint.org/baseline/#releases"

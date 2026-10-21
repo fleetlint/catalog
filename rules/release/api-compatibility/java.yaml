@@ -10,4 +10,6 @@ satisfiers:
 requirement: "A library published with maven-publish or Maven deploy runs japicmp or revapi against the previous release."
 fix:
   human: "Add japicmp-maven-plugin (or me.champeau.gradle.japicmp) comparing against the previous release version."
-refs: ["https://fleetlint.org/stacks/#java"]
+refs:
+  - {url: "https://siom79.github.io/japicmp/", kind: spec}
+  - "https://fleetlint.org/stacks/#java"

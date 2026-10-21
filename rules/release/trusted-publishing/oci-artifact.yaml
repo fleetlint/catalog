@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "OCI registries have no trusted publishing; the forge's own registry takes the job token, and signing (release/signing/oci-artifact) is what identifies the publisher."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

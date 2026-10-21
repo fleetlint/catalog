@@ -19,4 +19,7 @@ rationale: Checksums prove integrity; only a signature proves who built it.
 fix:
   human: "Sign each published artifact in its own format (`fleetlint explain release/signing/<artifact>`); without one, add a cosign step to the release workflow: `cosign sign-blob` for checksums.txt when the release is files, `cosign sign <image>@<digest>` for a container image (keyless on GitHub, with a key on Gitea)."
   agent: "Use the artifact's own signing format when it has one. Otherwise add sigstore/cosign-installer and a signing step after the artifacts are built. Files: `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` and upload the bundle. Container image: `cosign sign --yes <image>@<digest>` using the digest output of the build step, with `id-token: write` on the job."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PS.2.1: Make software integrity verification information available to software acquirers"}
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "Signed-Releases"}
+  - "https://fleetlint.org/baseline/#releases"

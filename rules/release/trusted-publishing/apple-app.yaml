@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "App Store Connect has no OIDC publishing; the API key stays a CI secret, scoped to the team."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

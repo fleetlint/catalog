@@ -3,4 +3,5 @@ kind: expr
 when: "false"
 expr: "true"
 requirement: "crates.io has no provenance attestations yet; a crate is checked for trusted publishing (release/trusted-publishing/crate)."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

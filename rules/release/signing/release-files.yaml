@@ -20,4 +20,7 @@ requirement: >
   `binary_signs:`, or a detached gpg signature, and publishes the signatures with the release.
 fix:
   human: "Add sigstore/cosign-installer and `cosign sign-blob --yes --bundle checksums.txt.sigstore.json checksums.txt` to the release workflow (or `signs:` in .goreleaser.yaml) and upload the bundle with the release."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.sigstore.dev/cosign/signing/signing_with_blobs/"]
+refs:
+  - {url: "https://docs.sigstore.dev/cosign/signing/signing_with_blobs/", kind: spec}
+  - {url: "https://goreleaser.com/customization/sign/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

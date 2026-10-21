@@ -17,4 +17,10 @@ requirement: >
   provenance (`RUNNER_GENERATE_ARTIFACTS_METADATA: "true"`).
 fix:
   human: "Add actions/attest-build-provenance with `subject-path` covering the APK or AAB (GitHub), `RUNNER_GENERATE_ARTIFACTS_METADATA: \"true\"` (GitLab) or `cosign attest-blob --predicate` (Gitea) to the release workflow."
-refs: ["https://fleetlint.org/baseline/#releases", "https://slsa.dev/spec/v1.0/provenance"]
+refs:
+  - {url: "https://slsa.dev/spec/v1.0/provenance", kind: standard}
+  - {url: "https://slsa.dev/spec/v1.0/levels", kind: standard, section: "Build L1: Provenance exists"}
+  - {url: "https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations/using-artifact-attestations-to-establish-provenance-for-builds", kind: guidance, section: "Generating build provenance for binaries"}
+  - {url: "https://github.com/slsa-framework/slsa-github-generator", kind: spec}
+  - {url: "https://docs.gitlab.com/ci/runners/configure_runners/", kind: spec, section: "Artifact provenance metadata"}
+  - "https://fleetlint.org/baseline/#releases"

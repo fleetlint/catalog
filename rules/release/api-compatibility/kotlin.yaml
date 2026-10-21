@@ -12,4 +12,7 @@ satisfiers:
 requirement: "A Gradle build that publishes with maven-publish checks its ABI: the Kotlin Gradle plugin's `abiValidation` (or the binary-compatibility-validator plugin) with committed `.api` dumps, or japicmp."
 fix:
   human: "Enable `abiValidation` in the Kotlin Gradle plugin (or apply binary-compatibility-validator), commit the `api/` dumps and let `./gradlew check` run the ABI check."
-refs: ["https://fleetlint.org/stacks/#kotlin-jvm--android"]
+refs:
+  - {url: "https://kotlinlang.org/docs/gradle-binary-compatibility-validation.html", kind: spec}
+  - {url: "https://github.com/Kotlin/binary-compatibility-validator", kind: spec}
+  - "https://fleetlint.org/stacks/#kotlin-jvm--android"

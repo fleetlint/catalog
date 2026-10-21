@@ -17,4 +17,6 @@ requirement: >
   Microsoft's sbom-tool and ships the SBOM inside or next to the package.
 fix:
   human: "Install CycloneDX as a dotnet tool and run `dotnet CycloneDX <solution> -o sbom` before `dotnet nuget push`; include the file in the package or the release."
-refs: ["https://fleetlint.org/baseline/#releases", "https://github.com/CycloneDX/cyclonedx-dotnet"]
+refs:
+  - {url: "https://github.com/CycloneDX/cyclonedx-dotnet", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

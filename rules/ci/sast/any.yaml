@@ -16,3 +16,6 @@ satisfiers:
     expr: >
       workflows().exists(w, steps(w).exists(s, s.uses.matches("^SonarSource/sonar(qube|cloud)-(scan-)?(github-)?action") || s.run.matches("\\bsonar-scanner\\b")))
 requirement: "CodeQL (github/codeql-action), Semgrep or Opengrep, the GitLab SAST template or component, or SonarQube runs in CI or the task runner."
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "SAST"}
+  - {url: "https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning", kind: spec}

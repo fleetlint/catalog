@@ -14,4 +14,7 @@ rationale: SAST follows data from input to dangerous sinks across files, which p
 fix:
   human: "Add a CodeQL workflow (GitHub advanced setup), include the GitLab SAST component, or add a Semgrep step to CI; with CodeQL default setup, declare it with `accept:`."
   agent: "Add a CodeQL workflow (github/codeql-action init/analyze, pinned) for the repository's languages, or on GitLab include `components/sast`; run it on pull requests and weekly."
-refs: ["https://fleetlint.org/baseline/#security"]
+refs:
+  - {url: "https://github.com/ossf/scorecard/blob/main/docs/checks.md", kind: standard, section: "SAST"}
+  - {url: "https://csrc.nist.gov/pubs/sp/800/218/final", kind: standard, section: "PW.7.2: Perform the code review and/or code analysis based on the organization's secure coding standards"}
+  - "https://fleetlint.org/baseline/#security"

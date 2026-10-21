@@ -10,4 +10,6 @@ rationale: A breaking change in a minor release is found by every user at once; 
 fix:
   human: "Add the stack's API compatibility check to the release target or workflow, comparing against the previous tag (see https://fleetlint.org/stacks/)."
   agent: "Add the stack's API compatibility tool to the release workflow, comparing against the latest tag; on a breaking change bump the major version instead of silencing the tool."
-refs: ["https://fleetlint.org/baseline/#releases"]
+refs:
+  - {url: "https://semver.org/spec/v2.0.0.html", kind: standard}
+  - {url: "https://fleetlint.org/baseline/#releases", kind: convention}

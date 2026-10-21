@@ -10,4 +10,7 @@ satisfiers:
 requirement: "A Go module without a `main` package runs gorelease or apidiff against the previous tag."
 fix:
   human: "Run `gorelease -base=$(git describe --tags --abbrev=0)` in the release workflow."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://pkg.go.dev/golang.org/x/exp/cmd/gorelease", kind: spec}
+  - {url: "https://go.dev/doc/modules/version-numbers", kind: guidance}
+  - "https://fleetlint.org/stacks/#go"

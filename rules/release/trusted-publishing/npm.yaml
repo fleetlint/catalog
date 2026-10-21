@@ -13,4 +13,6 @@ expr: >
 requirement: "A GitHub or GitLab workflow that publishes to npm uses trusted publishing: `id-token: write` (npm 11.5.1 or newer) and no NPM_TOKEN/NODE_AUTH_TOKEN or `--token` from secrets; on GitLab `id_tokens:`."
 fix:
   human: "Register the workflow as a trusted publisher on npmjs.com, publish with npm 11.5.1+ from a job with `id-token: write`, and delete the NPM_TOKEN secret."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.npmjs.com/trusted-publishers"]
+refs:
+  - {url: "https://docs.npmjs.com/trusted-publishers", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

@@ -26,4 +26,7 @@ requirement: >
 fix:
   human: "After the push step run `cosign sign --yes ${IMAGE}@${{ steps.build.outputs.digest }}` with `id-token: write` on the job (keyless) or `--key` on Gitea."
   agent: "Add sigstore/cosign-installer and, after the build-push step with an id, `cosign sign --yes <registry>/<image>@${{ steps.<id>.outputs.digest }}`; grant `id-token: write` and `packages: write` to that job only."
-refs: ["https://fleetlint.org/baseline/#releases", "https://docs.sigstore.dev/cosign/signing/signing_with_containers/"]
+refs:
+  - {url: "https://docs.sigstore.dev/cosign/signing/signing_with_containers/", kind: spec}
+  - {url: "https://goreleaser.com/customization/docker_sign/", kind: spec}
+  - "https://fleetlint.org/baseline/#releases"

@@ -13,4 +13,8 @@ satisfiers:
 requirement: "Release binaries are built with `-trimpath`: in .goreleaser.yaml together with `mod_timestamp` (so archive timestamps come from the commit), or in a `go build` of the task runner or the release workflow; or SOURCE_DATE_EPOCH is set for the release build. Go embeds the module version and VCS revision itself."
 fix:
   human: "Add `flags: [-trimpath]` and `mod_timestamp: \"{{ .CommitTimestamp }}\"` to the goreleaser builds."
-refs: ["https://fleetlint.org/stacks/#go"]
+refs:
+  - {url: "https://goreleaser.com/customization/builds/go/", kind: spec, section: "Reproducible Builds"}
+  - {url: "https://pkg.go.dev/cmd/go", kind: spec}
+  - {url: "https://reproducible-builds.org/docs/source-date-epoch/", kind: spec}
+  - "https://fleetlint.org/stacks/#go"

@@ -12,4 +12,6 @@ satisfiers:
 requirement: "A package.json that is not `private` and has `main`, `exports` or `types` runs API Extractor with a committed API report."
 fix:
   human: "Add @microsoft/api-extractor with a committed report (`api-extractor run` fails on an unreviewed change)."
-refs: ["https://fleetlint.org/stacks/#nodejs--typescript"]
+refs:
+  - {url: "https://api-extractor.com/", kind: spec}
+  - "https://fleetlint.org/stacks/#nodejs--typescript"

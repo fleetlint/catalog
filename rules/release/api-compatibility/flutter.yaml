@@ -10,4 +10,6 @@ satisfiers:
 requirement: "A Dart or Flutter package that is published (no `publish_to: none`) runs dart_apitool against the previous release."
 fix:
   human: "Run `dart_apitool diff --old pub://<package>/<previous> --new .` in the release workflow."
-refs: ["https://fleetlint.org/stacks/#flutter--dart"]
+refs:
+  - {url: "https://pub.dev/packages/dart_apitool", kind: spec}
+  - "https://fleetlint.org/stacks/#flutter--dart"

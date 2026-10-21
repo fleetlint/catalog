@@ -10,4 +10,6 @@ satisfiers:
 requirement: "A pyproject `[project]` without scripts runs `griffe check` against the previous tag."
 fix:
   human: "Run `griffe check <package> --against $(git describe --tags --abbrev=0)` in the release workflow."
-refs: ["https://fleetlint.org/stacks/#python"]
+refs:
+  - {url: "https://mkdocstrings.github.io/griffe/guide/users/checking/", kind: spec}
+  - "https://fleetlint.org/stacks/#python"
