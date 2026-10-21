@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/php
 kind: expr
+locate: .php-version
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".php-version") && scan(d + ".php-version", r'^\s*\d').size() > 0)
   || (file("composer.json") && text("composer.json").matches(r'"platform"\s*:\s*\{[^}]*"php"\s*:\s*"\d'))

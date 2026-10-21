@@ -4,6 +4,7 @@ kind: expr
 severity: error
 tiers: [1]
 scope: root
+locate: .github/workflows/release.yml
 when: release.mechanisms.exists(m, m != "git-cliff")
 expr: tagged_workflows().size() > 0
 message: "a release mechanism exists but no workflow is triggered by tag pushes"

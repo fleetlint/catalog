@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/kotlin
 kind: expr
+locate: '(["build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["build.gradle.kts"])[0]'
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".java-version") && scan(d + ".java-version", r'^\s*\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".sdkmanrc") && scan(d + ".sdkmanrc", r'^\s*java\s*=\s*\d').size() > 0)

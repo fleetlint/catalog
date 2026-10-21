@@ -1,5 +1,6 @@
 id: public/manifest-license/cpp
 kind: expr
+locate: '(["vcpkg.json", "conanfile.py"].filter(f, file(f)) + ["vcpkg.json"])[0]'
 expr: >
   (!file("vcpkg.json") || (json("vcpkg.json") != null && has(json("vcpkg.json").license)))
   && (!file("conanfile.py") || text("conanfile.py").matches(r'(?m)^\s*license\s*='))

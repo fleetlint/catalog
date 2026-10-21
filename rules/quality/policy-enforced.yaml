@@ -4,6 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1, 2]
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 expr: >
   text(".pre-commit-config.yaml").contains("fleetlint")
   || text("lefthook.yml").contains("fleetlint")

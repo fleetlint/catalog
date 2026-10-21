@@ -1,5 +1,6 @@
 id: lint/configured/rust
 kind: outcome
+locate: Cargo.toml
 satisfiers:
   - name: lints-table
     expr: >

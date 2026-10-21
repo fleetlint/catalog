@@ -1,6 +1,7 @@
 id: lint/configured/hugo
 kind: outcome
 title: The Hugo build treats warnings as errors
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 satisfiers:
   - name: panic-on-warning
     expr: >

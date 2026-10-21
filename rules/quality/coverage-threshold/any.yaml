@@ -1,6 +1,7 @@
 id: quality/coverage-threshold/any
 kind: outcome
 # Without a stack there is no code to cover.
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 when: repo.stacks.size() > 0
 params:
   skip: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b|(sudo\s+)?(go (install|get)|cargo b?install|pipx? install|pip3 install|python3? -m pip install|uv (tool |pip )?(install|add)|(npm|pnpm|yarn|bun) (i|install|add|global add)|gem install|bundle add|brew install|dotnet tool (install|update)|composer (global )?require|apt(-get)? install|curl|wget)\b[^;&]*$)'

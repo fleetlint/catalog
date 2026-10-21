@@ -1,5 +1,6 @@
 id: lint/configured/python
 kind: outcome
+locate: pyproject.toml
 satisfiers:
   # ruff uses the nearest ruff.toml, .ruff.toml or pyproject.toml with [tool.ruff], up to the repository root.
   - name: ruff

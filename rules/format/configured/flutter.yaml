@@ -1,5 +1,6 @@
 id: format/configured/flutter
 kind: outcome
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 satisfiers:
   - name: dart-format-run
     expr: >

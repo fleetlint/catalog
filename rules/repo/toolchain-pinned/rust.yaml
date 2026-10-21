@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/rust
 kind: expr
+locate: rust-toolchain.toml
 expr: >
   ["", "../", "../../", "../../../"].exists(d,
     (file(d + "rust-toolchain.toml") && scan(d + "rust-toolchain.toml", r'^\s*channel\s*=\s*"((stable|beta|nightly)-)?\d').size() > 0)

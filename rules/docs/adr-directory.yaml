@@ -4,6 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
+locate: docs/adr/0001-record-architecture-decisions.md
 expr: >
   ["docs/adr", "docs/adrs", "docs/decisions", "docs/architecture/decisions", "doc/adr", "doc/architecture/decisions", "adr"].exists(d,
     exists(d + "/*.md"))

@@ -1,5 +1,6 @@
 id: release/provenance/npm
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: npm-provenance
     expr: >

@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/hugo
 kind: expr
+locate: mise.toml
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(hugo|hugo-extended|gohugo)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,

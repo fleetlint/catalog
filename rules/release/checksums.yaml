@@ -4,6 +4,7 @@ kind: outcome
 severity: warning
 tiers: [1]
 scope: root
+locate: 'tagged_workflows().size() > 0 ? tagged_workflows()[0] : ".github/workflows/release.yml"'
 when: release.exists && tagged_workflows().size() > 0
 satisfiers:
   - name: goreleaser

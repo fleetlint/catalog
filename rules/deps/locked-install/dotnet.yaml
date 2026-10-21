@@ -1,6 +1,7 @@
 id: deps/locked-install/dotnet
 kind: expr
 # Applies once NuGet lock files exist; lockfile-committed asks for them.
+locate: Directory.Build.props
 when: exists("**/packages.lock.json")
 params:
   noise: '^\s*[@+-]*\s*(\{\{[^}]*\}\}\s*|\$[({][A-Za-z_]+[)}]\s*)?(#|//|echo\b|printf\b)'

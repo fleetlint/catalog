@@ -1,5 +1,6 @@
 id: release/signing/android-app
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   # The APK or AAB carries its own signature (APK Signature Scheme v2+, JAR signing for an AAB),
   # which Android checks on install and on every update. The release verifies or applies it.

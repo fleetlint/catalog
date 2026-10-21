@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/python
 kind: expr
+locate: .python-version
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".python-version") && scan(d + ".python-version", r'^\s*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(python)\s+\S*\d').size() > 0)

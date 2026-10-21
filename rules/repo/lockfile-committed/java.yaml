@@ -1,6 +1,7 @@
 id: repo/lockfile-committed/java
 kind: expr
 # Maven has no native lockfile; a Maven build is not checked.
+locate: gradle.lockfile
 when: file("build.gradle") || file("build.gradle.kts")
 expr: >
   tracked().exists(f, f.matches(r'(^|/)((settings|buildscript)-)?gradle\.lockfile$') || f == "gradle/verification-metadata.xml")

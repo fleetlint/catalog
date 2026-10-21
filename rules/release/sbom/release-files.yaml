@@ -1,5 +1,6 @@
 id: release/sbom/release-files
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: goreleaser
     expr: >

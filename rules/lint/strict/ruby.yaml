@@ -2,6 +2,7 @@ id: lint/strict/ruby
 kind: expr
 title: RuboCop enables new cops
 # RuboCop uses the nearest .rubocop.yml and what it inherits; Standard manages its cops itself.
+locate: .rubocop.yml
 when: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".rubocop.yml"))
 expr: >

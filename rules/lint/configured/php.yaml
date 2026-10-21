@@ -1,5 +1,6 @@
 id: lint/configured/php
 kind: outcome
+locate: phpstan.neon.dist
 satisfiers:
   - name: phpstan
     expr: >

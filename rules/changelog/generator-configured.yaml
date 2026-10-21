@@ -5,6 +5,7 @@ kind: outcome
 severity: info
 scope: root
 tiers: [1]
+locate: cliff.toml
 satisfiers:
   - name: git-cliff
     expr: file("cliff.toml") || file(".cliff.toml")

@@ -1,5 +1,6 @@
 id: lint/configured/ruby
 kind: outcome
+locate: .rubocop.yml
 satisfiers:
   # RuboCop uses the nearest .rubocop.yml above each file.
   - name: rubocop

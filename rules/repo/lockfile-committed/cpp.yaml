@@ -1,5 +1,6 @@
 id: repo/lockfile-committed/cpp
 kind: expr
+locate: 'file("vcpkg.json") ? "vcpkg.json" : "conan.lock"'
 expr: >
   ((!file("conanfile.txt") && !file("conanfile.py")) || "conan.lock" in tracked())
   && (!file("vcpkg.json") || text("vcpkg.json").contains("\"builtin-baseline\"")

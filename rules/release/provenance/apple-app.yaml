@@ -1,5 +1,6 @@
 id: release/provenance/apple-app
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: attest-action
     expr: artifact.workflows.exists(w, steps(w).exists(s, s.uses.startsWith("actions/attest-build-provenance") || s.uses.startsWith("actions/attest@")))

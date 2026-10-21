@@ -4,6 +4,7 @@ kind: outcome
 severity: warning
 scope: root
 tiers: [1, 2]
+locate: .devcontainer/devcontainer.json
 satisfiers:
   # `repo.container` decides: in a container mode only that mechanism counts.
   - name: devcontainer

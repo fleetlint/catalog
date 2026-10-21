@@ -1,5 +1,6 @@
 id: release/api-compatibility/dotnet
 kind: outcome
+locate: Directory.Build.props
 when: >
   glob("**/*.csproj").exists(f, text(f).matches(r'<(PackageId|IsPackable>true)'))
 satisfiers:

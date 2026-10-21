@@ -1,5 +1,6 @@
 id: quality/duplication-gate/any
 kind: outcome
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

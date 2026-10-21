@@ -1,5 +1,6 @@
 id: format/configured/cpp
 kind: outcome
+locate: .clang-format
 satisfiers:
   # clang-format uses the nearest .clang-format above each file.
   - name: clang-format

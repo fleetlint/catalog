@@ -4,6 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1, 2]
+locate: '(params.renovate.filter(f, file(f)) + [".github/dependabot.yml", ".github/dependabot.yaml"].filter(f, file(f)) + [".github/dependabot.yml"])[0]'
 params:
   renovate: ["renovate.json", "renovate.json5", ".renovaterc", ".renovaterc.json", ".renovaterc.json5",
     ".github/renovate.json", ".github/renovate.json5", ".gitea/renovate.json", ".gitea/renovate.json5",

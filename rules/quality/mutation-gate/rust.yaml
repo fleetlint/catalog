@@ -1,5 +1,6 @@
 id: quality/mutation-gate/rust
 kind: outcome
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

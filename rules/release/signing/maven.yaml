@@ -1,5 +1,6 @@
 id: release/signing/maven
 kind: outcome
+locate: '(["pom.xml", "build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["pom.xml"])[0]'
 satisfiers:
   # Maven Central requires PGP signatures: Maven's gpg/sign plugin, or Gradle's signing plugin
   # (or the vanniktech publish plugin) on a publishing release.

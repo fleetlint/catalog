@@ -1,5 +1,6 @@
 id: quality/mutation-gate/kotlin
 kind: outcome
+locate: '(["build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["build.gradle.kts"])[0]'
 satisfiers:
   - name: task-runner-or-ci
     expr: >

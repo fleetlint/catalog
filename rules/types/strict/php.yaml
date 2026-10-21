@@ -1,5 +1,6 @@
 id: types/strict/php
 kind: outcome
+locate: phpstan.neon.dist
 satisfiers:
   - name: phpstan-max
     expr: >

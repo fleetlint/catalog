@@ -1,5 +1,6 @@
 id: release/signing/oci-artifact
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   # The digest comes from the push step's output or an environment variable, never a tag.
   - name: cosign-by-digest

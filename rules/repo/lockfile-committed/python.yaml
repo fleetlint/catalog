@@ -1,5 +1,6 @@
 id: repo/lockfile-committed/python
 kind: expr
+locate: uv.lock
 expr: >
   tracked().exists(f, f in ["uv.lock", "poetry.lock", "pdm.lock", "Pipfile.lock", "pylock.toml"] || f.matches(r'^pylock\.[^/]+\.toml$'))
   || ["../", "../../", "../../../"].exists(d, file(d + "uv.lock") && file(d + "pyproject.toml") && text(d + "pyproject.toml").contains("[tool.uv.workspace]"))

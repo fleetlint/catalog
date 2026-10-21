@@ -1,5 +1,6 @@
 id: repo/lockfile-committed/rust
 kind: expr
+locate: Cargo.lock
 expr: >
   "Cargo.lock" in tracked()
   || ["../", "../../", "../../../"].exists(d, file(d + "Cargo.lock") && file(d + "Cargo.toml") && text(d + "Cargo.toml").matches(r'(?m)^\[workspace\]'))

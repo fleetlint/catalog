@@ -1,5 +1,6 @@
 id: release/api-compatibility/flutter
 kind: outcome
+locate: 'tagged_workflows().size() > 0 ? tagged_workflows()[0] : ".github/workflows/release.yml"'
 when: >
   file("pubspec.yaml") && scan("pubspec.yaml", r'^publish_to:\s*\S*none').size() == 0 && exists("lib/*.dart")
 satisfiers:

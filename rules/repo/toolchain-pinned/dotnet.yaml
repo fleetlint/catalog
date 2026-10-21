@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/dotnet
 kind: expr
+locate: global.json
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + "global.json") && text(d + "global.json").matches(r'"version"\s*:\s*"\d'))
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(dotnet|dotnet-core)\s+\S*\d').size() > 0)

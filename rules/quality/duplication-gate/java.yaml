@@ -1,5 +1,6 @@
 id: quality/duplication-gate/java
 kind: outcome
+locate: '(["pom.xml", "build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["pom.xml"])[0]'
 satisfiers:
   - name: pmd-cpd
     expr: >

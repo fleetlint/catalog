@@ -1,5 +1,6 @@
 id: format/configured/ruby
 kind: outcome
+locate: .rubocop.yml
 satisfiers:
   - name: rubocop-or-standard
     expr: >

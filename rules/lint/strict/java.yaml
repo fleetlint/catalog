@@ -2,6 +2,7 @@ id: lint/strict/java
 kind: expr
 title: Analyzer findings fail the build
 # The build files of the project, its parents and its convention plugins.
+locate: '(["pom.xml", "build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["pom.xml"])[0]'
 when: >
   (["", "../", "../../", "../../../"].map(d, [d + "pom.xml", d + "build.gradle", d + "build.gradle.kts"]).flatten()
     + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*"))

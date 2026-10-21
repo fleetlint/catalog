@@ -1,5 +1,6 @@
 id: release/sbom/maven
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   # The CycloneDX build plugins resolve the real dependency graph of the published artifact.
   - name: cyclonedx-gradle

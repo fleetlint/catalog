@@ -1,5 +1,6 @@
 id: quality/mutation-gate/cpp
 kind: outcome
+locate: mull.yml
 satisfiers:
   - name: task-runner-or-ci
     expr: >

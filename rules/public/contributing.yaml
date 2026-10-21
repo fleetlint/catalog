@@ -4,6 +4,7 @@ kind: expr
 severity: info
 scope: root
 tiers: [1]
+locate: CONTRIBUTING.md
 when: repo.public
 expr: exists("CONTRIBUTING*") || exists(".github/CONTRIBUTING*") || exists("docs/CONTRIBUTING*") || exists(".gitea/CONTRIBUTING*")
 message: "CONTRIBUTING.md is missing"

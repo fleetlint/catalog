@@ -1,6 +1,7 @@
 id: lint/configured/dotnet
 kind: outcome
 # MSBuild imports the nearest Directory.Build.props above each project; .editorconfig files apply from every parent.
+locate: Directory.Build.props
 satisfiers:
   - name: net-analyzers
     expr: >

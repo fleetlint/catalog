@@ -1,5 +1,6 @@
 id: release/api-compatibility/node
 kind: outcome
+locate: api-extractor.json
 when: >
   json("package.json") != null && !(has(json("package.json").private) && json("package.json").private == true) && (has(json("package.json").main) || has(json("package.json").exports) || has(json("package.json").types))
 satisfiers:

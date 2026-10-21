@@ -1,5 +1,6 @@
 id: public/manifest-license/ruby
 kind: expr
+locate: '(glob("*.gemspec") + [""])[0]'
 expr: glob("*.gemspec").all(f, text(f).matches(r'\.licenses?\s*='))
 message: "the gemspec does not declare a license"
 requirement: "Every gemspec sets `spec.license` (or `spec.licenses`) to an SPDX identifier."

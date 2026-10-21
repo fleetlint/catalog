@@ -1,5 +1,6 @@
 id: release/api-compatibility/python
 kind: outcome
+locate: 'tagged_workflows().size() > 0 ? tagged_workflows()[0] : ".github/workflows/release.yml"'
 when: >
   toml("pyproject.toml") != null && has(toml("pyproject.toml").project) && !has(toml("pyproject.toml").project.scripts)
 satisfiers:

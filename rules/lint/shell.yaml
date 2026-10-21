@@ -3,6 +3,7 @@ title: Shell scripts are linted
 kind: expr
 severity: info
 scope: root
+locate: '([".pre-commit-config.yaml", "lefthook.yml", "lefthook.yaml", "lefthook.toml", "lefthook.json", "lefthook.jsonc", ".lefthook.yml", ".lefthook.yaml", ".lefthook.toml", ".lefthook.json", ".lefthook.jsonc"].filter(f, file(f)) + [".pre-commit-config.yaml"])[0]'
 when: tracked().exists(p, p.endsWith(".sh"))
 expr: >
   [".pre-commit-config.yaml", "lefthook.yml", "lefthook.yaml", ".lefthook.yml"].exists(f, file(f) && text(f).contains("shellcheck"))

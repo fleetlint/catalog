@@ -1,5 +1,6 @@
 id: quality/duplication-gate/kotlin
 kind: outcome
+locate: '(["build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["build.gradle.kts"])[0]'
 satisfiers:
   - name: pmd-cpd
     expr: >

@@ -1,5 +1,6 @@
 id: repo/lockfile-committed/go
 kind: expr
+locate: go.sum
 expr: '"go.sum" in tracked() || scan("go.mod", r''^\s*require\b'').size() == 0'
 message: "go.sum is not tracked"
 requirement: "go.sum is tracked when go.mod requires any module."

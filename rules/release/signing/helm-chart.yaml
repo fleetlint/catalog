@@ -1,5 +1,6 @@
 id: release/signing/helm-chart
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: cosign
     expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign sign\\b")))

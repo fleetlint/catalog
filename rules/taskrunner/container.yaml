@@ -4,6 +4,7 @@ kind: outcome
 severity: warning
 scope: root
 tiers: [1, 2]
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 when: repo.container != "none" && taskrunner.kind in ["make", "just", "task"]
 satisfiers:
   - name: devcontainer-cli

@@ -1,5 +1,6 @@
 id: format/configured/python
 kind: outcome
+locate: pyproject.toml
 satisfiers:
   - name: ruff-format-or-black-run
     expr: >

@@ -1,5 +1,6 @@
 id: release/api-compatibility/kotlin
 kind: outcome
+locate: '(["build.gradle.kts", "build.gradle"].filter(f, file(f)) + ["build.gradle.kts"])[0]'
 when: >
   grep("**/build.gradle*", "maven-publish").size() > 0
 satisfiers:

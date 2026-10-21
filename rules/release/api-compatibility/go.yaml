@@ -1,5 +1,6 @@
 id: release/api-compatibility/go
 kind: outcome
+locate: 'tagged_workflows().size() > 0 ? tagged_workflows()[0] : ".github/workflows/release.yml"'
 when: >
   !exists("**/main.go")
 satisfiers:

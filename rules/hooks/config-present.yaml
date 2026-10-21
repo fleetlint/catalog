@@ -4,6 +4,7 @@ kind: expr
 severity: error
 scope: root
 tiers: [1, 2]
+locate: .pre-commit-config.yaml
 expr: >
   [".pre-commit-config.yaml", "lefthook.yml", "lefthook.yaml", "lefthook.toml", "lefthook.json", "lefthook.jsonc",
    ".lefthook.yml", ".lefthook.yaml", ".lefthook.toml", ".lefthook.json", ".lefthook.jsonc"].exists(f, file(f))

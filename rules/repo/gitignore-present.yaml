@@ -3,6 +3,7 @@ title: A .gitignore exists
 kind: expr
 severity: warning
 scope: root
+locate: .gitignore
 expr: file(".gitignore")
 message: ".gitignore is missing"
 requirement: The repository root has a .gitignore.

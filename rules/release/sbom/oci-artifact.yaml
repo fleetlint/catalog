@@ -1,5 +1,6 @@
 id: release/sbom/oci-artifact
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: cosign-attest
     expr: artifact.workflows.exists(w, steps(w).exists(s, s.run.matches("\\bcosign attest\\b[^\\n]*--type\\s*(spdx|spdxjson|cyclonedx)|\\bcosign attach sbom\\b")))

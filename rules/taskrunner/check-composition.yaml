@@ -3,6 +3,7 @@ title: check runs the gates and excludes bench and release
 kind: expr
 severity: warning
 scope: root
+locate: 'taskrunner.file != "" ? taskrunner.file : "Makefile"'
 when: taskrunner.kind in ["make", "just", "task"] && "check" in taskrunner.targets
 expr: >
   [("check" in taskrunner.deps ? taskrunner.deps["check"] : []) + ("check" in taskrunner.recipes

@@ -4,6 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1, 2]
+locate: .pre-commit-config.yaml
 when: file(".pre-commit-config.yaml")
 expr: >
   type(yaml(".pre-commit-config.yaml")) == map && "repos" in yaml(".pre-commit-config.yaml")

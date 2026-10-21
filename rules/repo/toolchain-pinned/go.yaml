@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/go
 kind: expr
+locate: go.mod
 expr: >
   scan("go.mod", r'^(toolchain go\d+\.\d+|go \d+\.\d+\.\d+)').size() > 0
   || ["../", "../../", "../../../"].exists(d, file(d + "go.work") && scan(d + "go.work", r'^(toolchain go\d+\.\d+|go \d+\.\d+\.\d+)').size() > 0)

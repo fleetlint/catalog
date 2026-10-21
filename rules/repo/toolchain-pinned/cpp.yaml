@@ -1,5 +1,6 @@
 id: repo/toolchain-pinned/cpp
 kind: expr
+locate: mise.toml
 expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(cmake|clang|llvm|gcc|conan|ninja|meson)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,

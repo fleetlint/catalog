@@ -3,6 +3,7 @@ title: README exists and has a quickstart
 kind: expr
 severity: warning
 scope: root
+locate: README.md
 expr: >
   glob("*").exists(f, f.matches(r'^(?i)readme(\.(md|markdown|rst|adoc|asciidoc|txt|org))?$')
     && size(lines(f)) >= 10

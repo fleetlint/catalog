@@ -1,5 +1,6 @@
 id: release/provenance/pypi
 kind: outcome
+locate: 'artifact.workflows.size() > 0 ? artifact.workflows[0] : ".github/workflows/release.yml"'
 satisfiers:
   - name: pypi-attestations
     expr: >

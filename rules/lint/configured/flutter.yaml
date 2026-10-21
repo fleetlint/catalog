@@ -1,5 +1,6 @@
 id: lint/configured/flutter
 kind: outcome
+locate: analysis_options.yaml
 satisfiers:
   # The Dart analyzer uses the nearest analysis_options.yaml above each file.
   - name: analysis-options

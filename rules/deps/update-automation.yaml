@@ -4,6 +4,7 @@ kind: expr
 severity: warning
 scope: root
 tiers: [1, 2]
+locate: renovate.json
 expr: >
   exists("renovate.json") || exists("renovate.json5") || exists(".renovaterc") || exists(".renovaterc.json") || exists(".renovaterc.json5")
   || [".github", ".gitea", ".forgejo", ".gitlab"].exists(d, file(d + "/renovate.json") || file(d + "/renovate.json5"))
