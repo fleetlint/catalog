@@ -1,4 +1,5 @@
-# Publishes this catalog version as a signed OCI artifact on every tag: the
+# Publishes this catalog version as a signed OCI artifact on every tag, and a
+# GitHub release with its notes: the
 # whole tree (presets/, rules/, stacks/, artifacts/, templates/, aliases.yaml), the same
 # version the git tag holds, with an SBOM and build provenance attested to its digest. A repository pins it with
 #   catalog: {oci: ghcr.io/fleetlint/catalog:<tag>}
@@ -17,6 +18,8 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.push.outputs.digest }}
     timeout-minutes: 15
     permissions:
       contents: read
@@ -36,7 +39,7 @@ jobs:
           cache: false   # a release build reads no cache a pull request could have written
       - name: fleetlint, to load what was published
         env:
-          FLEETLINT_REF: 20bbc2881292bb3e196b60fc953f0eb06afeac94   # fleetlint artifact-instances (pre-0.8.0), which reads engine level 7
+          FLEETLINT_REF: bc08ccba05fd75cb741afc94c606f63f3b07825f   # fleetlint v0.8.0, which reads engine level 7
         run: |
           go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
@@ -77,3 +80,26 @@ jobs:
             "ghcr.io/${GITHUB_REPOSITORY}@${DIGEST}"
       - name: Load it the way a repository pins it (by tag, through the signature)
         run: scripts/oci-check.sh "ghcr.io/${GITHUB_REPOSITORY}:${GITHUB_REF_NAME}"
+
+  # The release page: the version's CHANGELOG.md section, the engine level,
+  # the digest pin and the verify commands. No assets: the signed OCI
+  # artifact is the release. A job of its own, so only it can write releases.
+  release:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write   # create the GitHub release
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Release notes from the CHANGELOG.md section, and the release
+        env:
+          DIGEST: ${{ needs.publish.outputs.digest }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          awk -v v="${GITHUB_REF_NAME#v}" 'index($0, "## [" v "]") == 1 {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > section.md
+          scripts/release-notes.sh "$GITHUB_REF_NAME" "$DIGEST" section.md > notes.md
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" --notes-file notes.md

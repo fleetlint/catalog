@@ -5,6 +5,14 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- Every tag gets a GitHub release whose notes are the version's CHANGELOG.md section, the engine level and the fleetlint version it needs, the digest pin and the commands that verify the signature, SBOM and provenance (`scripts/release-notes.sh`). The signed OCI artifact stays the only asset. Releases for v0.1.0 to v0.5.0 were created after the fact with the same notes.
+
+### Changed
+
+- CI installs fleetlint v0.8.0.
+
 ## [0.5.0] - 2026-10-21
 
 Engine level 7: needs fleetlint 0.8.0 or newer (published artifacts as named instances, `locate:`; `combine:` and `artifact_workflows()` are gone).
