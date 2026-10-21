@@ -27,7 +27,7 @@ case $engine in
 esac
 ref=ghcr.io/fleetlint/catalog@$digest
 
-sed '/./,$!d' "$section"
+printf '%s\n' "$(sed '/./,$!d' "$section")"
 cat <<NOTES
 
 ---
