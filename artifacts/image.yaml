@@ -1,12 +1,11 @@
 id: image
 title: Container image
 refs: ["https://fleetlint.org/baseline/#releases"]
-# An image pushed to a registry from a workflow that runs on push, tag, release, schedule or by
-# hand (not from a pull request): a build-push action that pushes, docker/podman/buildah push,
+# An image pushed to a registry from any workflow not run from a pull request: a build-push action that pushes, docker/podman/buildah push,
 # ko, Jib, crane, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`.
-summary: "docker/build-push-action with `push: true`, `docker|podman|buildah|nerdctl push`, `docker buildx build --push`, ko, Jib, crane, redhat-actions/push-to-registry, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`; in any workflow that runs on push, tag, release, schedule or by hand (not from a pull request). Each image reference pushed (without tag or digest) is one artifact: from docker/metadata-action `images`, else docker/build-push-action `tags`, else the push command; plus GoReleaser's first `image_templates`, `images` or `repositories` entry per item."
+summary: "docker/build-push-action with `push: true`, `docker|podman|buildah|nerdctl push`, `docker buildx build --push`, ko, Jib, crane, redhat-actions/push-to-registry, or GoReleaser `dockers:`, `dockers_v2:` or `kos:`; in any workflow not run from a pull request, whatever `if:` guards the step. Each image reference pushed (without tag or digest) is one artifact: from docker/metadata-action `images`, else docker/build-push-action `tags`, else the push command; plus GoReleaser's first `image_templates`, `images` or `repositories` entry per item."
 detect: >
-  workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && (
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (
     steps(w).exists(s,
       (s.uses.startsWith("docker/build-push-action") && "push" in s.with && string(s.with.push) == "true")
       || s.uses.startsWith("redhat-actions/push-to-registry")

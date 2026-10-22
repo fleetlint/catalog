@@ -1,6 +1,6 @@
 id: nuget
 title: NuGet package
 refs: ["https://fleetlint.org/baseline/#releases", "https://learn.microsoft.com/nuget/nuget-org/trusted-publishing"]
-summary: "`dotnet nuget push` or `nuget push`; in a tag-triggered workflow"
+summary: "`dotnet nuget push` or `nuget push`; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s, s.run.matches("\\b(dotnet nuget push|nuget(\\.exe)? push)\\b")))
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s, s.run.matches("\\b(dotnet nuget push|nuget(\\.exe)? push)\\b"))))

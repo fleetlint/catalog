@@ -1,7 +1,7 @@
 id: gem
 title: RubyGems gem
 refs: ["https://fleetlint.org/baseline/#releases", "https://guides.rubygems.org/trusted-publishing/"]
-summary: "`gem push` or rubygems/release-gem; in a tag-triggered workflow"
+summary: "`gem push` or rubygems/release-gem; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s,
-    s.uses.startsWith("rubygems/release-gem") || s.run.matches("\\bgem push\\b")))
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s,
+    s.uses.startsWith("rubygems/release-gem") || s.run.matches("\\bgem push\\b"))))

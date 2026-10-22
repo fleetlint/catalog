@@ -1,7 +1,7 @@
 id: crate
 title: crates.io crate
 refs: ["https://fleetlint.org/baseline/#releases", "https://crates.io/docs/trusted-publishing"]
-summary: "`cargo publish` or katyo/publish-crates; in a tag-triggered workflow"
+summary: "`cargo publish` or katyo/publish-crates; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s,
-    s.uses.startsWith("katyo/publish-crates") || s.run.matches("\\bcargo publish\\b")))
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s,
+    s.uses.startsWith("katyo/publish-crates") || s.run.split("\n").exists(l, l.matches("\\bcargo publish\\b") && !l.matches("--dry-run|\\s-n\\b")))))

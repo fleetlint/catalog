@@ -2,9 +2,9 @@ id: helm-chart
 title: Helm chart
 refs: ["https://fleetlint.org/baseline/#releases", "https://helm.sh/docs/topics/registries/"]
 # A chart pushed to an OCI registry or a chart repository: `helm push`, chart-releaser.
-summary: "`helm push`, helm/chart-releaser-action, `cr upload`, or `helm package --sign`; in any workflow not run from a pull request. Each chart is one artifact, named by the chart `helm push` pushes (its first argument) or chart-releaser-action's `charts_dir`; a workflow that names none is one chart named after the file."
+summary: "`helm push`, helm/chart-releaser-action, `cr upload`, or `helm package --sign`; in any workflow not run from a pull request, whatever `if:` guards the step. Each chart is one artifact, named by the chart `helm push` pushes (its first argument) or chart-releaser-action's `charts_dir`; a workflow that names none is one chart named after the file."
 detect: >
-  workflows().filter(w, triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create"]) && steps(w).exists(s,
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && steps(w).exists(s,
     s.uses.startsWith("helm/chart-releaser-action")
     || s.run.matches("\\bhelm push\\b|\\bcr (upload|index)\\b|\\bhelm package\\b[^\\n]*--sign")))
 # The chart path `helm push <chart> <oci://...>` pushes (quotes dropped, a `${{ ... }}` stays whole)

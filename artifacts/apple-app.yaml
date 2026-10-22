@@ -2,9 +2,12 @@ id: apple-app
 title: Apple app or binary (IPA, app, pkg, dmg)
 refs: ["https://fleetlint.org/baseline/#releases", "https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution"]
 # A build exported for the App Store, TestFlight or notarized download: xcodebuild export, fastlane
-# deliver/pilot/gym, notarytool, altool, upload-testflight-build, `flutter build ipa`.
-summary: "`xcodebuild -exportArchive`, fastlane `deliver|pilot|gym|upload_to_testflight|upload_to_app_store`, `notarytool submit`, `xcrun altool --upload`, apple-actions/upload-testflight-build, `flutter build ipa`; in a tag-triggered workflow"
+# deliver/pilot/gym, notarytool, altool, upload-testflight-build, `flutter build ipa`. An upload
+# counts in any workflow not run from a pull request; a build only in a tag-triggered one, since CI
+# builds an archive on every push without shipping it.
+summary: "`xcodebuild -exportArchive`, fastlane `deliver|pilot|gym|upload_to_testflight|upload_to_app_store`, `notarytool submit`, `xcrun altool --upload`, apple-actions/upload-testflight-build, `flutter build ipa`; uploads in any workflow not run from a pull request, whatever `if:` guards the step, builds only in a tag-triggered one"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s,
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s,
     s.uses.startsWith("apple-actions/upload-testflight-build")
-    || s.run.matches("\\bxcodebuild\\b[^\\n]*-exportArchive|\\bfastlane\\b[^\\n]*\\b(deliver|pilot|gym|upload_to_testflight|upload_to_app_store|build_app|build_ios_app)\\b|\\bnotarytool submit\\b|\\bxcrun altool\\b[^\\n]*--upload|\\bflutter build ipa\\b")))
+    || s.run.matches("\\bfastlane\\b[^\\n]*\\b(deliver|pilot|upload_to_testflight|upload_to_app_store)\\b|\\bnotarytool submit\\b|\\bxcrun altool\\b[^\\n]*--upload")
+    || (w in tagged_workflows() && s.run.matches("\\bxcodebuild\\b[^\\n]*-exportArchive|\\bfastlane\\b[^\\n]*\\b(gym|build_app|build_ios_app)\\b|\\bflutter build ipa\\b")))))

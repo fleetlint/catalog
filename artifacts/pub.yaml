@@ -1,6 +1,6 @@
 id: pub
 title: pub.dev package
 refs: ["https://fleetlint.org/baseline/#releases", "https://dart.dev/tools/pub/automated-publishing"]
-summary: "`dart pub publish` or `flutter pub publish`; in a tag-triggered workflow"
+summary: "`dart pub publish` or `flutter pub publish`; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s, s.run.matches("\\b(dart|flutter) pub publish\\b")))
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s, s.run.split("\n").exists(l, l.matches("\\b(dart|flutter) pub publish\\b") && !l.matches("--dry-run|\\s-n\\b")))))

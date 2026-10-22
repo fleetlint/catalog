@@ -11,6 +11,7 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ### Changed
 
+- **A publish step counts in any workflow not run from a pull request.** Every artifact kind is detected in tag-triggered workflows and in workflows run on push, release, schedule, by hand (`workflow_dispatch`), on `create`, `workflow_run`, `workflow_call` or `repository_dispatch`; `if:` guards on the step are not evaluated, since a step that is there publishes eventually. Before, ten kinds (release-files, npm, pypi, crate, gem, maven, nuget, pub, android-app, apple-app) only looked at tag-triggered workflows and missed release-please, semantic-release and changesets, which publish from a push to main. Rehearsals still do not count: `--dry-run` (and `-n` for cargo and pub), GoReleaser `build`, `check` and `--snapshot`, and Apple builds (`xcodebuild -exportArchive`, fastlane `gym`, `flutter build ipa`) outside a tag-triggered workflow.
 - CI installs fleetlint v0.8.1 (0.8.0 is a source tag without binaries).
 
 ## [0.5.0] - 2026-10-21

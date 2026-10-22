@@ -1,8 +1,8 @@
 id: pypi
 title: PyPI distribution
 refs: ["https://fleetlint.org/baseline/#releases", "https://docs.pypi.org/trusted-publishers/"]
-summary: "pypa/gh-action-pypi-publish, `twine upload`, `uv|poetry|flit|hatch|pdm publish`; in a tag-triggered workflow"
+summary: "pypa/gh-action-pypi-publish, `twine upload`, `uv|poetry|flit|hatch|pdm publish`; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s,
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s,
     s.uses.startsWith("pypa/gh-action-pypi-publish")
-    || s.run.matches("\\b(twine upload|uv publish|poetry publish|flit publish|hatch publish|pdm publish)\\b")))
+    || s.run.split("\n").exists(l, l.matches("\\b(twine upload|uv publish|poetry publish|flit publish|hatch publish|pdm publish)\\b") && !l.contains("--dry-run")))))

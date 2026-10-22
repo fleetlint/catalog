@@ -3,8 +3,8 @@ title: Maven artifact
 refs: ["https://fleetlint.org/baseline/#releases", "https://central.sonatype.org/publish/requirements/"]
 # JARs, AARs and POMs deployed to Maven Central or another Maven repository: `mvn deploy`, Gradle
 # publish tasks (not publishToMavenLocal, not the Play Store's publishBundle/publishApk), JReleaser.
-summary: "`mvn ... deploy`, a Gradle `publish*` task (not `publishToMavenLocal`, not the Play Store tasks), `jreleaser deploy|full-release`; in a tag-triggered workflow"
+summary: "`mvn ... deploy`, a Gradle `publish*` task (not `publishToMavenLocal`, not the Play Store tasks), `jreleaser deploy|full-release`; in any workflow not run from a pull request, whatever `if:` guards the step"
 detect: >
-  tagged_workflows().filter(w, steps(w).exists(s,
+  workflows().filter(w, (w in tagged_workflows() || triggers(w).exists(t, t in ["push", "release", "workflow_dispatch", "schedule", "create", "workflow_run", "workflow_call", "repository_dispatch"])) && (steps(w).exists(s,
     s.run.matches("\\bmvn\\b[^\\n]*\\bdeploy\\b|\\bjreleaser (deploy|full-release)\\b")
-    || (s.run.matches("\\bgradlew?\\b[^\\n]*\\bpublish[A-Za-z]*") && !s.run.matches("\\bpublishToMavenLocal\\b") && !s.run.matches("\\bpublish(Release|Debug)?(Bundle|Apk|Listing|Products)\\b"))))
+    || (s.run.matches("\\bgradlew?\\b[^\\n]*\\bpublish[A-Za-z]*") && !s.run.matches("\\bpublishToMavenLocal\\b") && !s.run.matches("\\bpublish(Release|Debug)?(Bundle|Apk|Listing|Products)\\b")))))
