@@ -64,7 +64,7 @@ jobs:
     timeout-minutes: 15
     services:
       registry:
-        image: docker.io/library/registry@sha256:21078ecfcba8a0cd7e1a384f75b3509899661dd21823bf1da21b5a4674aaceb9 # 2
+        image: docker.io/library/registry@sha256:1290056e2357eceb0c047cb60ae9abb370305a218e2df650eb8d3ea021b1c151 # 2
         ports: ["5000:5000"]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
