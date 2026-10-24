@@ -5,6 +5,10 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- CI installs fleetlint v0.9.0.
+
 ## [0.6.0] - 2026-10-24
 
 ### Added

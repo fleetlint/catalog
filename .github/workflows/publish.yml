@@ -39,7 +39,7 @@ jobs:
           cache: false   # a release build reads no cache a pull request could have written
       - name: fleetlint, to load what was published
         env:
-          FLEETLINT_REF: 7772a7ab3ebe84f8d0efc5b4490922c2cf010775   # fleetlint v0.8.1, which reads engine level 7
+          FLEETLINT_REF: fc2bcae4ad5435cd8f8fb328275d8ba144f99dff   # fleetlint v0.9.0, which reads engine level 7
         run: |
           go install "github.com/fleetlint/fleetlint/cmd/fleetlint@${FLEETLINT_REF}"
           echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
