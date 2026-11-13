@@ -9,12 +9,12 @@ satisfiers:
   - name: task-runner
     expr: >
       workflows().exists(w, ("push" in triggers(w) || "pull_request" in triggers(w))
-        && steps(w).exists(s, s.run.matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
+        && steps(w).exists(s, s.run.matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|devbox run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
   - name: dev-container
     expr: >
       workflows().exists(w, ("push" in triggers(w) || "pull_request" in triggers(w))
         && steps(w).exists(s, s.uses.startsWith("devcontainers/ci") && "runCmd" in s.with
-          && string(s.with.runCmd).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
+          && string(s.with.runCmd).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|devbox run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
 message: "no workflow runs the project's check"
 requirement: >
   A CI workflow or pipeline that runs on pushes or pull requests (GitLab: branch or merge request

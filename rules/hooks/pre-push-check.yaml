@@ -16,7 +16,7 @@ satisfiers:
       && yaml(".pre-commit-config.yaml").repos.exists(r, type(r) == map && "hooks" in r && type(r.hooks) == list
         && r.hooks.exists(h, type(h) == map && "stages" in h && type(h.stages) == list
           && ("pre-push" in h.stages || "push" in h.stages) && "entry" in h
-          && string(h.entry).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
+          && string(h.entry).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|devbox run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
   - name: lefthook
     expr: >
       ["lefthook.yml", "lefthook.yaml", "lefthook.toml", "lefthook.json", "lefthook.jsonc",
@@ -24,9 +24,9 @@ satisfiers:
         [dyn(f.endsWith(".toml") ? toml(f) : (f.endsWith(".json") || f.endsWith(".jsonc")) ? json(f) : yaml(f))].exists(d,
           type(d) == map && "pre-push" in d && type(d["pre-push"]) == map && [dyn(d["pre-push"])].exists(h,
             ("commands" in h && type(h.commands) == map && h.commands.exists(k, type(h.commands[k]) == map && "run" in h.commands[k]
-              && string(h.commands[k].run).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
+              && string(h.commands[k].run).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|devbox run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])')))
             || ("jobs" in h && type(h.jobs) == list && h.jobs.exists(j, type(j) == map && "run" in j
-              && string(j.run).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])'))))))
+              && string(j.run).matches(r'(^|[\s;&|(\x22\x27])(make|just|task|mise run|devbox run|npm run|pnpm( run)?|yarn( run)?|bun run|\./gradlew|gradlew|gradle|nix flake)\b[^\n;&|]*\scheck(\s|$|[;&|)\x22\x27])|/check(\.sh)?(\s|$|[;&|)\x22\x27])'))))))
 message: "no pre-push hook runs the full check"
 requirement: >
   The task runner's `check` (`make check`, `just check`, `task check`, `npm run check`, `./gradlew check`

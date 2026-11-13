@@ -11,11 +11,13 @@ expr: >
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(java)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(java)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(jdk|openjdk|temurin-bin|zulu|corretto|graalvm-ce)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))|"((jdk|openjdk|zulu|corretto)\d+|temurin-bin-\d+)(@[^"]*)?"'))
 message: "no JDK version is pinned"
-requirement: "The JDK is pinned: `.java-version`, `.sdkmanrc` with `java=`, a Gradle toolchain in the project's or a parent build (`JavaLanguageVersion.of(n)`, `jvmToolchain(n)`) or `gradle-daemon-jvm.properties`, the Maven enforcer's `requireJavaVersion`, or `.tool-versions`/mise naming java. The Gradle and Maven wrappers pin the build tool, not the JDK, and `maven.compiler.release` only sets the bytecode level; none of them counts."
+requirement: "The JDK is pinned: `.java-version`, `.sdkmanrc` with `java=`, a Gradle toolchain in the project's or a parent build (`JavaLanguageVersion.of(n)`, `jvmToolchain(n)`) or `gradle-daemon-jvm.properties`, the Maven enforcer's `requireJavaVersion`, or `.tool-versions`/mise or `devbox.json` naming java. The Gradle and Maven wrappers pin the build tool, not the JDK, and `maven.compiler.release` only sets the bytecode level; none of them counts. In `devbox.json` the package needs a version (`jdk@21`, `jdk21`); `@latest` does not count."
 fix:
   human: "Add a Gradle toolchain in the project's or a parent build (`java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }`) or a .java-version file."
 refs:
   - {url: "https://docs.gradle.org/current/userguide/toolchains.html", kind: spec}
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - "https://fleetlint.org/stacks/#java"

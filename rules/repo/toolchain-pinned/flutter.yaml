@@ -7,11 +7,13 @@ expr: >
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(flutter)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(flutter)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(flutter)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))|"(flutter\d+)(@[^"]*)?"'))
 message: "no Flutter version is pinned"
-requirement: "`.fvmrc` (or `.fvm/fvm_config.json`) exists, pubspec.yaml's `environment.flutter` is an exact version, or `.tool-versions`/mise names flutter with a version."
+requirement: "`.fvmrc` (or `.fvm/fvm_config.json`) exists, pubspec.yaml's `environment.flutter` is an exact version, or `.tool-versions`/mise or `devbox.json` names flutter with a version. In `devbox.json` the package needs a version (`flutter@3.32`, `flutter332`); `@latest` does not count."
 fix:
   human: "Run `fvm use <version>` (writes .fvmrc)."
 refs:
   - {url: "https://fvm.app/documentation/getting-started/configuration", kind: spec}
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - "https://fleetlint.org/stacks/#flutter--dart"

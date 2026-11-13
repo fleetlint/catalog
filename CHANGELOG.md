@@ -5,8 +5,13 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- **devbox counts as a development environment.** `repo/dev-environment` accepts `devbox.json` with its `devbox.lock` (satisfier `devbox`), and `repo/toolchain-pinned` accepts a `devbox.json` here or in a parent directory that names the stack's package with a version, as a list entry (`go@1.27.4`, `nodejs@22`), as a map entry (`"go": "1.27.4"` or `{"version": "1.27.4"}`) or as a versioned package name (`nodejs_22`, `python313`, `jdk21`); `@latest` does not count. A CI step or pre-push hook running `devbox run check` counts for `ci/check-workflow` and `hooks/pre-push-check`.
+
 ### Changed
 
+- **A Nix environment needs its lock file.** `repo/dev-environment` counts a flake only with `flake.lock` and devenv only with `devenv.lock` (`shell.nix` has no lock and counts as before). Without the lock the finding is the info `nix-unlocked` instead of a pass: every machine resolves its own package versions.
 - CI installs fleetlint v0.9.0.
 
 ## [0.6.0] - 2026-10-24

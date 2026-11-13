@@ -8,11 +8,13 @@ expr: >
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(node|nodejs)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(node|nodejs)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(nodejs|nodejs-slim)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))|"(nodejs(-slim)?_\d+)(@[^"]*)?"'))
 message: "no Node.js version is pinned"
-requirement: "`.nvmrc` or `.node-version` names a version (not `lts/*` or `node`), a package.json here or in a parent directory has a `volta` pin, or `.tool-versions`/mise names node with a version. `engines.node` is a range and `packageManager` pins the package manager, not Node; neither counts."
+requirement: "`.nvmrc` or `.node-version` names a version (not `lts/*` or `node`), a package.json here or in a parent directory has a `volta` pin, or `.tool-versions`/mise or `devbox.json` names node with a version. `engines.node` is a range and `packageManager` pins the package manager, not Node; neither counts. In `devbox.json` the package needs a version (`nodejs@22`, `nodejs_22`); `@latest` does not count."
 fix:
   human: "Write the Node version you use to .nvmrc (e.g. `node --version > .nvmrc`)."
 refs:
   - {url: "https://github.com/nvm-sh/nvm", kind: spec}
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - "https://fleetlint.org/stacks/#nodejs--typescript"

@@ -5,12 +5,14 @@ expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(cmake|clang|llvm|gcc|conan|ninja|meson)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(cmake|clang|llvm|gcc|conan|ninja|meson)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(cmake|clang|llvm|gcc|conan|ninja|meson)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))|"((clang|llvm|gcc)_?\d+)(@[^"]*)?"'))
   || (glob(".conan/profiles/*") + glob("conan/profiles/*") + glob("profiles/*")).exists(f, text(f).matches(r'(?m)^\s*compiler\.version\s*=\s*\d'))
   || [".devcontainer/devcontainer.json", ".devcontainer.json"].exists(f, file(f) && text(f).matches(r'"image"\s*:\s*"[^"]+@sha256:'))
 message: "no C/C++ toolchain version is pinned"
-requirement: "The compiler or build tool is pinned: `.tool-versions`/mise naming cmake, clang/llvm, gcc, conan, ninja or meson with a version, a Conan profile with `compiler.version`, or a dev container image pinned by digest. `cmake_minimum_required` is a floor, not a pin."
+requirement: "The compiler or build tool is pinned: `.tool-versions`/mise or `devbox.json` naming cmake, clang/llvm, gcc, conan, ninja or meson with a version, a Conan profile with `compiler.version`, or a dev container image pinned by digest. `cmake_minimum_required` is a floor, not a pin. In `devbox.json` the package needs a version (`cmake@3.31`, `gcc14`); `@latest` does not count."
 fix:
   human: "Pin the toolchain with mise (`mise use cmake@3.x clang@18`) or build in a digest-pinned dev container image."
 refs:
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - {url: "https://fleetlint.org/stacks/#cc", kind: convention}

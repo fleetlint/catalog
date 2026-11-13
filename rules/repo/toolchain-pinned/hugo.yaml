@@ -5,14 +5,16 @@ expr: >
   ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(hugo|hugo-extended|gohugo)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(hugo|hugo-extended|gohugo)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(hugo)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))'))
   || ["", "../", "../../", "../../../"].exists(d, file(d + "netlify.toml") && text(d + "netlify.toml").matches(r'HUGO_VERSION\s*=\s*"v?\d'))
   || (file("vercel.json") && text("vercel.json").matches(r'"HUGO_VERSION"\s*:\s*"v?\d'))
   || workflows().exists(w, text(w).matches(r'HUGO_VERSION\s*[:=]\s*["\x27]?v?\d|hugo-version:\s*["\x27]?v?\d|gohugoio/hugo(:|@)v?\d'))
 message: "no Hugo version is pinned"
-requirement: "The Hugo version is pinned: `.tool-versions`/mise naming hugo with a version, `HUGO_VERSION` in netlify.toml or vercel.json, or a CI file setting `HUGO_VERSION`, `hugo-version` or a versioned gohugoio/hugo image."
+requirement: "The Hugo version is pinned: `.tool-versions`/mise or `devbox.json` naming hugo with a version, `HUGO_VERSION` in netlify.toml or vercel.json, or a CI file setting `HUGO_VERSION`, `hugo-version` or a versioned gohugoio/hugo image. In `devbox.json` the package needs a version (`hugo@0.152.2`); `@latest` does not count."
 fix:
   human: "Pin Hugo in mise.toml (`hugo-extended = \"0.x.y\"`) or set HUGO_VERSION in CI."
 refs:
   - {url: "https://gohugo.io/host-and-deploy/host-on-netlify/", kind: spec}
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - "https://fleetlint.org/stacks/#hugo--static-sites"

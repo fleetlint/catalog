@@ -6,11 +6,13 @@ expr: >
   || ["", "../", "../../", "../../../"].exists(d, file(d + ".tool-versions") && scan(d + ".tool-versions", r'^\s*(dotnet|dotnet-core)\s+\S*\d').size() > 0)
   || ["", "../", "../../", "../../../"].exists(d, ["mise.toml", ".mise.toml", ".config/mise.toml", ".config/mise/config.toml", "mise/config.toml"].exists(n,
        file(d + n) && scan(d + n, r'^\s*"?(dotnet|dotnet-core)"?\s*=\s*[^#\n]*\d').size() > 0))
+  || ["", "../", "../../", "../../../"].exists(d, file(d + "devbox.json") && text(d + "devbox.json").matches(r'"(dotnet-sdk)(@v?\d|"\s*:\s*("v?\d|\{[^}]*"version"\s*:\s*"v?\d))|"(dotnet-sdk_\d+(_\d+)?)(@[^"]*)?"'))
 message: "global.json pins no .NET SDK"
-requirement: "global.json sets `sdk.version`, or `.tool-versions`/mise names dotnet with a version."
+requirement: "global.json sets `sdk.version`, or `.tool-versions`/mise or `devbox.json` names dotnet with a version. In `devbox.json` the package needs a version (`dotnet-sdk@9.0.100`, `dotnet-sdk_9`); `@latest` does not count."
 fix:
   human: "Run `dotnet new globaljson --sdk-version <version> --roll-forward latestFeature`."
 refs:
   - {url: "https://learn.microsoft.com/en-us/dotnet/core/tools/global-json", kind: spec}
   - {url: "https://mise.jdx.dev/configuration.html", kind: spec}
+  - {url: "https://github.com/jetify-com/devbox/blob/main/.schema/devbox.schema.json", kind: spec}
   - "https://fleetlint.org/stacks/#net"
