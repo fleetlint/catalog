@@ -12,7 +12,7 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 ### Changed
 
 - **A Nix environment needs its lock file.** `repo/dev-environment` counts a flake only with `flake.lock` and devenv only with `devenv.lock` (`shell.nix` has no lock and counts as before). Without the lock the finding is the info `nix-unlocked` instead of a pass: every machine resolves its own package versions.
-- CI installs fleetlint v0.9.0.
+- CI installs fleetlint v0.10.0.
 
 ## [0.6.0] - 2026-10-24
 
