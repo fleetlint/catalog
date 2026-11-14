@@ -4,7 +4,7 @@ kind: expr
 severity: info
 scope: root
 foreach: >
-  codegrep("code", r'(//|#|/\*)\s*(Now (we|it|uses|handles|correctly|properly)\b|Updated? to\b|Changed (to|from)\b|Fix(ed)? for\b|(NEW|FIX|FIXED|CHANGED|UPDATED):|New:|Fix:|Previously\b|As requested\b|Per (your|the) request\b|This is the (key|main|critical|important) (fix|change|part)\b)')
+  codegrep("code", r'(//|#|/\*)\s*(Now (we|it|uses|handles|correctly|properly)\b|Updated? to\b|Changed (to|from)\b|Fix(ed)? for\b|(NEW|FIX|FIXED|CHANGED|UPDATED):|New:|Fix(ed)?:|Previously\b|(?i:as requested)\b|Per (your|the) request\b|This is the (key|main|critical|important) (fix|change|part)\b)')
 expr: >
   false
 message: "comment narrates a change instead of explaining the code"
