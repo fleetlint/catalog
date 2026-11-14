@@ -2,6 +2,6 @@ id: deps/locked-install/hugo
 kind: expr
 when: "false"
 expr: "true"
-requirement: "A Hugo site has no dependency manager of its own: Hugo modules live in go.mod and npm tooling in package.json, and both are checked as their own stacks."
+requirement: "A Hugo site has no dependency manager of its own. Hugo modules (go.mod) are not checked: a site's go.mod does not make it a Go project unless Go sources sit next to it. npm tooling in package.json is checked as Node."
 refs:
   - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}

@@ -2,6 +2,6 @@ id: repo/lockfile-committed/hugo
 kind: expr
 when: "false"
 expr: "true"
-requirement: "Hugo has no lockfile of its own: Hugo modules are locked by go.sum and npm tooling by its lockfile, both checked as their own stacks; themes added as git submodules are pinned by commit."
+requirement: "Hugo has no lockfile of its own. The go.sum of Hugo modules is not checked: a site's go.mod does not make it a Go project unless Go sources sit next to it. npm tooling's lockfile is checked as Node, and themes added as git submodules are pinned by commit."
 refs:
   - {url: "https://fleetlint.org/stacks/#hugo--static-sites", kind: convention}
