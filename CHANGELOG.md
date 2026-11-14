@@ -5,6 +5,19 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- `deps/license-check/kotlin` and `deps/license-check/java` accept the Licensee Gradle plugin (`app.cash.licensee`, satisfier `licensee`), applied in the build, a parent build or a convention plugin, by id or through a version-catalog alias. Its task runs in `check` and fails on a license outside its `allow` list; with `violationAction` LOG or IGNORE, or only `apply false`, it does not count.
+
+### Fixed
+
+- `slop/narration-comments` finds `Fixed:` and "as requested" in any case, as its requirement says; before, only `Fix:`, `FIXED:` and `As requested` matched.
+- Requirements say what the rule checks, and what the file should contain moved to the fix: `repo/editorconfig`, `repo/codeowners`, `containers/dockerignore`, `docs/architecture`, `public/code-of-conduct` and `public/security-policy` check that the file exists, `repo/gitattributes` that it contains `text=auto`, `changelog/present` that CHANGELOG.md has a `## ` heading, `docs/adr-directory` that an ADR directory holds a Markdown file, and `quality/policy-enforced` that a hook, task-runner or workflow file names fleetlint.
+- The not-applicable Hugo implementations of `deps/license-check`, `deps/locked-install`, `deps/vulnerability-scan`, `deps/unused-check` and `repo/lockfile-committed` no longer say Hugo modules are checked as Go: a site's go.mod and go.sum are not checked unless Go sources next to it make it a Go project.
+- Implementations without a fix of their own no longer inherit one written for another stack or artifact. `quality/duplication-gate` and `quality/coverage-threshold` have stack-neutral fixes (their `any` implementations said "Enable `dupl` in .golangci.yml" and "`make cover`"); the `release/provenance` agent instruction starts with the registry's own provenance for npm, PyPI and RubyGems; `release/sbom` no longer asks the CycloneDX plugins for SPDX; `ci/sast/php` and `ci/sast/ruby` have their own agent instruction and message (Psalm, Brakeman).
+- `fleetlint:minimal` says its hook rules apply at tiers 1 and 2, and `fleetlint:strict` that its security rules can neither be excepted nor disabled, which fleetlint enforces for a rule whose policy sets `exceptions: false`.
+- `repo/codeowners` links the baseline's Hygiene section, `ci/workflow-lint` Continuous integration and `changelog/present` Documentation, where the baseline lists them.
+
 ## [0.7.0] - 2026-11-13
 
 ### Added
