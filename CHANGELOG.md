@@ -5,6 +5,8 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-14
+
 ### Added
 
 - `deps/license-check/kotlin` and `deps/license-check/java` accept the Licensee Gradle plugin (`app.cash.licensee`, satisfier `licensee`), applied in the build, a parent build or a convention plugin, by id or through a version-catalog alias. Its task runs in `check` and fails on a license outside its `allow` list; with `violationAction` LOG or IGNORE, or only `apply false`, it does not count.
