@@ -7,12 +7,12 @@ tiers: [1]
 locate: '".github/CODEOWNERS"'
 expr: file("CODEOWNERS") || file(".github/CODEOWNERS") || file("docs/CODEOWNERS") || file(".gitea/CODEOWNERS")
 message: "no CODEOWNERS file"
-requirement: A CODEOWNERS file routes review requests for every path.
+requirement: "A CODEOWNERS file exists at the root or in `.github/`, `docs/` or `.gitea/`; the paths and owners in it are not checked."
 rationale: Review ownership that lives in people's heads does not survive a holiday.
 fix:
-  human: "Add .github/CODEOWNERS with a default owner line."
+  human: "Add .github/CODEOWNERS with a default owner line, so review requests for every path reach someone."
   agent: "Add .github/CODEOWNERS containing `* @<owner>` and commit."
 refs:
   - {url: "https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners", kind: guidance}
   - {url: "https://docs.gitlab.com/user/project/codeowners/", kind: spec}
-  - "https://fleetlint.org/baseline/#public-repositories"
+  - "https://fleetlint.org/baseline/#hygiene"

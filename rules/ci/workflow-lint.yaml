@@ -24,4 +24,4 @@ fix:
 refs:
   - {url: "https://github.com/rhysd/actionlint", kind: spec}
   - {url: "https://docs.zizmor.sh/", kind: spec}
-  - "https://fleetlint.org/baseline/#security"
+  - "https://fleetlint.org/baseline/#continuous-integration"

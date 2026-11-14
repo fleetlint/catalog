@@ -9,10 +9,10 @@ expr: >
   ["docs/adr", "docs/adrs", "docs/decisions", "docs/architecture/decisions", "doc/adr", "doc/architecture/decisions", "adr"].exists(d,
     exists(d + "/*.md"))
 message: "no architecture decision records"
-requirement: "Significant decisions are recorded as Markdown ADRs (context, decision, consequences) in docs/adr, docs/decisions, docs/architecture/decisions, doc/adr (the adr-tools default) or adr/."
+requirement: "At least one Markdown file exists in docs/adr, docs/adrs, docs/decisions, docs/architecture/decisions, doc/adr (the adr-tools default), doc/architecture/decisions or adr/; the records' content is not checked."
 rationale: Without the why, the next person re-litigates every settled question.
 fix:
-  human: "Add docs/adr/0001-record-architecture-decisions.md and one ADR per existing major decision."
+  human: "Add docs/adr/0001-record-architecture-decisions.md and one ADR (context, decision, consequences) per existing major decision."
   agent: "Create docs/adr/0001-record-architecture-decisions.md in MADR format; list the decisions already visible in the code as candidates."
 refs:
   - {url: "https://fleetlint.org/baseline/#documentation", kind: convention}

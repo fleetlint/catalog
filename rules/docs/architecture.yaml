@@ -9,10 +9,10 @@ expr: >
   file("docs/ARCHITECTURE.md") || file("ARCHITECTURE.md")
   || (file("README.md") && scan("README.md", "(?i)^#+\\s*architecture").size() > 0)
 message: "no architecture document or README section"
-requirement: docs/ARCHITECTURE.md (or an Architecture section in the README) explains the components, their boundaries and the data flow in one page.
+requirement: "docs/ARCHITECTURE.md or ARCHITECTURE.md exists, or the README has an Architecture heading; the content is not checked."
 rationale: The shape of the system is the one thing a newcomer cannot recover from the code quickly.
 fix:
-  human: "Write docs/ARCHITECTURE.md: components, boundaries, data flow, the three decisions that shaped it."
+  human: "Write docs/ARCHITECTURE.md, one page: components, boundaries, data flow, the three decisions that shaped it."
   agent: "Write docs/ARCHITECTURE.md from the actual package structure: one paragraph per component, one diagram, no marketing."
 refs:
   - {url: "https://fleetlint.org/baseline/#documentation", kind: convention}

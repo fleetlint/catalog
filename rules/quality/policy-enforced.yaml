@@ -11,7 +11,7 @@ expr: >
   || [taskrunner.file, "Makefile", "justfile", "Taskfile.yml", "package.json", "build.gradle", "build.gradle.kts"].exists(f, text(f).contains("fleetlint"))
   || workflows().exists(w, text(w).contains("fleetlint"))
 message: "nothing runs fleetlint: not a hook, not the task runner, not a workflow"
-requirement: "`fleetlint check` runs without anyone remembering to: as a git hook, in the task runner's `check` target, or in a CI workflow."
+requirement: "`fleetlint check` runs without anyone remembering to: `fleetlint` is named in .pre-commit-config.yaml, lefthook.yml, the task runner file (Makefile, justfile, Taskfile.yml, package.json, a Gradle build file) or a CI workflow. Which target or step runs it is not checked."
 rationale: A policy that is only checked by hand drifts with the first busy week; the report is then a description of last month.
 fix:
   human: "Add `fleetlint check --fail-on error` to the `check` target, and the fleetlint hook to .pre-commit-config.yaml (see https://fleetlint.org/integrations/)."

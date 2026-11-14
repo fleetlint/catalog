@@ -6,10 +6,10 @@ scope: root
 locate: '".gitattributes"'
 expr: file(".gitattributes") && text(".gitattributes").contains("text=auto")
 message: ".gitattributes with `* text=auto` is missing"
-requirement: ".gitattributes sets `* text=auto eol=lf` and marks binaries."
+requirement: "A `.gitattributes` at the repository root contains `text=auto` (normally `* text=auto eol=lf`); the `eol` setting and binary markings are not checked."
 rationale: Prevents CRLF/LF diffs and corrupted binaries across operating systems.
 fix:
-  human: "Add .gitattributes with `* text=auto eol=lf`; `fleetlint fix --apply` writes the template."
+  human: "Add .gitattributes with `* text=auto eol=lf` and mark binary files `binary`; `fleetlint fix --apply` writes the template."
   agent: "Create .gitattributes with `* text=auto eol=lf` and `binary` for image, font, archive and media extensions."
   actions:
     - template: gitattributes

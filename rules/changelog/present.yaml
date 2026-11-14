@@ -7,13 +7,13 @@ tiers: [1, 2]
 locate: '"CHANGELOG.md"'
 expr: file("CHANGELOG.md") && scan("CHANGELOG.md", "^##\\s+\\S").size() > 0
 message: "CHANGELOG.md is missing or has no version sections"
-requirement: "The repository keeps a CHANGELOG.md with one `## ` section per version (`## [Unreleased]` until the first release), as Keep a Changelog, git-cliff, release-please and changesets write it."
+requirement: "CHANGELOG.md exists and has at least one `## ` section heading; which versions it lists and their format are not checked."
 rationale: Users and future you need to know what changed between versions without reading commits.
 fix:
-  human: "Add CHANGELOG.md with an `## [Unreleased]` section (`fleetlint fix --apply` writes it), then keep it current with git-cliff."
+  human: "Add CHANGELOG.md with an `## [Unreleased]` section (`fleetlint fix --apply` writes it), then keep one `## ` section per version, as Keep a Changelog, git-cliff, release-please and changesets write it."
   agent: "Create CHANGELOG.md from the template; if cliff.toml exists, regenerate it with `git-cliff -o CHANGELOG.md` and review the result."
   actions:
     - template: CHANGELOG.md
 refs:
   - {url: "https://keepachangelog.com/en/1.1.0/", kind: standard, section: "How do I make a good changelog?"}
-  - "https://fleetlint.org/baseline/#releases"
+  - "https://fleetlint.org/baseline/#documentation"

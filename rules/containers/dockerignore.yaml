@@ -7,10 +7,10 @@ locate: '".dockerignore"'
 when: tracked().exists(p, p.matches("(^|/)((Dockerfile|Containerfile)[^/]*|[^/]+\\.(Dockerfile|Containerfile|dockerfile|containerfile))$"))
 expr: file(".dockerignore") || file(".containerignore") || exists("*.dockerignore")
 message: "a Dockerfile is tracked but there is no .dockerignore"
-requirement: "A repository with a Dockerfile has a `.dockerignore` that keeps `.git`, secrets and build output out of the build context."
+requirement: "A repository with a Dockerfile or Containerfile has a `.dockerignore` or `.containerignore` at the root, or a per-Dockerfile `*.dockerignore`; what it excludes is not checked."
 rationale: Without it the whole working tree, including `.env` files and the git history, is sent to the builder and can end up in a layer.
 fix:
-  human: "Add .dockerignore listing .git, .env*, build output and anything the image does not need."
+  human: "Add .dockerignore listing .git, .env*, build output and anything the image does not need, so they stay out of the build context."
   agent: "Add .dockerignore with .git, .env*, the stack's build output and dependency directories; check that the image still builds."
 refs:
   - {url: "https://docs.docker.com/build/building/best-practices/", kind: guidance, section: "Exclude with .dockerignore"}
