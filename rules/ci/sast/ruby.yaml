@@ -5,9 +5,11 @@ satisfiers:
     expr: >
       workflows().exists(w, steps(w).exists(s, s.run.matches("\\bbrakeman\\b")))
       || [".pre-commit-config.yaml", taskrunner.file, "Rakefile"].exists(f, text(f).matches("\\bbrakeman\\b"))
+message: "no SAST scan (Brakeman, CodeQL, Semgrep, GitLab SAST, SonarQube) runs on the code"
 requirement: "Brakeman (taint analysis for Rails) runs in CI or the task runner; or a stack-neutral scanner (CodeQL, Semgrep, GitLab SAST, SonarQube)."
 fix:
   human: "Add `bundle exec brakeman --no-pager` to the check workflow, or a CodeQL/Semgrep step."
+  agent: "Add `bundle exec brakeman --no-pager` to the check workflow or the task runner's check target, or a CodeQL or Semgrep step; list what it reports instead of ignoring it."
 refs:
   - {url: "https://brakemanscanner.org/", kind: spec}
   - "https://fleetlint.org/stacks/#ruby"

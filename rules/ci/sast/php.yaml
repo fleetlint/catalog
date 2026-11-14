@@ -5,9 +5,11 @@ satisfiers:
     expr: >
       workflows().exists(w, steps(w).exists(s, s.run.matches("\\bpsalm\\b[^\\n]*--taint-analysis")))
       || [taskrunner.file, "composer.json", ".pre-commit-config.yaml"].exists(f, text(f).matches("\\bpsalm\\b[^\\n]*--taint-analysis"))
+message: "no SAST scan (Psalm taint analysis, CodeQL, Semgrep, GitLab SAST, SonarQube) runs on the code"
 requirement: "Psalm's taint analysis (`psalm --taint-analysis`) runs in CI or the task runner; or a stack-neutral scanner (CodeQL, Semgrep, GitLab SAST, SonarQube)."
 fix:
   human: "Run `vendor/bin/psalm --taint-analysis` in the check workflow, or add a Semgrep step."
+  agent: "Add `vendor/bin/psalm --taint-analysis` to the check workflow or the task runner's check target, or a Semgrep step; list what it reports instead of suppressing it."
 refs:
   - {url: "https://psalm.dev/docs/security_analysis/", kind: spec}
   - "https://fleetlint.org/stacks/#php"

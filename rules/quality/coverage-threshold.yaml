@@ -10,7 +10,7 @@ requirement: >
   For a workspace member the repository's CI and configuration files in parent directories count as well.
 rationale: A coverage number nobody enforces drifts down one "quick fix" at a time.
 fix:
-  human: "Make `make cover` fail below the floor (diff-cover --fail-under=80 is the stack-neutral option)."
-  agent: "Add a threshold to the cover recipe using the stack profile's tool (go: go-test-coverage or a cover script with a minimum; python: --cov-fail-under; node: coverageThreshold; rust: cargo llvm-cov --fail-under-lines; kotlin: kover verify)."
+  human: "Make the `cover` target fail below the floor with the stack's coverage tool, or run `diff-cover --fail-under=80` on its report (any stack)."
+  agent: "Add a threshold to the cover recipe with the coverage tool of the stack profile (https://fleetlint.org/stacks/), or run diff-cover --fail-under on the coverage report."
 refs:
   - {url: "https://fleetlint.org/baseline/#tests", kind: convention}
