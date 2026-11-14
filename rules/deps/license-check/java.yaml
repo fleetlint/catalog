@@ -19,10 +19,21 @@ satisfiers:
         && text(p).matches(r'<(failOnBlacklist|failOnNotWhitelisted|failIfWarning)>\s*true'))
       || (glob("**/build.gradle*") + ["../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts"]).flatten().filter(f, file(f))).exists(f, text(f).contains("allowedLicensesFile")
         && text(f).matches(r'dependsOn\W[^\n]*checkLicense'))
-requirement: "pom.xml configures license-maven-plugin to fail on licenses outside its list (`failOnBlacklist`/`failOnNotWhitelisted`), or the Gradle dependency-license-report plugin has an `allowedLicensesFile` and its `checkLicense` task runs (from a recipe, a CI step or a task dependency); or a stack-neutral license checker runs."
+  # Licensee hooks its task into `check` and fails it on a license outside allow() unless violationAction is LOG or IGNORE.
+  - name: licensee
+    expr: >
+      [glob("**/build.gradle*") + glob("buildSrc/**/*.gradle*") + glob("build-logic/**/*.gradle*")
+        + ["../", "../../", "../../../"].map(d, [d + "build.gradle", d + "build.gradle.kts"]).flatten().filter(f, file(f))].exists(fs,
+        fs.exists(f, lines(f).exists(l, !l.matches(r'\bapply\s*\(?\s*false\b')
+          && (l.matches(r'["\x27]app\.cash\.licensee["\x27]')
+            || (l.matches(r'libs\.plugins\.[\w.]*licensee') && ["", "../", "../../", "../../../"].exists(d, file(d + "gradle/libs.versions.toml")
+              && text(d + "gradle/libs.versions.toml").contains("app.cash.licensee"))))))
+        && !fs.exists(f, text(f).matches(r'violationAction\W[^\n]*\b(LOG|IGNORE)\b')))
+requirement: "pom.xml configures license-maven-plugin to fail on licenses outside its list (`failOnBlacklist`/`failOnNotWhitelisted`), or the Gradle dependency-license-report plugin has an `allowedLicensesFile` and its `checkLicense` task runs (from a recipe, a CI step or a task dependency), or the Licensee plugin (`app.cash.licensee`) is applied, which fails `check` on a license outside its `allow` list unless `violationAction` is LOG or IGNORE; or a stack-neutral license checker runs."
 fix:
-  human: "Gradle: add com.github.jk1.dependency-license-report with allowedLicensesFile and run checkLicense in `audit`; Maven: configure license-maven-plugin with an included-licenses list and failOnBlacklist."
+  human: "Gradle: apply the Licensee plugin (`app.cash.licensee`) with `allow(\"<SPDX id>\")` entries, which `check` runs, or add com.github.jk1.dependency-license-report with allowedLicensesFile and run checkLicense in `audit`; Maven: configure license-maven-plugin with an included-licenses list and failOnBlacklist."
 refs:
   - {url: "https://www.mojohaus.org/license-maven-plugin/add-third-party-mojo.html", kind: spec}
   - {url: "https://github.com/jk1/Gradle-License-Report", kind: spec}
+  - {url: "https://github.com/cashapp/licensee", kind: spec}
   - "https://fleetlint.org/stacks/#java"
