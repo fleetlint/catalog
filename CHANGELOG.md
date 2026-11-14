@@ -16,6 +16,8 @@ Format: Keep a Changelog. Versioning: Semantic Versioning.
 - The not-applicable Hugo implementations of `deps/license-check`, `deps/locked-install`, `deps/vulnerability-scan`, `deps/unused-check` and `repo/lockfile-committed` no longer say Hugo modules are checked as Go: a site's go.mod and go.sum are not checked unless Go sources next to it make it a Go project.
 - Implementations without a fix of their own no longer inherit one written for another stack or artifact. `quality/duplication-gate` and `quality/coverage-threshold` have stack-neutral fixes (their `any` implementations said "Enable `dupl` in .golangci.yml" and "`make cover`"); the `release/provenance` agent instruction starts with the registry's own provenance for npm, PyPI and RubyGems; `release/sbom` no longer asks the CycloneDX plugins for SPDX; `ci/sast/php` and `ci/sast/ruby` have their own agent instruction and message (Psalm, Brakeman).
 - `fleetlint:minimal` says its hook rules apply at tiers 1 and 2, and `fleetlint:strict` that its security rules can neither be excepted nor disabled, which fleetlint enforces for a rule whose policy sets `exceptions: false`.
+- `public/security-policy`, `public/code-of-conduct` and `public/contributing` count a file at the root only, as their requirements say; a `SECURITY.md` in a subdirectory, such as one belonging to a vendored package, no longer satisfies them.
+- `repo/codeowners` accepts `.gitlab/CODEOWNERS`, where GitLab also reads it.
 - `repo/codeowners` links the baseline's Hygiene section, `ci/workflow-lint` Continuous integration and `changelog/present` Documentation, where the baseline lists them.
 
 ## [0.7.0] - 2026-11-13

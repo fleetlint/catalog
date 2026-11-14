@@ -5,9 +5,9 @@ severity: info
 scope: root
 tiers: [1]
 locate: '".github/CODEOWNERS"'
-expr: file("CODEOWNERS") || file(".github/CODEOWNERS") || file("docs/CODEOWNERS") || file(".gitea/CODEOWNERS")
+expr: file("CODEOWNERS") || file(".github/CODEOWNERS") || file("docs/CODEOWNERS") || file(".gitea/CODEOWNERS") || file(".gitlab/CODEOWNERS")
 message: "no CODEOWNERS file"
-requirement: "A CODEOWNERS file exists at the root or in `.github/`, `docs/` or `.gitea/`; the paths and owners in it are not checked."
+requirement: "A CODEOWNERS file exists at the root or in `.github/`, `.gitlab/`, `docs/` or `.gitea/`; the paths and owners in it are not checked."
 rationale: Review ownership that lives in people's heads does not survive a holiday.
 fix:
   human: "Add .github/CODEOWNERS with a default owner line, so review requests for every path reach someone."

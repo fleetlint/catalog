@@ -6,7 +6,7 @@ scope: root
 tiers: [1]
 locate: '"CODE_OF_CONDUCT.md"'
 when: repo.public
-expr: exists("CODE_OF_CONDUCT*") || exists(".github/CODE_OF_CONDUCT*") || exists("docs/CODE_OF_CONDUCT*") || exists(".gitea/CODE_OF_CONDUCT*")
+expr: glob("CODE_OF_CONDUCT*").exists(f, !f.contains("/")) || exists(".github/CODE_OF_CONDUCT*") || exists("docs/CODE_OF_CONDUCT*") || exists(".gitea/CODE_OF_CONDUCT*")
 message: "CODE_OF_CONDUCT.md is missing"
 requirement: "A CODE_OF_CONDUCT file exists at the root or in `.github/`, `docs/` or `.gitea/`; its content is not checked."
 rationale: Forges surface it in the community profile; contributors look for it before engaging.

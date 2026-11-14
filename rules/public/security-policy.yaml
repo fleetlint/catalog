@@ -6,7 +6,7 @@ scope: root
 tiers: [1]
 locate: '"SECURITY.md"'
 when: repo.public
-expr: exists("SECURITY*") || exists(".github/SECURITY*") || exists("docs/SECURITY*") || exists(".gitea/SECURITY*")
+expr: glob("SECURITY*").exists(f, !f.contains("/")) || exists(".github/SECURITY*") || exists("docs/SECURITY*") || exists(".gitea/SECURITY*")
 message: "SECURITY.md is missing"
 requirement: "A SECURITY file exists at the root or in `.github/`, `docs/` or `.gitea/`; its content is not checked."
 rationale: Reporters otherwise open public issues, which disclose the problem before a fix exists.

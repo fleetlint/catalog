@@ -6,7 +6,7 @@ scope: root
 tiers: [1]
 locate: '"CONTRIBUTING.md"'
 when: repo.public
-expr: exists("CONTRIBUTING*") || exists(".github/CONTRIBUTING*") || exists("docs/CONTRIBUTING*") || exists(".gitea/CONTRIBUTING*")
+expr: glob("CONTRIBUTING*").exists(f, !f.contains("/")) || exists(".github/CONTRIBUTING*") || exists("docs/CONTRIBUTING*") || exists(".gitea/CONTRIBUTING*")
 message: "CONTRIBUTING.md is missing"
 requirement: "A CONTRIBUTING file exists at the root or in `.github/`, `docs/` or `.gitea/`. It should state how to set up, run `make check`, and what a pull request needs; its content is not checked."
 rationale: It is the difference between a drive-by issue and a merged fix.
