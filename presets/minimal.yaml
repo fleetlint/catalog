@@ -6,7 +6,8 @@ metadata:
   description: >
     The floor for any repository, including experiments: nothing secret,
     accidental or oversized is tracked, no conflict markers are committed,
-    hooks exist, and public repos have a license.
+    and public repos have a license. At tiers 1 and 2, hooks exist and scan
+    for secrets.
 
 
 # The rules live in rules/<family>/<name>.yaml; a preset selects them.

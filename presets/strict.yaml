@@ -6,13 +6,14 @@ metadata:
   description: >
     Everything in recommended, held to a higher standard: every warning is an
     error, every informational rule a warning, and the security rules take no
-    exceptions. For repositories whose gate must not be argued with.
+    exceptions and cannot be disabled. For repositories whose gate must not be
+    argued with.
   includes: [fleetlint:recommended]
 
 # A pattern applies first; an exact rule id refines it. Nothing is disabled.
 overrides:
   "*": { raise: 1 }
-  # Security rules: no per-finding exceptions either.
+  # Security rules: no exceptions, and no later catalog, repository or scope can disable them.
   hooks/secret-scan:            { exceptions: false }
   ci/actions-pinned:            { exceptions: false }
   ci/least-privilege:           { exceptions: false }
