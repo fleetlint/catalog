@@ -1,7 +1,7 @@
       - uses: peaceiris/actions-hugo@d1c81a15d4e6dca7086a17b9c2565cb70fd576bf # v3.3.0
         env:
           # renovate: datasource=github-releases depName=gohugoio/hugo
-          HUGO_VERSION: v0.170.0
+          HUGO_VERSION: v0.170.1
         with:
           hugo-version: ${{ env.HUGO_VERSION }}
           extended: true
